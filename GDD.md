@@ -1,102 +1,119 @@
-# Game Design Document (GDD) — Cuarta Transformación
+# Game Design Document (GDD) — Cuarta Transformacion
 
 ---
 
-## 1. Concepción de la Idea (5 / 5 pts)
+## 1. Concepcion de la Idea
 
-* **Título del Proyecto:** *Cuarta Transformación*
-* **Género:** Plataformas 2D / Acción y Aventura Retro.
-* **Plataforma Objetivo:** PC / WebGL (navegadores web mediante Itch.io).
-* **Motor de Desarrollo:** Unity 6 (URP 2D).
-* **Público Objetivo:**
-  * **Edad:** Jóvenes y adolescentes entre 12 y 25 años.
-  * **Perfil:** Jugadores que disfrutan de juegos de plataformas de precisión y acción en pixel art (como *Celeste*, *Shovel Knight* o *Hollow Knight*).
-  * **Motivación:** Desafío de plataformeo fluido, combate ágil con espada, exploración de niveles y superación de trampas y enemigos.
+### 1.1 Ficha Tecnica
+* **Titulo del Proyecto:** Cuarta Transformacion
+* **Genero:** Accion 2D por niveles (Side-scroller)
+* **Motor de Desarrollo:** Unity (C#)
+* **Plataforma:** PC / WebGL (navegadores mediante Itch.io)
+* **Duracion del Proyecto:** 8 semanas (4 sprints de 2 semanas)
 
----
-
-## 2. Diseño del Juego (8 / 8 pts)
-
-### 2.1 Historia y Premisa
-En un mundo que ha atravesado una metamorfosis radical conocida como "La Cuarta Transformación", la tierra se ha fracturado en islas flotantes y ruinas repletas de criaturas hostiles. **Finn**, un joven espadachín errante, despierta en los límites del reino con su espada oxidada. Su misión es abrirse paso a través de terrenos peligrosos, derrotar a las hordas de slimes y alcanzar el portal ancestral para restaurar el balance del mundo.
-
-### 2.2 Personajes
-* **Finn (Protagonista):** Un espadachín ágil y determinado. Posee habilidades acrobáticas de salto, estiramiento dinámico y combate cuerpo a cuerpo con espada.
-* **Slimes / Criaturas Corruptas (Enemigos):** Entidades gelatinosas que patrullan las plataformas. Al contacto con Finn infligen daño y retroceso, pero son vulnerables a los tajos de espada.
-
-### 2.3 Mecánicas del Jugador
-* **Movimiento Horizontal:** Desplazamiento ágil con aceleración y volteo de sprite instantáneo.
-* **Salto Variable y Coyote Time:** Salto receptivo con margen de tolerancia (0.15s) al salir de bordes y amortiguación de aterrizaje (*Squash & Stretch* procedural).
-* **Combate (Ataque con Espada):** Estocada horizontal con hitbox frontal que inflige daño y empuja a los enemigos.
-* **Sistema de Salud e Invulnerabilidad:** 5 puntos de vida, retroceso por impacto y 1 segundo de parpadeo de invulnerabilidad.
-* **Reaparición / Revivir:** Al agotarse la vida, Finn se desploma y reaparece tras 1.5s ejecutando su animación de reincorporación.
-
-### 2.4 Estilo de Arte y Audio
-* **Arte Visual:** Pixel art clásico 32x32 px con estética retro vibrante inspirada en *Adventure Time*, sombras planas y efectos de deformación dinámica.
-* **Estilo de Audio:** Efectos de sonido chiptune / 8-bit contundentes (corte de espada, salto retro, impactos) y melodías de sintetizador enérgicas.
+### 1.2 Publico Objetivo
+* **Rango de Edad:** 12 a 25 anos.
+* **Perfil del Jugador:** Jugadores interesados en juegos de accion y plataformas clasicos en pixel art, con gusto por la cultura regional mexicana, el humor satirico y los retos de combate de ritmo agil.
+* **Motivacion:** Superar oleadas de enemigos, dominar el movimiento y vencer a jefes caricaturescos para restablecer el orden en su comunidad antes de las celebraciones patronales.
 
 ---
 
-## 3. Planificación Scrum (5 / 5 pts)
+## 2. Diseno del Juego
 
-El proyecto se estructura en **4 Sprints** con asignación directa al responsable:
+### 2.1 Historia y Argumento
+Dolores Hidalgo, cuna de la Independencia de Mexico, se prepara para sus fiestas patronales cuando una situacion inusual desestabiliza la region: tres figuras exageradas y ridiculas —un vendedor ambulante convertido en meme viral, un politico local caracterizado por promesas incumplidas y un influencer obsesionado con las camaras— se apoderan de distintos sectores del municipio.
 
-| Sprint | Enfoque Principal | Tareas Clave | Responsable | Estado |
+Su influencia contagia a los habitantes locales, volviendolos hostiles y bloqueando el transito publico. En medio del desorden, el jugador asume el papel de un vecino arraigado al pueblo, conocedor de cada callejon y tradicion de Dolores Hidalgo, quien decide intervenir personalmente para restablecer la paz antes de que las fiestas patronales queden arruinadas.
+
+### 2.2 Objetivos del Juego
+* **Objetivo Narrativo:** Recuperar la tranquilidad en Dolores Hidalgo y Guanajuato derrotando a las tres figuras responsables del alboroto.
+* **Objetivo de Jugabilidad:** Recorrer tres niveles tematicos limpiando oleadas de NPCs hostiles y derrotar al jefe de cada zona para desbloquear la siguiente area.
+* **Condicion de Victoria:** Derrotar a los tres jefes principales: El Vendedor Viral, El Municipe Carismatico y El Influencer del Callejon.
+
+### 2.3 Estructura de Zonas y Jefes
+
+| Nivel | Zona (Dolores Hidalgo / Guanajuato) | Jefe (Arquetipo Ficticio) | Descripcion del Jefe |
+| :---: | :--- | :--- | :--- |
+| **Nivel 1** | Jardin Principal / Centro Historico | **El Vendedor Viral** | Comerciante ambulante convertido en fenomeno de internet debido a una frase pegajosa. Ataques basados en lanzamiento de mercancia y ráfagas vocales. |
+| **Nivel 2** | Zona de talleres de talavera / Fabrica La Aurora | **El Municipe Carismatico** | Politico local de promesas vacias con microfono en mano. Ataques basados en ondas sonoras amplificadas y convocatoria de simpatizantes. |
+| **Nivel 3** | Callejones y cerros de Guanajuato capital | **El Influencer del Callejon** | Combinacion de personaje folklorico urbano y streamer en vivo. Ataques con destellos de flash cegadores y emboscadas en desnivel. |
+
+### 2.4 Mecanicas del Jugador
+* **Desplazamiento Horizontal:** Movimiento lateral fluido con respuesta inmediata de control.
+* **Sistema de Salto:** Salto con altura variable (dependiente del tiempo de pulsacion), coyote time y almacenamiento previo de pulsacion (jump buffer).
+* **Combate:** Golpe cuerpo a cuerpo con hitbox frontal para infligir dano y aplicar empuje (knockback) a los agresores.
+* **Salud e Impacto:** Sistema de puntos de vida, periodo de invulnerabilidad temporal con respuesta visual de parpadeo y retroceso fisico.
+* **Ciclo de Nivel:** Derrota de oleadas de vecinos contagiados hasta habilitar la arena de combate del jefe de zona.
+
+### 2.5 Estilo Artistico y Sonoro
+* **Arte Visual:** Estilo pixel art 2D optimizado para desarrollo en solitario, apoyado en la adaptacion y personalizacion de asset packs con identidad arquitectonica mexicana (kioscos, farolas, talleres de ceramica y callejones coloniales).
+* **Audio:** Efectos de sonido claros y legibles para cada accion (impactos, saltos, golpes) y pistas de musica tradicional adaptadas a instrumentacion electronica/chiptune.
+
+---
+
+## 3. Planificacion de Sprints (Scrum - 8 Semanas)
+
+El proyecto se planifica en cuatro sprints quincenales bajo la responsabilidad directa de un unico desarrollador:
+
+| Sprint | Periodo | Enfoque Principal | Entregables Clave | Responsable |
 | :--- | :--- | :--- | :--- | :--- |
-| **Sprint 1** | **Core Gameplay & Audio** | Integración de AudioManager, efectos SFX, música BGM y sistema de coleccionables. | @Brayanpower | Issue #1, #2 |
-| **Sprint 2** | **Level Design & IA** | Trazado de nivel extendido, plataformas móviles, meta de victoria e IA avanzada de enemigos. | @Brayanpower | Issue #3, #4 |
-| **Sprint 3** | **UI & Game Loop** | Menú principal, menú de pausa, pantalla de Game Over / Victoria y sistema de Checkpoints. | @Brayanpower | Issue #5, #6 |
-| **Sprint 4** | **Testing & Lanzamiento** | Sesión de playtesting con 3 jugadores externos, build para Itch.io y tráiler de 30-60s. | @Brayanpower | Issue #7, #8, #9 |
+| **Sprint 1** | Semanas 1 y 2 | Concepcion, Diseno, GDD y Prototipo del Nivel 1 | Documento GDD completo, repositorio Git inicializado, control del jugador funcional y spawn base de NPCs. | @Brayanpower |
+| **Sprint 2** | Semanas 3 y 4 | Nivel 1 Completo y Nivel 2 en Greybox | Nivel 1 terminado con arte y Jefe 1 operativo; Nivel 2 estructurado en greybox con Jefe 2 y audio base. | @Brayanpower |
+| **Sprint 3** | Semanas 5 y 6 | Nivel 3, Progresion, Arte Final y UI | Nivel 3 jugable con Jefe 3; flujo completo de transicion entre niveles, menus de UI y arte final aplicado. | @Brayanpower |
+| **Sprint 4** | Semanas 7 y 8 | Playtesting, Balance, Trailer y Publicacion | Sesiones de prueba documentadas con tres evaluadores, ajustes de dificultad, juego en Itch.io y trailer de 30-60s. | @Brayanpower |
 
 ---
 
-## 4. Desarrollo Técnico (8 / 8 pts)
+## 4. Desarrollo Tecnico
 
-* **Entorno:** Unity 6 (6000.6.0f1) con Universal Render Pipeline (URP 2D).
-* **Control de Entrada:** Nuevo Unity Input System (`com.unity.inputsystem`) soportando Teclado, Ratón, Gamepad y Touchscreen.
-* **Animación:** Máquina de estados finitos en `AnimatorController` con parámetros nativos (`Horizontal`, `IsGrounded`, `Jump`, `Attack`, `TakeDamage`, `Revive`) y clips sin interpolación lineal para preservar la nitidez del pixel art.
-* **Cámara:** `CameraFollow` programada con interpolación `Vector3.SmoothDamp` y centrado dinámico sobre el eje vertical del jugador.
-* **Arquitectura de Scripts:**
-  * `PlayerMovement.cs`: Control de físicas en `FixedUpdate`, lógica de combate y salud.
-  * `SimpleEnemy.cs`: Patrullaje horizontal, gestión de daño recibido, empuje y reaparición.
-  * `HazardSpikes.cs`: Detección de peligro estático y empuje vertical.
-  * `CameraFollow.cs`: Seguimiento de cámara fluido sin sobrecarga de dependencias.
+* **Arquitectura de Software en Unity:**
+  * `PlayerMovement.cs`: Gestion de fisicas en FixedUpdate, ejecucion de ataques y control de vida del protagonista.
+  * `SimpleEnemy.cs`: Comportamiento de patrullaje, recepcion de dano, retroceso y ataque por contacto de los vecinos hostiles.
+  * `HazardSpikes.cs`: Obstaculos ambientales estaticos con aplicacion de dano y propulsion.
+  * `CameraFollow.cs`: Desplazamiento de camara amortiguado mediante SmoothDamp para mantener encuadrada la accion en todo momento.
+* **Control de Entrada:** Nuevo sistema de entrada de Unity (Input System) configurado para teclado, raton y gamepad.
+* **Animacion:** Controladores Animator con transiciones sin tiempo de salida para garantizar precision en las respuestas de combate.
 
 ---
 
-## 5. Pruebas y Control de Calidad (Testing) (6 / 6 pts)
+## 5. Pruebas y Aseguramiento de Calidad (Testing)
 
-### Protocolo de Pruebas
-1. **Población de prueba:** Al menos 3 evaluadores externos que no conozcan la solución de antemano.
-2. **Variables a registrar:**
-   * Claridad de los controles y dificultad percibida del salto.
-   * Detección de colisiones inesperadas o fallos de hitbox en el ataque.
-   * Fluidez de la cámara de seguimiento.
-3. **Bitácora de Balance:** Ajustar la velocidad de movimiento, altura de salto y tiempo de invulnerabilidad según las observaciones de los jugadores.
+* **Protocolo de Evaluacion Externa:** Realizacion de pruebas con al menos tres personas ajenas a la programacion del juego durante el transcurso del desarrollo.
+* **Registro de Errores y Balance:**
+  * Identificacion de puntos de perdida de ritmo o atasco en el salto entre plataformas.
+  * Registro de fallos en colisiones o deteccion de golpes.
+  * Ajuste de valores numericos de velocidad, resistencia de oleadas y patrones de ataque de los jefes en funcion de la dificultad observada.
 
 ---
 
-## 6. Lanzamiento y Difusión (5 / 5 pts)
+## 6. Publicacion y Promocion
 
-* **Plataforma:** Publicación en [Itch.io](https://itch.io) con soporte WebGL para jugar directo en navegador web sin instalación.
+* **Plataforma de Lanzamiento:** Publicacion formal en Itch.io mediante compilacion optimizada para WebGL (ejecutable en navegador) y version descargable para PC.
 * **Material Promocional:**
-  * Tráiler de 30 a 60 segundos con música retro capturando la jugabilidad, el parkour y los combates.
-  * Portada y capturas promocionales destacando el estilo visual en pixel art.
-* **Canales de Promoción:**
-  * Presentación y demostración en vivo en clase.
-  * Enlace compartido en comunidades estudiantiles y redes sociales del desarrollador.
+  * Trailer de jugabilidad con duracion de 30 a 60 segundos, destacando el combate, el plataformeo y los enfrentamientos contra los tres jefes.
+  * Capturas de pantalla descriptivas y redaccion de instrucciones claras en la pagina de publicacion.
+* **Canales de Difusion:** Exposicion academica presencial y difusion mediante comunidades de desarrollo independiente.
 
 ---
 
-## 7. Control de Versiones e Issues
+## 7. Gestion de Riesgos y Mitigaciones (Desarrollo Individual)
 
-Todos los requerimientos se encuentran vinculados a los **GitHub Issues oficiales** del repositorio:
-* **Issue #1:** `[Sprint 1] Implementar Sistema de Audio (SFX y Música de Fondo - BGM)`
-* **Issue #2:** `[Sprint 1] Sistema de Coleccionables y Puntuación (Monedas / Gemas)`
-* **Issue #3:** `[Sprint 2] Diseño de Nivel Completo y Meta de Victoria (Portal / Fin de Nivel)`
-* **Issue #4:** `[Sprint 2] Variedad de Enemigos e IA de Patrullaje con Detección de Bordes`
-* **Issue #5:** `[Sprint 3] Interfaz de Usuario: Menú Principal, Menú de Pausa y Game Over`
-* **Issue #6:** `[Sprint 3] Sistema de Vidas Totales y Checkpoints en el Nivel`
-* **Issue #7:** `[Sprint 4] Playtesting y Sesión de Feedback con Jugadores Externos`
-* **Issue #8:** `[Sprint 4] Generación de Build para Itch.io y Tráiler de Lanzamiento (30-60s)`
-* **Issue #9:** `[Documentación] Elaboración y Entrega del Game Design Document (GDD)`
+1. **Riesgo de Alcance:** Si el ritmo de avance al finalizar la quinta semana se ve comprometido, se priorizara entregar dos niveles completamente pulidos y balanceados en lugar de tres niveles incompletos, manteniendo el rigor de evaluacion.
+2. **Riesgo de Arte:** Se emplearan asset packs profesionales adaptados tematicamente para evitar cuellos de botella en la ilustracion manual y enfocar las horas disponibles en programacion y jugabilidad.
+3. **Riesgo de Testing:** Se recabara retroalimentacion informal de manera continua desde la culminacion de cada nivel en lugar de reservar las pruebas unicamente para la semana final.
+4. **Seguimiento Semanal:** Evaluacion interna de avance al termino de cada semana para identificar desajustes en el cronograma con suficiente tiempo de correccion.
+
+---
+
+## 8. Trazabilidad de Issues en GitHub
+
+El seguimiento operativo de este documento se encuentra vinculado a los issues del repositorio:
+* **Issue #1:** Sprint 1: Concepcion, Diseno Inicial y Documento GDD
+* **Issue #2:** Sprint 1: Control del Jugador y Prototipo de Oleadas en Nivel 1
+* **Issue #3:** Sprint 2: Nivel 1 Completo (Jardin Principal) y Jefe 1: El Vendedor Viral
+* **Issue #4:** Sprint 2: Nivel 2 en Greybox (Zona de Talavera) y Jefe 2: El Municipe Carismatico
+* **Issue #5:** Sprint 3: Nivel 3 (Callejones de Guanajuato) y Jefe 3: El Influencer del Callejon
+* **Issue #6:** Sprint 3: Progresion entre Niveles, Interfaz de Usuario y Arte Final
+* **Issue #7:** Sprint 4: Playtesting Externo, Analisis de Retroalimentacion y Balance
+* **Issue #8:** Sprint 4: Generacion de Build, Trailer Promocional y Lanzamiento en Itch.io
+* **Issue #9:** Gestion de Proyecto: Control de Riesgos y Mitigaciones para Desarrollo Individual
