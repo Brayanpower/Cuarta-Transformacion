@@ -1,0 +1,990 @@
+fileFormatVersion: 2
+guid: 3cfce5214d9524bcab8bbd105b4034ba
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1000000001
+    second: vendedor_idle_0
+  - first:
+      213: 1000000002
+    second: vendedor_idle_1
+  - first:
+      213: 1000000003
+    second: vendedor_idle_2
+  - first:
+      213: 1000000004
+    second: vendedor_idle_3
+  - first:
+      213: 1000000005
+    second: vendedor_idle_4
+  - first:
+      213: 1000000006
+    second: vendedor_idle_5
+  - first:
+      213: 1000000011
+    second: vendedor_walk_right_0
+  - first:
+      213: 1000000012
+    second: vendedor_walk_right_1
+  - first:
+      213: 1000000013
+    second: vendedor_walk_right_2
+  - first:
+      213: 1000000014
+    second: vendedor_walk_right_3
+  - first:
+      213: 1000000015
+    second: vendedor_walk_right_4
+  - first:
+      213: 1000000016
+    second: vendedor_walk_right_5
+  - first:
+      213: 1000000021
+    second: vendedor_walk_left_0
+  - first:
+      213: 1000000022
+    second: vendedor_walk_left_1
+  - first:
+      213: 1000000023
+    second: vendedor_walk_left_2
+  - first:
+      213: 1000000024
+    second: vendedor_walk_left_3
+  - first:
+      213: 1000000025
+    second: vendedor_walk_left_4
+  - first:
+      213: 1000000026
+    second: vendedor_walk_left_5
+  - first:
+      213: 1000000031
+    second: vendedor_cucharazo_0
+  - first:
+      213: 1000000032
+    second: vendedor_cucharazo_1
+  - first:
+      213: 1000000033
+    second: vendedor_cucharazo_2
+  - first:
+      213: 1000000034
+    second: vendedor_cucharazo_3
+  - first:
+      213: 1000000035
+    second: vendedor_cucharazo_4
+  - first:
+      213: 1000000041
+    second: vendedor_lluvia_0
+  - first:
+      213: 1000000042
+    second: vendedor_lluvia_1
+  - first:
+      213: 1000000043
+    second: vendedor_lluvia_2
+  - first:
+      213: 1000000044
+    second: vendedor_lluvia_3
+  - first:
+      213: 1000000045
+    second: vendedor_lluvia_4
+  - first:
+      213: 1000000051
+    second: vendedor_defeat_0
+  - first:
+      213: 1000000052
+    second: vendedor_defeat_1
+  - first:
+      213: 1000000053
+    second: vendedor_defeat_2
+  - first:
+      213: 1000000054
+    second: vendedor_defeat_3
+  - first:
+      213: 1000000055
+    second: vendedor_defeat_4
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 4096
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0}
+  spritePixelsToUnits: 150
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: vendedor_idle_0
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 1998
+        width: 297
+        height: 308
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10aca9b3000000000800000000000000
+      internalID: 1000000001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_idle_1
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 1998
+        width: 298
+        height: 308
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20aca9b3000000000800000000000000
+      internalID: 1000000002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_idle_2
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 1998
+        width: 282
+        height: 308
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30aca9b3000000000800000000000000
+      internalID: 1000000003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_idle_3
+      rect:
+        serializedVersion: 2
+        x: 923
+        y: 1998
+        width: 233
+        height: 308
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40aca9b3000000000800000000000000
+      internalID: 1000000004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_idle_4
+      rect:
+        serializedVersion: 2
+        x: 1201
+        y: 1998
+        width: 289
+        height: 308
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50aca9b3000000000800000000000000
+      internalID: 1000000005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_idle_5
+      rect:
+        serializedVersion: 2
+        x: 1490
+        y: 1998
+        width: 286
+        height: 308
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60aca9b3000000000800000000000000
+      internalID: 1000000006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_walk_right_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1605
+        width: 298
+        height: 290
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0aca9b3000000000800000000000000
+      internalID: 1000000011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_walk_right_1
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 1605
+        width: 298
+        height: 292
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0aca9b3000000000800000000000000
+      internalID: 1000000012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_walk_right_2
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 1605
+        width: 298
+        height: 291
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0aca9b3000000000800000000000000
+      internalID: 1000000013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_walk_right_3
+      rect:
+        serializedVersion: 2
+        x: 894
+        y: 1605
+        width: 279
+        height: 290
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0aca9b3000000000800000000000000
+      internalID: 1000000014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_walk_right_4
+      rect:
+        serializedVersion: 2
+        x: 1195
+        y: 1606
+        width: 295
+        height: 290
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0aca9b3000000000800000000000000
+      internalID: 1000000015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_walk_right_5
+      rect:
+        serializedVersion: 2
+        x: 1490
+        y: 1605
+        width: 242
+        height: 290
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01aca9b3000000000800000000000000
+      internalID: 1000000016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_walk_left_0
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 1215
+        width: 262
+        height: 287
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51aca9b3000000000800000000000000
+      internalID: 1000000021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_walk_left_1
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 1215
+        width: 298
+        height: 287
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61aca9b3000000000800000000000000
+      internalID: 1000000022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_walk_left_2
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 1215
+        width: 297
+        height: 294
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71aca9b3000000000800000000000000
+      internalID: 1000000023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_walk_left_3
+      rect:
+        serializedVersion: 2
+        x: 908
+        y: 1215
+        width: 284
+        height: 287
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81aca9b3000000000800000000000000
+      internalID: 1000000024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_walk_left_4
+      rect:
+        serializedVersion: 2
+        x: 1192
+        y: 1215
+        width: 298
+        height: 287
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91aca9b3000000000800000000000000
+      internalID: 1000000025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_walk_left_5
+      rect:
+        serializedVersion: 2
+        x: 1490
+        y: 1215
+        width: 298
+        height: 293
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1aca9b3000000000800000000000000
+      internalID: 1000000026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_cucharazo_0
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 815
+        width: 321
+        height: 294
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1aca9b3000000000800000000000000
+      internalID: 1000000031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_cucharazo_1
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 815
+        width: 352
+        height: 294
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02aca9b3000000000800000000000000
+      internalID: 1000000032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_cucharazo_2
+      rect:
+        serializedVersion: 2
+        x: 716
+        y: 815
+        width: 358
+        height: 291
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12aca9b3000000000800000000000000
+      internalID: 1000000033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_cucharazo_3
+      rect:
+        serializedVersion: 2
+        x: 1074
+        y: 815
+        width: 358
+        height: 288
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22aca9b3000000000800000000000000
+      internalID: 1000000034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_cucharazo_4
+      rect:
+        serializedVersion: 2
+        x: 1432
+        y: 815
+        width: 334
+        height: 291
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32aca9b3000000000800000000000000
+      internalID: 1000000035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_lluvia_0
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 420
+        width: 322
+        height: 303
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92aca9b3000000000800000000000000
+      internalID: 1000000041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_lluvia_1
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 420
+        width: 358
+        height: 299
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2aca9b3000000000800000000000000
+      internalID: 1000000042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_lluvia_2
+      rect:
+        serializedVersion: 2
+        x: 716
+        y: 420
+        width: 358
+        height: 300
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2aca9b3000000000800000000000000
+      internalID: 1000000043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_lluvia_3
+      rect:
+        serializedVersion: 2
+        x: 1074
+        y: 420
+        width: 358
+        height: 300
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2aca9b3000000000800000000000000
+      internalID: 1000000044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_lluvia_4
+      rect:
+        serializedVersion: 2
+        x: 1432
+        y: 426
+        width: 354
+        height: 269
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2aca9b3000000000800000000000000
+      internalID: 1000000045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_defeat_0
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 30
+        width: 321
+        height: 302
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33aca9b3000000000800000000000000
+      internalID: 1000000051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_defeat_1
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 31
+        width: 312
+        height: 303
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43aca9b3000000000800000000000000
+      internalID: 1000000052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_defeat_2
+      rect:
+        serializedVersion: 2
+        x: 756
+        y: 31
+        width: 318
+        height: 303
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53aca9b3000000000800000000000000
+      internalID: 1000000053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_defeat_3
+      rect:
+        serializedVersion: 2
+        x: 1074
+        y: 34
+        width: 358
+        height: 246
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63aca9b3000000000800000000000000
+      internalID: 1000000054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vendedor_defeat_4
+      rect:
+        serializedVersion: 2
+        x: 1432
+        y: 30
+        width: 356
+        height: 274
+      alignment: 7
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73aca9b3000000000800000000000000
+      internalID: 1000000055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      vendedor_cucharazo_0: 1000000031
+      vendedor_cucharazo_1: 1000000032
+      vendedor_cucharazo_2: 1000000033
+      vendedor_cucharazo_3: 1000000034
+      vendedor_cucharazo_4: 1000000035
+      vendedor_defeat_0: 1000000051
+      vendedor_defeat_1: 1000000052
+      vendedor_defeat_2: 1000000053
+      vendedor_defeat_3: 1000000054
+      vendedor_defeat_4: 1000000055
+      vendedor_idle_0: 1000000001
+      vendedor_idle_1: 1000000002
+      vendedor_idle_2: 1000000003
+      vendedor_idle_3: 1000000004
+      vendedor_idle_4: 1000000005
+      vendedor_idle_5: 1000000006
+      vendedor_lluvia_0: 1000000041
+      vendedor_lluvia_1: 1000000042
+      vendedor_lluvia_2: 1000000043
+      vendedor_lluvia_3: 1000000044
+      vendedor_lluvia_4: 1000000045
+      vendedor_walk_left_0: 1000000021
+      vendedor_walk_left_1: 1000000022
+      vendedor_walk_left_2: 1000000023
+      vendedor_walk_left_3: 1000000024
+      vendedor_walk_left_4: 1000000025
+      vendedor_walk_left_5: 1000000026
+      vendedor_walk_right_0: 1000000011
+      vendedor_walk_right_1: 1000000012
+      vendedor_walk_right_2: 1000000013
+      vendedor_walk_right_3: 1000000014
+      vendedor_walk_right_4: 1000000015
+      vendedor_walk_right_5: 1000000016
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
