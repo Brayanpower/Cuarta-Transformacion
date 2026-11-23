@@ -1,83 +1,76 @@
-# Tablero Kanban — Cuarta Transformacion (8 Semanas)
+# Tablero Kanban — Cuarta Transformacion
 
-Este tablero refleja el avance del proyecto organizado bajo la metodologia Scrum para 4 sprints (8 semanas), desarrollado por **@Brayanpower**.
+Este tablero refleja el avance del proyecto organizado mediante issues individuales en GitHub, desarrollado por **@Brayanpower**.
 
 ---
 
 ## 1. Columnas del Tablero de Trabajo
 
 ```
-+--------------------------------+--------------------------------+--------------------------------+
-|          HECHO (DONE)          |    EN PROGRESO (IN PROGRESS)   |      POR HACER (TO DO)         |
-+--------------------------------+--------------------------------+--------------------------------+
-| - [Issue #1] Concepcion,       | - [Issue #2] Controles del     | - [Issue #3] Nivel 1 Completo  |
-|   Diseno y Documento GDD       |   Jugador y Spawn de Enemigos  |   y Jefe: El Vendedor Viral    |
-| - Movimiento, Salto, Físicas   | - [Issue #9] Gestion y Control | - [Issue #4] Nivel 2 Greybox   |
-|   y Coyote Time en C#          |   de Riesgos en Solitario      |   y Jefe: Municipe Carismatico |
-| - Animaciones en Animator      |                                | - [Issue #5] Nivel 3 y Jefe:   |
-|   (Idle, Run, Jump, Golpe,     |                                |   Influencer del Callejon      |
-|   Dano, Revivir)               |                                | - [Issue #6] Progresion, UI    |
-| - Combate e Impacto de Espada  |                                |   Canvas y Arte Final          |
-| - Sistema de Salud y Knockback |                                | - [Issue #7] Playtesting con   |
-| - Camara Suave (CameraFollow)  |                                |   3 Evaluadores Externos       |
-| - Nivel Base con Plataformas,  |                                | - [Issue #8] Build Itch.io,    |
-|   Picos y Enemigo de Prueba    |                                |   Trailer y Cierre de GDD      |
-+--------------------------------+--------------------------------+--------------------------------+
++-----------------------------------+-----------------------------------+-----------------------------------+
+|            HECHO (DONE)           |     EN PROGRESO (IN PROGRESS)     |         POR HACER (TO DO)         |
++-----------------------------------+-----------------------------------+-----------------------------------+
+| - [Issue #1] Concepcion, Diseno   | (Sin tareas activas en curso;     | - [Issue #8] Generacion de Build, |
+|   Inicial y Documento GDD         |  listo para empaquetado final)    |   Trailer y Lanzamiento           |
+| - [Issue #2] Control del Jugador, |                                   |                                   |
+|   Combate, Dash y Oleadas         |                                   |                                   |
+| - [Issue #3] Nivel 1 Completo:    |                                   |                                   |
+|   Jardin Principal de Dolores     |                                   |                                   |
+|   Hidalgo, Garbanzos y Jefe 1     |                                   |                                   |
+| - [Issue #4] Nivel 2 Completo:    |                                   |                                   |
+|   Talleres de Talavera, Audio     |                                   |                                   |
+|   Chiptune y Jefe 2               |                                   |                                   |
+| - [Issue #5] Nivel 3 Completo:    |                                   |                                   |
+|   Callejones de Guanajuato,       |                                   |                                   |
+|   Jefe 3 y Celebracion Final      |                                   |                                   |
+| - [Issue #6] Progresion, Menus    |                                   |                                   |
+|   Formales, Cinematica y Arte     |                                   |                                   |
+| - [Issue #7] Balance, Fisicas,    |                                   |                                   |
+|   Lava Animada y FOV/Zoom         |                                   |                                   |
+| - [Issue #9] Gestion de Proyecto: |                                   |                                   |
+|   Control de Riesgos y Kanban     |                                   |                                   |
++-----------------------------------+-----------------------------------+-----------------------------------+
 ```
 
 ---
 
-## 2. Detalle de Estado por Tarea
+## 2. Detalle de Estado por Issue
 
 ### Columna: Hecho (Done)
 * **[Issue #1: Concepcion, Diseno Inicial y Documento GDD](https://github.com/Brayanpower/Cuarta-Transformacion/issues/1)**
-  * Documento `GDD.md` formalizado con la historia de Dolores Hidalgo, arquetipos y rubrica de 40 puntos.
-  * Repositorio Git estructurado y sincronizado en GitHub.
-* **Componentes del Jugador Implementados (C#):**
-  * `PlayerMovement.cs`: Fisicas en `FixedUpdate`, salto variable, coyote time y jump buffer.
-  * Combate activo: Ataque con espada y deteccion de hitbox frontal (`Physics2D.OverlapCircleAll`).
-  * Sistema de salud: 5 HP, parpadeo de invulnerabilidad temporal y reincorporacion automatica al morir.
-* **Animaciones 2D:**
-  * Maquina de estados configurada en `AnimatorController.controller` con 6 estados y transiciones precisas.
-  * Clips generados a partir de `FinnSprite.png` (Idle, Run, Jump, Golpe, Dano, revivir).
-* **Entorno y Pruebas en Escena:**
-  * `CameraFollow.cs`: Camara de seguimiento suave con `SmoothDamp`.
-  * `SampleScene.unity`: Escenario ampliado a 60 metros con 5 plataformas elevadas para parkour.
-  * `HazardSpikes.cs`: Trampas de picos funcionales con impulso vertical y dano.
-  * `SimpleEnemy.cs`: Enemigo interactivo con patrullaje, recepcion de dano, retroceso y reaparicion.
+  * Documento `GDD.md` formalizado con la historia de Dolores Hidalgo, arquetipos y rubrica de evaluacion.
+  * Repositorio Git estructurado con ramas por issue y Pull Requests en GitHub.
+* **[Issue #2: Control del Jugador, Mecanicas de Combate y Prototipo](https://github.com/Brayanpower/Cuarta-Transformacion/issues/2)**
+  * `PlayerMovement.cs`: fisicas continuas en `FixedUpdate`, salto variable, coyote time, jump buffer, dash con invulnerabilidad (`Left Shift`), ataque de espada y animaciones conectadas en `AnimatorController`.
+* **[Issue #3: Nivel 1 Completo — Jardin Principal y Jefe 1: El Vendedor Viral](https://github.com/Brayanpower/Cuarta-Transformacion/issues/3)**
+  * `Nivel1.unity`: recorrido completo con esbirros garbanzo (`SimpleEnemy.cs`), resortes Sonic (`SpeedSpring.cs`), coleccionables (`CollectibleItem.cs`), arena bloqueada estilo Sonic y jefe `ViralVendorBoss.cs` con portal colonial (`LevelPortalTrigger.cs`).
+* **[Issue #4: Nivel 2 Completo — Talleres de Talavera y Jefe 2: El Municipe Carismatico](https://github.com/Brayanpower/Cuarta-Transformacion/issues/4)**
+  * `Nivel2.unity`: plataformas quebradizas de talavera (`BreakableTalaveraPlatform.cs`), jarrones explosivos (`ExplosivePotHazard.cs`), esbirros locales (`Level2TalaveraEnemy.cs`), jefe `CharismaticMayorBoss.cs` y sintetizador chiptune/SFX procedural (`ProceduralSoundManager.cs`).
+* **[Issue #5: Nivel 3 Completo — Callejones de Guanajuato y Jefe 3: El Influencer del Callejon](https://github.com/Brayanpower/Cuarta-Transformacion/issues/5)**
+  * `Nivel3.unity`: recorrido vertical con drones paparazzi (`Level3DroneEnemy.cs`), fans de selfies (`Level3SelfieFanEnemy.cs`), reflectores (`SpotlightHazard.cs`), jefe final `AlleyInfluencerBoss.cs`, animacion automatica de salida estilo Sonic (`LevelCompletionCelebration.cs`) y titulos de zona (`LevelTitleCard.cs`).
+* **[Issue #6: Progresion entre Niveles, Interfaz de Usuario y Arte Final](https://github.com/Brayanpower/Cuarta-Transformacion/issues/6)**
+  * Fondos pixel-art nocturnos de Dolores Hidalgo, Talavera y Guanajuato, props coloniales-medievales (`MedievalPropAnimator.cs`), suelos tematicos por nivel, cinematica automatica de 4 actos en Nivel 1 (`Level1IntroCutsceneTrigger.cs`, `StoryCutsceneController.cs`), Menu Principal formal de tablones (`MainMenu.unity`, `MainMenuUI.cs`), ajustes (`SettingsMenuUI.cs`), pausa unificada (`PauseMenu.cs`) y progresion (`LevelProgressionManager.cs`).
+* **[Issue #7: Playtesting Externo, Analisis de Retroalimentacion y Balance](https://github.com/Brayanpower/Cuarta-Transformacion/issues/7)**
+  * Correccion de colisiones en suelo plano con `CompositeCollider2D` + collider redondeado sin friccion, tope izquierdo del mapa, cooldown tras golpe, bloqueo total de controles en fin de nivel/titulos, opcion de **FOV / Zoom de Camara** (`CameraFollow.cs`) y reemplazo de trampas rojas por lava pixel-art animada con rebote de rescate (`HazardSpikes.cs`).
+* **[Issue #9: Gestion de Proyecto: Control de Riesgos y Mitigaciones para Desarrollo Individual](https://github.com/Brayanpower/Cuarta-Transformacion/issues/9)**
+  * Cumplimiento de los 3 niveles jugables completos, seguimiento por ramas/PRs de noviembre y actualizacion integral del tablero Kanban.
 
 ---
 
 ### Columna: En Progreso (In Progress)
-* **[Issue #2: Controles del Jugador y Prototipo de Oleadas en Nivel 1](https://github.com/Brayanpower/Cuarta-Transformacion/issues/2)**
-  * Pendiente: Generador automatico de oleadas de vecinos hostiles en puntos especificos del mapa.
-* **[Issue #9: Gestion de Proyecto y Control de Riesgos](https://github.com/Brayanpower/Cuarta-Transformacion/issues/9)**
-  * Evaluacion continua de tiempos semanales para asegurar la entrega de los niveles comprometidos.
+* Ninguna tarea activa en curso antes de la publicacion final.
 
 ---
 
 ### Columna: Por Hacer (To Do)
-* **Sprint 2 (Semanas 3 y 4):**
-  * **[Issue #3: Nivel 1 Completo (Jardin Principal) y Jefe 1: El Vendedor Viral](https://github.com/Brayanpower/Cuarta-Transformacion/issues/3)**
-  * **[Issue #4: Nivel 2 en Greybox (Zona de Talavera) y Jefe 2: El Municipe Carismatico](https://github.com/Brayanpower/Cuarta-Transformacion/issues/4)**
-* **Sprint 3 (Semanas 5 y 6):**
-  * **[Issue #5: Nivel 3 (Callejones de Guanajuato) y Jefe 3: El Influencer del Callejon](https://github.com/Brayanpower/Cuarta-Transformacion/issues/5)**
-  * **[Issue #6: Progresion entre Niveles, Interfaz de Usuario y Arte Final](https://github.com/Brayanpower/Cuarta-Transformacion/issues/6)**
-* **Sprint 4 (Semanas 7 y 8):**
-  * **[Issue #7: Playtesting Externo, Analisis de Retroalimentacion y Balance](https://github.com/Brayanpower/Cuarta-Transformacion/issues/7)**
-  * **[Issue #8: Generacion de Build, Trailer Promocional y Lanzamiento en Itch.io](https://github.com/Brayanpower/Cuarta-Transformacion/issues/8)**
+* **[Issue #8: Generacion de Build, Trailer Promocional y Lanzamiento en Itch.io](https://github.com/Brayanpower/Cuarta-Transformacion/issues/8)**
+  * Compilacion final PC/WebGL, capturas, trailer promocional (30–60 s) y pagina oficial en Itch.io.
 
 ---
 
 ## 3. Visualizacion en GitHub
 
 Puedes filtrar los issues en GitHub directamente por su estado utilizando las etiquetas:
-* [Ver tareas en Hecho](https://github.com/Brayanpower/Cuarta-Transformacion/issues?q=is%3Aissue+label%3A%22Estado%3A+Hecho%22)
-* [Ver tareas En Progreso](https://github.com/Brayanpower/Cuarta-Transformacion/issues?q=is%3Aissue+label%3A%22Estado%3A+En+Progreso%22)
-* [Ver tareas Por Hacer](https://github.com/Brayanpower/Cuarta-Transformacion/issues?q=is%3Aissue+label%3A%22Estado%3A+Por+Hacer%22)
-
-Para abrir la vista interactiva de tablero en GitHub:
-1. Dirigete a la pestaña **Projects** en tu repositorio: https://github.com/Brayanpower/Cuarta-Transformacion/projects
-2. Haz clic en **New project**.
-3. Selecciona la plantilla **Board**.
-4. Agrega los issues del repositorio arrastrandolos a las columnas correspondientes.
+* [Ver issues en Hecho](https://github.com/Brayanpower/Cuarta-Transformacion/issues?q=is%3Aissue+label%3A%22Estado%3A+Hecho%22)
+* [Ver issues En Progreso](https://github.com/Brayanpower/Cuarta-Transformacion/issues?q=is%3Aissue+label%3A%22Estado%3A+En+Progreso%22)
+* [Ver issues Por Hacer](https://github.com/Brayanpower/Cuarta-Transformacion/issues?q=is%3Aissue+label%3A%22Estado%3A+Por+Hacer%22)
