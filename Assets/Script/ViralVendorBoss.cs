@@ -6,15 +6,11 @@ using UnityEngine;
 /// <summary>
 /// Jefe del Nivel 1 (Jardín Principal / Centro Histórico de Dolores Hidalgo):
 /// EL VENDEDOR VIRAL — Don Chava de los Garbanzos.
-/// Comerciante ambulante convertido en fenómeno de internet por su frase pegajosa.
-/// Cuenta con:
-/// - Orientación dinámica izquierda/derecha mirando SIEMPRE al jugador.
-/// - Persecución activa en tiempo real por toda la arena para acorralar al jugador.
-/// - Ataque 1: Cucharazo colosal telegrafiado con empuje frontal.
-/// - Ataque 2: Lluvia de mercancía (garbanzazos de largo alcance dirigidos al jugador que cruzan toda la arena).
-/// - Ráfagas Vocales: Globos de diálogo flotantes con frases virales de meme.
-/// - Fase de furia al 50% de vida ("¡Me volví viral!").
-/// - Bloqueo de cámara y jugador estilo Sonic en la arena.
+/// Jefe desarrollado en 2 fases con 4 patrones de ataque telegrafiados:
+/// 1) Cucharazo Colosal: wind-up dorado + embestida frontal + onda corta de caldo hirviendo.
+/// 2) Lluvia de Garbanzos Calientes: ráfaga dirigida en arco (y caída desde el cielo en Fase II).
+/// 3) ¡Ollazo Sísmico!: salto hacia el jugador, caída pesada al suelo y ondas gemelas izquierda/derecha.
+/// 4) ¡Oferta Viral 2x1!: invoca un Mini-Garbanzo de apoyo y deja ventana breve de castigo.
 /// </summary>
 public class ViralVendorBoss : SimpleEnemy
 {
@@ -27,19 +23,23 @@ public class ViralVendorBoss : SimpleEnemy
     public LevelPortalTrigger levelPortal;
     public float arenaTriggerX = 132f;
 
+    [Header("Estilo Visual")]
+    [Tooltip("Usa sprites pixel-art procedurales dedicados de 7 frames para máxima nitidez")]
+    public bool useProceduralPixelArt = true;
+
     [Header("Estadísticas de Combate")]
-    public float bossSpeed = 3.5f;
-    public float enrageSpeed = 4.8f;
-    public float meleeAttackRange = 2.4f;
+    public float bossSpeed = 3.6f;
+    public float enrageSpeed = 5.0f;
+    public float meleeAttackRange = 2.6f;
     public float rangedAttackRange = 24.0f;
-    public float attackCooldown = 3.2f;
+    public float attackCooldown = 2.6f;
     public int spoonDamage = 2;
 
     [Header("Proyectil de Garbanzo (Largo Alcance)")]
     public Sprite projectileSprite;
     public float projectileSpeed = 14.5f;
     public float projectileLifetime = 6.0f;
-    public Vector2 firePointOffset = new Vector2(0.9f, 1.15f);
+    public Vector2 firePointOffset = new Vector2(0.95f, 1.10f);
 
     [Header("Arena Bounds (Estilo Sonic)")]
     public float arenaLeftBound = 131f;
@@ -47,7 +47,7 @@ public class ViralVendorBoss : SimpleEnemy
     public Vector3 arenaCameraPosition = new Vector3(143.0f, -1.2f, -10f);
     public float arenaCameraOrthoSize = 6.2f;
 
-    [Header("Sprites de Animación")]
+    [Header("Sprites de Animación (Compatibilidad Inspector)")]
     public Sprite[] idleSprites;
     public Sprite[] walkRightSprites;
     public Sprite[] walkLeftSprites;
@@ -55,7 +55,7 @@ public class ViralVendorBoss : SimpleEnemy
     public Sprite[] lluviaSprites;
     public new Sprite[] defeatSprites;
 
-    // Cache estático compartido para asegurar carga de sprites
+    // Cachés de respaldo PNG
     private static Sprite[] sharedBossIdle;
     private static Sprite[] sharedBossWalkRight;
     private static Sprite[] sharedBossWalkLeft;
@@ -64,20 +64,33 @@ public class ViralVendorBoss : SimpleEnemy
     private static Sprite[] sharedBossDefeat;
     private static Sprite sharedBossProjectile;
 
+    // 7 frames pixel-art procedurales (0:Idle, 1-2:Walk, 3:Windup, 4:Swing, 5:PotAttack, 6:Defeat)
+    private Sprite[] proceduralFrames;
+    private Sprite proceduralGarbanzoSprite;
+    private Sprite proceduralWaveSprite;
+
     private Rigidbody2D bossRb;
     private SpriteRenderer bossRenderer;
-    private Color normalColor;
+    private BoxCollider2D bossBoxCol;
+    private Color normalColor = Color.white;
 
     public bool isAwakened = false;
     public bool isEnraged = false;
     private bool isAttacking = false;
     private bool isDefeated = false;
+    private bool isPhaseTransitioning = false;
     private float nextAttackTime = 0f;
+    private float nextSteamTime = 0f;
+    private int attackCycleIndex = 0;
+    private float arenaFloorY = -4f;
     private Vector3 initialSpawnPosition;
     private float walkAnimTimer = 0f;
     private int walkAnimFrame = 0;
+    private float displayedHealth = 18f;
 
-    // Ráfagas Vocales (Frases pegajosas virales de meme)
+    private readonly List<GameObject> summonedMinions = new List<GameObject>();
+
+    // Ráfagas Vocales (Frases virales de Don Chava)
     private string activeVocalQuote = "";
     private float quoteExpireTime = 0f;
     private readonly string[] viralPhrases = new string[]
@@ -90,9 +103,13 @@ public class ViralVendorBoss : SimpleEnemy
         "¡PRUÉBEME EL GARBANZO, VA CON GARANTÍA!"
     };
 
-    // Texturas para UI cinemática
+    // Texturas preasignadas una sola vez en Start() (cero fugas de memoria en OnGUI)
     private Texture2D barBgTexture;
+    private Texture2D emptyBarTexture;
     private Texture2D barFillTexture;
+    private Texture2D barLagTexture;
+    private Texture2D enrageFillTexture;
+    private Texture2D goldBorderTexture;
     private Texture2D quoteBgTexture;
 
     protected override bool UseGarbanzoSprites => false;
@@ -100,10 +117,11 @@ public class ViralVendorBoss : SimpleEnemy
     protected override void Awake()
     {
         base.Awake();
-        maxHealth = 16;
+        maxHealth = 18;
         currentHealth = maxHealth;
+        displayedHealth = maxHealth;
         damageToPlayer = 1;
-        canPatrol = false; // Maneja su propia IA de jefe
+        canPatrol = false;
         EnsureBossSpritesLoaded();
     }
 
@@ -114,14 +132,19 @@ public class ViralVendorBoss : SimpleEnemy
 
         if (bossRb == null)
             bossRb = gameObject.AddComponent<Rigidbody2D>();
+        if (bossRenderer == null)
+            bossRenderer = gameObject.AddComponent<SpriteRenderer>();
 
+        // Normalizar masa y físicas continuas (corrige m_Mass: 30 serializado en Nivel1.unity)
         bossRb.bodyType = RigidbodyType2D.Dynamic;
-        if (bossRb.gravityScale < 1.5f)
-            bossRb.gravityScale = 2.5f;
+        bossRb.mass = 1f;
+        bossRb.linearDamping = 0f;
+        bossRb.angularDamping = 0f;
+        bossRb.gravityScale = 2.6f;
         bossRb.constraints = RigidbodyConstraints2D.FreezeRotation;
         bossRb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        bossRb.interpolation = RigidbodyInterpolation2D.Interpolate;
 
-        // Material sin fricción y bordes redondeados para que NUNCA se atore en las uniones de tiles del suelo
         PhysicsMaterial2D slipMat = new PhysicsMaterial2D("BossSlipMaterial")
         {
             friction = 0f,
@@ -129,27 +152,30 @@ public class ViralVendorBoss : SimpleEnemy
         };
         bossRb.sharedMaterial = slipMat;
 
-        BoxCollider2D boxCol = GetComponent<BoxCollider2D>();
-        if (boxCol != null)
-        {
-            boxCol.sharedMaterial = slipMat;
-            boxCol.edgeRadius = 0.06f;
-            boxCol.size = new Vector2(1.05f, 1.88f);
-            boxCol.offset = new Vector2(0f, 1.0f);
-        }
+        bossBoxCol = GetComponent<BoxCollider2D>();
+        if (bossBoxCol == null)
+            bossBoxCol = gameObject.AddComponent<BoxCollider2D>();
+        bossBoxCol.sharedMaterial = slipMat;
+        bossBoxCol.edgeRadius = 0.06f;
+        bossBoxCol.size = new Vector2(1.10f, 1.95f);
+        bossBoxCol.offset = new Vector2(0f, 1.0f);
 
-        // Asegurar velocidad de persecución activa aunque la escena tenga valores antiguos serializados
-        if (bossSpeed < 3.2f)
-            bossSpeed = 3.5f;
-        if (enrageSpeed < 4.5f)
-            enrageSpeed = 4.8f;
+        // Asegurar velocidad y vida consistentes aunque existan valores viejos en escena
+        maxHealth = 18;
+        currentHealth = maxHealth;
+        displayedHealth = maxHealth;
+        if (bossSpeed < 3.4f) bossSpeed = 3.6f;
+        if (enrageSpeed < 4.8f) enrageSpeed = 5.0f;
+        if (attackCooldown > 2.8f) attackCooldown = 2.6f;
 
-        if (bossRenderer != null)
-            normalColor = bossRenderer.color;
+        bossRenderer.sortingOrder = 4;
+        normalColor = Color.white;
+        bossRenderer.color = normalColor;
 
         EnsureBossSpritesLoaded();
 
         initialSpawnPosition = transform.position;
+        arenaFloorY = transform.position.y;
 
         if (playerTransform == null)
         {
@@ -161,30 +187,24 @@ public class ViralVendorBoss : SimpleEnemy
         if (arenaGate != null)
             arenaGate.SetActive(false);
 
-        // Inicializar texturas de barra de vida
-        barBgTexture = MakeTex(2, 2, new Color(0.12f, 0.08f, 0.05f, 0.9f));
-        barFillTexture = MakeTex(2, 2, new Color(0.85f, 0.65f, 0.15f, 0.95f));
-        quoteBgTexture = MakeTex(2, 2, new Color(0.95f, 0.95f, 0.85f, 0.95f));
+        // Preasignar todas las texturas del HUD una única vez
+        barBgTexture       = MakeTex(new Color(0.08f, 0.06f, 0.12f, 0.94f));
+        emptyBarTexture    = MakeTex(new Color(0.18f, 0.05f, 0.06f, 0.94f));
+        barFillTexture     = MakeTex(new Color(0.92f, 0.68f, 0.16f, 0.98f));
+        barLagTexture      = MakeTex(new Color(1.00f, 0.92f, 0.55f, 0.90f));
+        enrageFillTexture  = MakeTex(new Color(0.92f, 0.22f, 0.16f, 0.98f));
+        goldBorderTexture  = MakeTex(new Color(0.955f, 0.785f, 0.340f, 0.95f));
+        quoteBgTexture     = MakeTex(new Color(0.97f, 0.95f, 0.87f, 0.96f));
 
-        // Orientar inicialmente hacia la izquierda (donde llega el jugador)
         FaceDirection(-1f);
-
-        // Iniciar bucle de animación cuando está en reposo antes de despertar
         StartCoroutine(IdleAnimationRoutine());
     }
 
-    /// <summary>
-    /// Orienta el sprite del jefe y su punto de disparo hacia la dirección indicada (-1 = izquierda, +1 = derecha).
-    /// En vendedor_garbanos.png las filas principales (Idle, WalkRight, Cucharazo, Lluvia, Defeat) miran hacia la DERECHA por defecto,
-    /// por lo que flipX = true hace que Don Chava mire a la IZQUIERDA y flipX = false hace que mire a la DERECHA.
-    /// </summary>
     private void FaceDirection(float dirX)
     {
         bool lookLeft = dirX < 0f;
         if (bossRenderer != null)
-        {
             bossRenderer.flipX = lookLeft;
-        }
 
         if (firePoint != null)
         {
@@ -195,9 +215,6 @@ public class ViralVendorBoss : SimpleEnemy
         }
     }
 
-    /// <summary>
-    /// Orientación continua hacia la posición actual del jugador.
-    /// </summary>
     private float FaceTowardsPlayer()
     {
         if (playerTransform == null)
@@ -210,14 +227,41 @@ public class ViralVendorBoss : SimpleEnemy
     }
 
     /// <summary>
-    /// Carga robusta de sprites desde el PNG en disco si faltan referencias en el Inspector.
-    /// Garantiza que El Vendedor Viral NUNCA sea invisible.
+    /// Carga los 7 frames pixel-art dedicados de Don Chava (y respaldos PNG si se desactiva useProceduralPixelArt).
     /// </summary>
     public void EnsureBossSpritesLoaded()
     {
         if (bossRenderer == null)
             bossRenderer = GetComponent<SpriteRenderer>();
 
+        if (proceduralFrames == null || proceduralFrames.Length < 7)
+        {
+            proceduralFrames = new Sprite[7];
+            for (int i = 0; i < 7; i++)
+                proceduralFrames[i] = ProceduralPixelArt.GetVendorBossSprite(i);
+        }
+
+        if (proceduralGarbanzoSprite == null)
+            proceduralGarbanzoSprite = ProceduralPixelArt.GetGarbanzoProjectileSprite();
+        if (proceduralWaveSprite == null)
+            proceduralWaveSprite = ProceduralPixelArt.GetBrothShockwaveSprite();
+
+        if (useProceduralPixelArt)
+        {
+            idleSprites      = new Sprite[] { proceduralFrames[0] };
+            walkRightSprites = new Sprite[] { proceduralFrames[1], proceduralFrames[2] };
+            walkLeftSprites  = walkRightSprites;
+            cucharazoSprites = new Sprite[] { proceduralFrames[3], proceduralFrames[4] };
+            lluviaSprites    = new Sprite[] { proceduralFrames[5] };
+            defeatSprites    = new Sprite[] { proceduralFrames[6] };
+            projectileSprite = proceduralGarbanzoSprite;
+
+            if (bossRenderer != null)
+                bossRenderer.sprite = proceduralFrames[0];
+            return;
+        }
+
+        // Respaldo legacy desde vendedor_garbanos.png si useProceduralPixelArt == false
         bool needsIdle = idleSprites == null || idleSprites.Length == 0 || idleSprites[0] == null;
         bool needsWalkR = walkRightSprites == null || walkRightSprites.Length == 0 || walkRightSprites[0] == null;
         bool needsWalkL = walkLeftSprites == null || walkLeftSprites.Length == 0 || walkLeftSprites[0] == null;
@@ -226,102 +270,94 @@ public class ViralVendorBoss : SimpleEnemy
         bool needsDefeat = defeatSprites == null || defeatSprites.Length == 0 || defeatSprites[0] == null;
         bool needsCurrentSprite = bossRenderer != null && bossRenderer.sprite == null;
 
-        if (!needsIdle && !needsWalkR && !needsWalkL && !needsCucharazo && !needsLluvia && !needsDefeat && !needsCurrentSprite)
-            return;
-
-        if (sharedBossIdle == null || sharedBossIdle.Length == 0 || sharedBossIdle[0] == null)
+        if (needsIdle || needsWalkR || needsWalkL || needsCucharazo || needsLluvia || needsDefeat || needsCurrentSprite)
         {
-            string path = Path.Combine(Application.dataPath, "Images/Nivel1/Boos/vendedor_garbanos.png");
-            if (!File.Exists(path))
-                path = "Assets/Images/Nivel1/Boos/vendedor_garbanos.png";
-
-            if (File.Exists(path))
+            if (sharedBossIdle == null || sharedBossIdle.Length == 0 || sharedBossIdle[0] == null)
             {
-                byte[] bytes = File.ReadAllBytes(path);
-                Texture2D tex = new Texture2D(1792, 2400, TextureFormat.RGBA32, false);
-                tex.filterMode = FilterMode.Point;
-                tex.wrapMode = TextureWrapMode.Clamp;
-                tex.LoadImage(bytes);
+                string path = Path.Combine(Application.dataPath, "Images/Nivel1/Boos/vendedor_garbanos.png");
+                if (!File.Exists(path))
+                    path = "Assets/Images/Nivel1/Boos/vendedor_garbanos.png";
 
-                sharedBossIdle = new Sprite[]
+                if (File.Exists(path))
                 {
-                    Sprite.Create(tex, new Rect(1, 1998, 297, 308), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(298, 1998, 298, 308), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(596, 1998, 282, 308), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(923, 1998, 233, 308), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(1201, 1998, 289, 308), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(1490, 1998, 286, 308), new Vector2(0.5f, 0f), 150f)
-                };
+                    byte[] bytes = File.ReadAllBytes(path);
+                    Texture2D tex = new Texture2D(1792, 2400, TextureFormat.RGBA32, false)
+                    {
+                        filterMode = FilterMode.Point,
+                        wrapMode = TextureWrapMode.Clamp
+                    };
+                    tex.LoadImage(bytes);
 
-                sharedBossWalkRight = new Sprite[]
-                {
-                    Sprite.Create(tex, new Rect(0, 1605, 298, 290), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(298, 1605, 298, 292), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(596, 1605, 298, 291), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(894, 1605, 279, 290), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(1195, 1606, 295, 290), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(1490, 1605, 242, 290), new Vector2(0.5f, 0f), 150f)
-                };
-
-                sharedBossWalkLeft = new Sprite[]
-                {
-                    Sprite.Create(tex, new Rect(36, 1215, 262, 287), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(298, 1215, 298, 287), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(596, 1215, 297, 294), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(908, 1215, 284, 287), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(1192, 1215, 298, 287), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(1490, 1215, 298, 293), new Vector2(0.5f, 0f), 150f)
-                };
-
-                sharedBossCucharazo = new Sprite[]
-                {
-                    Sprite.Create(tex, new Rect(36, 815, 321, 294), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(364, 815, 352, 294), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(716, 815, 358, 291), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(1074, 815, 358, 288), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(1432, 815, 334, 291), new Vector2(0.5f, 0f), 150f)
-                };
-
-                sharedBossLluvia = new Sprite[]
-                {
-                    Sprite.Create(tex, new Rect(36, 420, 322, 303), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(358, 420, 358, 299), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(716, 420, 358, 300), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(1074, 420, 358, 300), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(1432, 426, 354, 269), new Vector2(0.5f, 0f), 150f)
-                };
-
-                sharedBossDefeat = new Sprite[]
-                {
-                    Sprite.Create(tex, new Rect(36, 30, 321, 302), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(403, 31, 312, 303), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(756, 31, 318, 303), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(1074, 34, 358, 246), new Vector2(0.5f, 0f), 150f),
-                    Sprite.Create(tex, new Rect(1432, 30, 356, 274), new Vector2(0.5f, 0f), 150f)
-                };
-
-                sharedBossProjectile = Sprite.Create(tex, new Rect(140, 1998, 40, 40), new Vector2(0.5f, 0.5f), 100f);
+                    sharedBossIdle = new Sprite[]
+                    {
+                        Sprite.Create(tex, new Rect(1, 1998, 297, 308), new Vector2(0.5f, 0f), 150f),
+                        Sprite.Create(tex, new Rect(298, 1998, 298, 308), new Vector2(0.5f, 0f), 150f)
+                    };
+                    sharedBossWalkRight = new Sprite[]
+                    {
+                        Sprite.Create(tex, new Rect(0, 1605, 298, 290), new Vector2(0.5f, 0f), 150f),
+                        Sprite.Create(tex, new Rect(298, 1605, 298, 292), new Vector2(0.5f, 0f), 150f)
+                    };
+                    sharedBossWalkLeft = sharedBossWalkRight;
+                    sharedBossCucharazo = new Sprite[]
+                    {
+                        Sprite.Create(tex, new Rect(36, 815, 321, 294), new Vector2(0.5f, 0f), 150f),
+                        Sprite.Create(tex, new Rect(716, 815, 358, 291), new Vector2(0.5f, 0f), 150f)
+                    };
+                    sharedBossLluvia = new Sprite[]
+                    {
+                        Sprite.Create(tex, new Rect(36, 420, 322, 303), new Vector2(0.5f, 0f), 150f),
+                        Sprite.Create(tex, new Rect(716, 420, 358, 300), new Vector2(0.5f, 0f), 150f)
+                    };
+                    sharedBossDefeat = new Sprite[]
+                    {
+                        Sprite.Create(tex, new Rect(1432, 30, 356, 274), new Vector2(0.5f, 0f), 150f)
+                    };
+                    sharedBossProjectile = proceduralGarbanzoSprite;
+                }
             }
+
+            if (needsIdle && sharedBossIdle != null) idleSprites = sharedBossIdle;
+            if (needsWalkR && sharedBossWalkRight != null) walkRightSprites = sharedBossWalkRight;
+            if (needsWalkL && sharedBossWalkLeft != null) walkLeftSprites = sharedBossWalkLeft;
+            if (needsCucharazo && sharedBossCucharazo != null) cucharazoSprites = sharedBossCucharazo;
+            if (needsLluvia && sharedBossLluvia != null) lluviaSprites = sharedBossLluvia;
+            if (needsDefeat && sharedBossDefeat != null) defeatSprites = sharedBossDefeat;
+            if (projectileSprite == null && sharedBossProjectile != null) projectileSprite = sharedBossProjectile;
         }
 
-        if (needsIdle && sharedBossIdle != null) idleSprites = sharedBossIdle;
-        if (needsWalkR && sharedBossWalkRight != null) walkRightSprites = sharedBossWalkRight;
-        if (needsWalkL && sharedBossWalkLeft != null) walkLeftSprites = sharedBossWalkLeft;
-        if (needsCucharazo && sharedBossCucharazo != null) cucharazoSprites = sharedBossCucharazo;
-        if (needsLluvia && sharedBossLluvia != null) lluviaSprites = sharedBossLluvia;
-        if (needsDefeat && sharedBossDefeat != null) defeatSprites = sharedBossDefeat;
-        if (projectileSprite == null && sharedBossProjectile != null) projectileSprite = sharedBossProjectile;
+        if (bossRenderer != null && bossRenderer.sprite == null && idleSprites != null && idleSprites.Length > 0)
+            bossRenderer.sprite = idleSprites[0];
+    }
 
-        if (bossRenderer != null && (bossRenderer.sprite == null || needsCurrentSprite))
+    private void SetBossFrame(int proceduralIndex, Sprite[] fallbackGroup = null, int fallbackIdx = 0)
+    {
+        if (bossRenderer == null)
+            return;
+
+        if (useProceduralPixelArt && proceduralFrames != null && proceduralIndex >= 0 && proceduralIndex < proceduralFrames.Length)
         {
-            if (idleSprites != null && idleSprites.Length > 0 && idleSprites[0] != null)
-                bossRenderer.sprite = idleSprites[0];
+            bossRenderer.sprite = proceduralFrames[proceduralIndex];
+            return;
+        }
+
+        if (fallbackGroup != null && fallbackGroup.Length > 0)
+        {
+            Sprite s = fallbackGroup[Mathf.Clamp(fallbackIdx, 0, fallbackGroup.Length - 1)];
+            if (s != null)
+                bossRenderer.sprite = s;
         }
     }
 
     protected override void Update()
     {
-        if (isDefeated)
+        // Suavizar barra de daño rezagada en HUD
+        if (displayedHealth > currentHealth)
+            displayedHealth = Mathf.MoveTowards(displayedHealth, currentHealth, Time.unscaledDeltaTime * 7.5f);
+        else
+            displayedHealth = currentHealth;
+
+        if (isDefeated || isDead)
             return;
 
         if (playerTransform == null)
@@ -332,74 +368,76 @@ public class ViralVendorBoss : SimpleEnemy
             return;
         }
 
-        // SIEMPRE orientar el sprite hacia donde esté el jugador (izquierda o derecha)
-        float dirX = FaceTowardsPlayer();
-
-        // Activación de la arena del jefe
         if (!isAwakened)
         {
+            FaceTowardsPlayer();
             if (playerTransform.position.x >= arenaTriggerX)
-            {
                 AwakenBoss();
-            }
             return;
         }
 
-        // Furia al 50% de vida
-        if (!isEnraged && currentHealth <= (maxHealth / 2))
+        // Partículas de vapor ardiente en Fase II (Furia Viral)
+        if (isEnraged && Time.time >= nextSteamTime)
         {
-            isEnraged = true;
-            TriggerVocalShout("¡¡ME HICE VIRAL EN REDES, NADIE ME DETIENE!!");
-            Debug.Log("[ViralVendorBoss] ¡El Vendedor Viral entró en modo FURIA TENDENCIA!");
+            nextSteamTime = Time.time + 0.18f;
+            SpawnSteamSpark(transform.position + new Vector3(Random.Range(-0.55f, 0.55f), Random.Range(0.7f, 1.8f), 0f),
+                            new Color(1f, 0.45f, 0.18f, 0.9f), 1.0f);
         }
 
-        if (isAttacking)
+        if (isPhaseTransitioning || isAttacking)
             return;
 
-        // Cálculo dinámico de distancia hacia la posición actual del jugador
+        FaceTowardsPlayer();
+
         float distToPlayer = Vector2.Distance(transform.position, playerTransform.position);
 
-        // Decisión de ataque (con enfriamiento real entre ataques para que siempre camine y persiga)
-        if (Time.time >= nextAttackTime)
+        if (Time.time >= nextAttackTime && distToPlayer <= rangedAttackRange)
         {
-            if (distToPlayer <= meleeAttackRange)
+            // Ciclo inteligente de 4 patrones distintos
+            int pattern = attackCycleIndex % 4;
+            attackCycleIndex++;
+
+            if (distToPlayer <= meleeAttackRange && pattern != 2)
             {
                 StartCoroutine(PerformCucharazoAttack());
                 return;
             }
-            else if (distToPlayer <= rangedAttackRange)
+
+            switch (pattern)
             {
-                StartCoroutine(PerformGarbanzoRainAttack());
-                return;
+                case 0:
+                    StartCoroutine(PerformCucharazoAttack());
+                    return;
+                case 1:
+                    StartCoroutine(PerformGarbanzoRainAttack());
+                    return;
+                case 2:
+                    StartCoroutine(PerformPotSlamAttack());
+                    return;
+                default:
+                    StartCoroutine(PerformViralOfferSummon());
+                    return;
             }
         }
 
-        // Persecución real y continua hacia la posición actual del jugador por toda la arena
         MoveHorizontallyTowardsPlayer(1f, true);
     }
 
-    /// <summary>
-    /// Mueve a Don Chava horizontalmente hacia el jugador garantizando desplazamiento fluido
-    /// incluso sobre uniones de TilemapCollider2D.
-    /// </summary>
-    private void MoveHorizontallyTowardsPlayer(float speedMultiplier, bool updateWalkSprite)
+    private void MoveHorizontallyTowardsPlayer(float speedMultiplier, bool animateWalk)
     {
-        if (playerTransform == null || isDefeated)
+        if (playerTransform == null || isDefeated || isDead)
             return;
 
         float dirX = FaceTowardsPlayer();
         float horizontalDist = Mathf.Abs(playerTransform.position.x - transform.position.x);
         float currentSpeed = (isEnraged ? enrageSpeed : bossSpeed) * speedMultiplier;
 
-        if (horizontalDist > 0.45f)
+        if (horizontalDist > 0.50f)
         {
             float targetVelX = dirX * currentSpeed;
             if (bossRb != null)
-            {
                 bossRb.linearVelocity = new Vector2(targetVelX, bossRb.linearVelocity.y);
-            }
 
-            // Desplazamiento directo de respaldo si alguna unión de tile frena la velocidad física
             if (bossRb == null || Mathf.Abs(bossRb.linearVelocity.x) < currentSpeed * 0.45f)
             {
                 float nextX = Mathf.Clamp(
@@ -410,159 +448,181 @@ public class ViralVendorBoss : SimpleEnemy
                 transform.position = new Vector3(nextX, transform.position.y, transform.position.z);
             }
 
-            if (updateWalkSprite)
-            {
+            if (animateWalk)
                 AnimateWalking();
-            }
         }
         else if (bossRb != null)
         {
             bossRb.linearVelocity = new Vector2(0f, bossRb.linearVelocity.y);
+            if (animateWalk)
+                SetBossFrame(0, idleSprites, 0);
         }
 
-        // Confinamiento dentro de la arena
         float clampedX = Mathf.Clamp(transform.position.x, arenaLeftBound, arenaRightBound);
         if (transform.position.x != clampedX)
-        {
             transform.position = new Vector3(clampedX, transform.position.y, transform.position.z);
-        }
     }
 
     private void AnimateWalking()
     {
-        if (walkRightSprites == null || walkRightSprites.Length == 0 || bossRenderer == null)
+        if (bossRenderer == null)
             return;
 
         walkAnimTimer += Time.deltaTime;
-        float fps = isEnraged ? 13f : 10f;
+        float fps = isEnraged ? 12f : 8.5f;
         if (walkAnimTimer >= (1f / fps))
         {
             walkAnimTimer = 0f;
-            walkAnimFrame = (walkAnimFrame + 1) % walkRightSprites.Length;
-            if (walkRightSprites[walkAnimFrame] != null)
-                bossRenderer.sprite = walkRightSprites[walkAnimFrame];
+            walkAnimFrame = (walkAnimFrame + 1) % 2;
+            SetBossFrame(1 + walkAnimFrame, walkRightSprites, walkAnimFrame);
         }
     }
 
     private void AwakenBoss()
     {
         isAwakened = true;
-        // Dar 1.4 segundos iniciales de persecución pura caminando hacia el jugador antes del primer ataque
-        nextAttackTime = Time.time + 1.4f;
+        isAttacking = true;
+        arenaFloorY = transform.position.y;
         ProceduralSoundManager.Instance?.PlayBossAlert();
         ProceduralSoundManager.Instance?.PlayBossMusic();
-        TriggerVocalShout(viralPhrases[Random.Range(0, viralPhrases.Length)]);
         Debug.Log("¡¡ALERTA DE JEFE!! El Vendedor Viral ha bloqueado el Jardín Principal.");
 
         if (arenaGate != null)
             arenaGate.SetActive(true);
 
-        // Bloquear cámara estilo Sonic
         CameraFollow cam = Object.FindAnyObjectByType<CameraFollow>();
         if (cam != null)
             cam.LockBossArena(arenaCameraPosition, arenaCameraOrthoSize);
 
-        // Bloquear a Finn en la arena
         if (playerTransform != null)
         {
             PlayerMovement pm = playerTransform.GetComponent<PlayerMovement>();
             if (pm != null)
                 pm.LockInArena(arenaLeftBound, arenaRightBound);
         }
+
+        StartCoroutine(IntroRoarRoutine());
     }
 
-    // ═══ ATAQUE 1: CUCHARAZO COLOSAL ═══
+    private IEnumerator IntroRoarRoutine()
+    {
+        TriggerVocalShout("¡¡PÁSELE MARCHANTE, LLEGÓ EL REY DE LOS GARBANZOS!!");
+        SetBossFrame(3, cucharazoSprites, 0);
+
+        if (bossRb != null)
+            bossRb.linearVelocity = new Vector2(0f, 6.2f);
+
+        for (int i = 0; i < 6; i++)
+            SpawnSteamSpark(transform.position + new Vector3(Random.Range(-0.7f, 0.7f), Random.Range(0.4f, 1.5f), 0f),
+                            new Color(0.98f, 0.85f, 0.30f, 1f), 1.35f);
+
+        yield return new WaitForSeconds(0.65f);
+
+        SetBossFrame(0, idleSprites, 0);
+        nextAttackTime = Time.time + 0.85f;
+        isAttacking = false;
+    }
+
+    // ═══ ATAQUE 1: CUCHARAZO COLOSAL + ONDA DE CALDO ═══
     private IEnumerator PerformCucharazoAttack()
     {
         isAttacking = true;
-
         float dirX = FaceTowardsPlayer();
 
         if (bossRb != null)
             bossRb.linearVelocity = new Vector2(0f, bossRb.linearVelocity.y);
 
         TriggerVocalShout(viralPhrases[Random.Range(0, viralPhrases.Length)]);
-
-        // Animación de alzar la cuchara (wind-up telegrafiado)
-        if (cucharazoSprites != null && cucharazoSprites.Length >= 2 && bossRenderer != null && cucharazoSprites[0] != null)
-            bossRenderer.sprite = cucharazoSprites[0];
+        SetBossFrame(3, cucharazoSprites, 0);
 
         if (bossRenderer != null)
-            bossRenderer.color = isEnraged ? Color.red : new Color(1f, 0.85f, 0.3f);
+            bossRenderer.color = isEnraged ? new Color(1f, 0.35f, 0.35f) : new Color(1f, 0.88f, 0.38f);
 
-        yield return new WaitForSeconds(0.55f); // Ventana para que el jugador esquive con Shift o salte
+        yield return new WaitForSeconds(isEnraged ? 0.42f : 0.52f);
 
-        // Re-orientar hacia la posición actual del jugador justo al lanzar el golpe
         dirX = FaceTowardsPlayer();
-
-        // Impacto frontal con la cuchara
         ProceduralSoundManager.Instance?.PlayBossMelee();
-        if (cucharazoSprites != null && cucharazoSprites.Length >= 3 && bossRenderer != null && cucharazoSprites[2] != null)
-            bossRenderer.sprite = cucharazoSprites[2];
-
-        if (bossRb != null)
-            bossRb.AddForce(new Vector2(dirX * (isEnraged ? 5.5f : 3.8f), 0.5f), ForceMode2D.Impulse);
-
-        yield return new WaitForSeconds(0.12f);
-
-        // Daño si conecta con el jugador (respetando invulnerabilidad de Dash)
-        if (playerTransform != null)
-        {
-            float dist = Vector2.Distance(transform.position, playerTransform.position);
-            if (dist <= meleeAttackRange + 0.65f)
-            {
-                PlayerMovement pm = playerTransform.GetComponent<PlayerMovement>();
-                if (pm != null && !pm.IsDashing && !pm.IsInvulnerable)
-                {
-                    Vector2 knockback = new Vector2(dirX * 1.8f, 1.0f).normalized;
-                    pm.TakeDamage(spoonDamage, knockback);
-                }
-            }
-        }
-
-        yield return new WaitForSeconds(0.35f); // Recuperación breve para volver a caminar de inmediato
+        SetBossFrame(4, cucharazoSprites, cucharazoSprites != null && cucharazoSprites.Length > 1 ? 1 : 0);
 
         if (bossRenderer != null)
             bossRenderer.color = normalColor;
 
-        nextAttackTime = Time.time + attackCooldown;
+        // Embestida horizontal directa y controlada durante 0.26s
+        float lungeSpeed = isEnraged ? 13.5f : 10.5f;
+        float lungeElapsed = 0f;
+        bool meleeHitDealt = false;
+        while (lungeElapsed < 0.26f)
+        {
+            if (bossRb != null)
+                bossRb.linearVelocity = new Vector2(dirX * lungeSpeed, bossRb.linearVelocity.y);
+
+            if (bossRb == null || Mathf.Abs(bossRb.linearVelocity.x) < lungeSpeed * 0.45f)
+            {
+                float nx = Mathf.Clamp(transform.position.x + dirX * lungeSpeed * Time.deltaTime, arenaLeftBound, arenaRightBound);
+                transform.position = new Vector3(nx, transform.position.y, transform.position.z);
+            }
+
+            if (!meleeHitDealt && playerTransform != null)
+            {
+                float dist = Vector2.Distance(transform.position, playerTransform.position);
+                if (dist <= meleeAttackRange + 0.7f)
+                {
+                    PlayerMovement pm = playerTransform.GetComponent<PlayerMovement>();
+                    if (pm != null && !pm.IsDashing && !pm.IsInvulnerable)
+                    {
+                        meleeHitDealt = true;
+                        Vector2 knock = new Vector2(dirX * 1.8f, 1.0f).normalized;
+                        pm.TakeDamage(spoonDamage, knock);
+                    }
+                }
+            }
+
+            lungeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        if (bossRb != null)
+            bossRb.linearVelocity = new Vector2(0f, bossRb.linearVelocity.y);
+
+        // Onda corta de caldo hirviendo lanzada desde la cuchara
+        SpawnGroundBrothWave(dirX, isEnraged ? 12.5f : 10.5f, 0.85f);
+
+        yield return new WaitForSeconds(0.28f);
+        SetBossFrame(0, idleSprites, 0);
+
+        nextAttackTime = Time.time + (isEnraged ? attackCooldown * 0.76f : attackCooldown);
         isAttacking = false;
     }
 
-    // ═══ ATAQUE 2: LLUVIA DE MERCANCÍA (GARBANZAZOS DE LARGO ALCANCE EN MOVIMIENTO) ═══
+    // ═══ ATAQUE 2: LLUVIA DE GARBANZOS CALIENTES ═══
     private IEnumerator PerformGarbanzoRainAttack()
     {
         isAttacking = true;
-
         FaceTowardsPlayer();
-        TriggerVocalShout("¡AHÍ LES VA LA PROBADITA DE GARBANZO!");
+        TriggerVocalShout("¡AHÍ LES VA LA PROBADITA DE GARBANZO HIRVIENDO!");
+        SetBossFrame(5, lluviaSprites, 0);
 
-        if (lluviaSprites != null && lluviaSprites.Length >= 1 && bossRenderer != null && lluviaSprites[0] != null)
-            bossRenderer.sprite = lluviaSprites[0];
-
-        // Mientras prepara la olla sigue avanzando hacia el jugador
         float prepElapsed = 0f;
         while (prepElapsed < 0.35f)
         {
-            MoveHorizontallyTowardsPlayer(0.75f, false);
+            MoveHorizontallyTowardsPlayer(0.65f, false);
             prepElapsed += Time.deltaTime;
             yield return null;
         }
 
-        // Sacudida de olla y lanzamiento dirigido hacia el jugador sin dejar de acorralarlo
-        if (lluviaSprites != null && lluviaSprites.Length >= 3 && bossRenderer != null && lluviaSprites[2] != null)
-            bossRenderer.sprite = lluviaSprites[2];
-
-        int projectileCount = isEnraged ? 4 : 3;
+        int projectileCount = isEnraged ? 5 : 3;
         for (int i = 0; i < projectileCount; i++)
         {
             float currentDirX = FaceTowardsPlayer();
             SpawnGarbanzoProjectile(currentDirX, i, projectileCount);
 
+            if (isEnraged && i % 2 == 0)
+                SpawnSkyGarbanzoDrop(i);
+
             float shotWait = 0f;
             while (shotWait < 0.16f)
             {
-                MoveHorizontallyTowardsPlayer(0.65f, false);
+                MoveHorizontallyTowardsPlayer(0.55f, false);
                 shotWait += Time.deltaTime;
                 yield return null;
             }
@@ -570,8 +630,155 @@ public class ViralVendorBoss : SimpleEnemy
 
         if (bossRenderer != null)
             bossRenderer.color = normalColor;
+        SetBossFrame(0, idleSprites, 0);
 
-        nextAttackTime = Time.time + attackCooldown;
+        nextAttackTime = Time.time + (isEnraged ? attackCooldown * 0.76f : attackCooldown);
+        isAttacking = false;
+    }
+
+    // ═══ ATAQUE 3: ¡OLLAZO SÍSMICO! (SALTO + CAÍDA + ONDAS GEMELAS) ═══
+    private IEnumerator PerformPotSlamAttack()
+    {
+        isAttacking = true;
+        if (bossRb != null)
+            bossRb.linearVelocity = new Vector2(0f, bossRb.linearVelocity.y);
+
+        TriggerVocalShout("¡¡AGUAS CON LA OLLA HIRVIENDO!!");
+        SetBossFrame(5, lluviaSprites, 0);
+        if (bossRenderer != null)
+            bossRenderer.color = new Color(1f, 0.72f, 0.28f);
+
+        yield return new WaitForSeconds(0.38f);
+
+        float targetX = playerTransform != null
+            ? Mathf.Clamp(playerTransform.position.x, arenaLeftBound + 1.2f, arenaRightBound - 1.2f)
+            : transform.position.x;
+
+        // Salto vertical persiguiendo horizontalmente hacia la posición del jugador
+        if (bossRb != null)
+            bossRb.linearVelocity = new Vector2((targetX - transform.position.x) * 1.35f, 12.2f);
+        ProceduralSoundManager.Instance?.PlayJump();
+
+        if (bossRenderer != null)
+            bossRenderer.color = normalColor;
+
+        float riseElapsed = 0f;
+        while (riseElapsed < 0.48f)
+        {
+            if (bossRb != null)
+            {
+                float clampX = Mathf.Clamp(transform.position.x, arenaLeftBound + 0.8f, arenaRightBound - 0.8f);
+                if (transform.position.x != clampX)
+                    transform.position = new Vector3(clampX, transform.position.y, transform.position.z);
+            }
+            riseElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Breve suspensión en el aire antes de caer con la olla
+        if (bossRb != null)
+            bossRb.linearVelocity = Vector2.zero;
+        yield return new WaitForSeconds(0.14f);
+
+        // Caída pesada hasta tocar el suelo
+        if (bossRb != null)
+            bossRb.linearVelocity = new Vector2(0f, -17.5f);
+
+        float slamTimeout = 0f;
+        while (slamTimeout < 1.1f && transform.position.y > arenaFloorY + 0.15f)
+        {
+            if (bossRb != null)
+                bossRb.linearVelocity = new Vector2(0f, -17.5f);
+            slamTimeout += Time.deltaTime;
+            yield return null;
+        }
+
+        if (bossRb != null)
+            bossRb.linearVelocity = Vector2.zero;
+
+        // Impacto en suelo: explosión de vapor + daño cercano + 2 ondas gemelas
+        ProceduralSoundManager.Instance?.PlayExplosion();
+        for (int s = 0; s < 10; s++)
+            SpawnSteamSpark(transform.position + new Vector3(Random.Range(-1.2f, 1.2f), 0.2f, 0f),
+                            s % 2 == 0 ? new Color(1f, 0.78f, 0.25f) : new Color(0.45f, 0.95f, 0.30f), 1.4f);
+
+        if (playerTransform != null && Vector2.Distance(transform.position, playerTransform.position) <= 2.1f)
+        {
+            PlayerMovement pm = playerTransform.GetComponent<PlayerMovement>();
+            if (pm != null && !pm.IsDashing && !pm.IsInvulnerable)
+            {
+                float pushDir = playerTransform.position.x >= transform.position.x ? 1f : -1f;
+                pm.TakeDamage(1, new Vector2(pushDir * 1.4f, 1.2f).normalized);
+            }
+        }
+
+        float waveSpeed = isEnraged ? 13.0f : 10.5f;
+        SpawnGroundBrothWave(-1f, waveSpeed, 2.4f);
+        SpawnGroundBrothWave(1f, waveSpeed, 2.4f);
+
+        yield return new WaitForSeconds(0.42f);
+        SetBossFrame(0, idleSprites, 0);
+
+        nextAttackTime = Time.time + (isEnraged ? attackCooldown * 0.78f : attackCooldown);
+        isAttacking = false;
+    }
+
+    // ═══ ATAQUE 4: ¡OFERTA VIRAL 2x1! (INVOCACIÓN + VENTANA DE CASTIGO) ═══
+    private IEnumerator PerformViralOfferSummon()
+    {
+        isAttacking = true;
+        float dirX = FaceTowardsPlayer();
+
+        if (bossRb != null)
+            bossRb.linearVelocity = new Vector2(0f, bossRb.linearVelocity.y);
+
+        SetBossFrame(3, cucharazoSprites, 0);
+
+        summonedMinions.RemoveAll(m => m == null);
+        if (summonedMinions.Count < 2)
+        {
+            TriggerVocalShout("¡OFERTA 2x1 MARCHANTE! ¡ATÁQUENLO GARBANZOS!");
+            ProceduralSoundManager.Instance?.PlayBossAlert();
+
+            GameObject minionObj = new GameObject("Garbanzo_Oferta2x1");
+            float spawnX = Mathf.Clamp(transform.position.x + dirX * 2.0f, arenaLeftBound + 1f, arenaRightBound - 1f);
+            minionObj.transform.position = new Vector3(spawnX, transform.position.y + 0.45f, 0f);
+            minionObj.transform.localScale = new Vector3(0.75f, 0.75f, 1f);
+
+            SpriteRenderer msr = minionObj.AddComponent<SpriteRenderer>();
+            msr.sortingOrder = 3;
+
+            BoxCollider2D mcol = minionObj.AddComponent<BoxCollider2D>();
+            mcol.size = new Vector2(0.85f, 0.90f);
+            mcol.offset = new Vector2(0f, 0.45f);
+
+            SimpleEnemy minion = minionObj.AddComponent<SimpleEnemy>();
+            minion.maxHealth = 2;
+            minion.patrolSpeed = isEnraged ? 3.4f : 2.9f;
+            minion.detectionRange = 20f;
+            minion.canRespawn = false;
+
+            summonedMinions.Add(minionObj);
+
+            for (int i = 0; i < 6; i++)
+                SpawnSteamSpark(minionObj.transform.position, new Color(0.45f, 0.96f, 0.30f), 1.1f);
+        }
+        else
+        {
+            TriggerVocalShout("¡RESPIRE TANTITO QUE YA VIENE EL SIGUIENTE CUCHARAZO!");
+        }
+
+        // Breve pausa recuperando aliento para premiar al jugador que se acerque a golpear
+        if (bossRenderer != null)
+            bossRenderer.color = new Color(0.80f, 0.92f, 1f);
+        SetBossFrame(0, idleSprites, 0);
+
+        yield return new WaitForSeconds(0.70f);
+
+        if (bossRenderer != null)
+            bossRenderer.color = normalColor;
+
+        nextAttackTime = Time.time + (isEnraged ? attackCooldown * 0.78f : attackCooldown);
         isAttacking = false;
     }
 
@@ -586,17 +793,15 @@ public class ViralVendorBoss : SimpleEnemy
         go.transform.position = spawnPos;
 
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        if (projectileSprite != null)
-            sr.sprite = projectileSprite;
-        sr.color = new Color(0.35f, 0.90f, 0.22f, 1f); // Verde garbanzo brillante
-        go.transform.localScale = new Vector3(0.42f, 0.42f, 1f);
+        sr.sprite = proceduralGarbanzoSprite != null ? proceduralGarbanzoSprite : projectileSprite;
+        sr.color = Color.white;
+        go.transform.localScale = new Vector3(0.95f, 0.95f, 1f);
         sr.sortingOrder = 6;
 
         GarbanzoProjectile proj = go.AddComponent<GarbanzoProjectile>();
         proj.damage = 1;
         proj.lifetime = Mathf.Max(6.0f, projectileLifetime);
 
-        // Calcular velocidad dirigida hacia la posición actual del jugador para cruzar toda la arena
         Vector2 targetPos = playerTransform != null
             ? (Vector2)playerTransform.position + new Vector2(0f, 0.35f)
             : (Vector2)spawnPos + new Vector2(dirX * 15f, 0f);
@@ -605,17 +810,68 @@ public class ViralVendorBoss : SimpleEnemy
         float horizontalSign = Mathf.Abs(toTarget.x) > 0.05f ? Mathf.Sign(toTarget.x) : dirX;
         float distX = Mathf.Max(3.5f, Mathf.Abs(toTarget.x));
 
-        // Velocidad rápida con abanico ligero por cada garbanzazo de la ráfaga
-        float speed = projectileSpeed + (index * 1.6f);
+        float speed = projectileSpeed + (index * 1.4f);
         float flightTime = distX / speed;
 
-        // Compensar la caída gravitatoria del proyectil (gravityScale = 0.35f) para que llegue directo al jugador y cruce toda la arena
         float gravity = Mathf.Abs(Physics2D.gravity.y) * 0.35f;
-        float vy = (toTarget.y / flightTime) + (0.5f * gravity * flightTime) + (index * 0.65f);
+        float vy = (toTarget.y / flightTime) + (0.5f * gravity * flightTime) + (index * 0.55f);
         vy = Mathf.Clamp(vy, -4f, 9.5f);
 
-        Vector2 launchVelocity = new Vector2(horizontalSign * speed, vy);
-        proj.Launch(launchVelocity);
+        proj.Launch(new Vector2(horizontalSign * speed, vy));
+    }
+
+    private void SpawnSkyGarbanzoDrop(int index)
+    {
+        float dropX = playerTransform != null
+            ? Mathf.Clamp(playerTransform.position.x + Random.Range(-3.2f, 3.2f), arenaLeftBound + 1f, arenaRightBound - 1f)
+            : Mathf.Lerp(arenaLeftBound + 2f, arenaRightBound - 2f, index * 0.25f);
+
+        GameObject go = new GameObject("Garbanzo_SkyDrop");
+        go.transform.position = new Vector3(dropX, arenaFloorY + 9.0f, 0f);
+        go.transform.localScale = Vector3.one;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = proceduralGarbanzoSprite != null ? proceduralGarbanzoSprite : projectileSprite;
+        sr.color = Color.white;
+        sr.sortingOrder = 6;
+
+        GarbanzoProjectile proj = go.AddComponent<GarbanzoProjectile>();
+        proj.damage = 1;
+        proj.lifetime = 4.5f;
+        proj.Launch(new Vector2(0f, -4.5f));
+    }
+
+    private void SpawnGroundBrothWave(float dirX, float speed, float life)
+    {
+        GameObject wave = new GameObject("Broth_Shockwave");
+        wave.transform.position = new Vector3(transform.position.x + dirX * 0.85f, arenaFloorY, 0f);
+        wave.transform.localScale = new Vector3(1.15f, 1.15f, 1f);
+
+        SpriteRenderer sr = wave.AddComponent<SpriteRenderer>();
+        sr.sprite = proceduralWaveSprite != null ? proceduralWaveSprite : projectileSprite;
+        sr.sortingOrder = 6;
+
+        GarbanzoProjectile proj = wave.AddComponent<GarbanzoProjectile>();
+        proj.ConfigureAsGroundWave(new Vector2(dirX * speed, 0f), 1, life);
+    }
+
+    private void SpawnSteamSpark(Vector3 origin, Color color, float scale)
+    {
+        GameObject spark = new GameObject("Boss_SteamSpark");
+        spark.transform.position = origin;
+        spark.transform.localScale = Vector3.one * scale;
+
+        SpriteRenderer sr = spark.AddComponent<SpriteRenderer>();
+        sr.sprite = ProceduralPixelArt.GetLavaEmberSprite();
+        sr.color = color;
+        sr.sortingOrder = 6;
+
+        Rigidbody2D srb = spark.AddComponent<Rigidbody2D>();
+        srb.gravityScale = -0.35f;
+        srb.linearVelocity = new Vector2(Random.Range(-1.8f, 1.8f), Random.Range(1.5f, 3.6f));
+        srb.linearDamping = 1.2f;
+
+        Destroy(spark, Random.Range(0.35f, 0.65f));
     }
 
     public void TriggerVocalShout(string quote)
@@ -626,23 +882,70 @@ public class ViralVendorBoss : SimpleEnemy
 
     public override void TakeDamage(int damage, Vector2 knockbackDir)
     {
-        if (isDefeated)
+        if (isDefeated || isDead || isPhaseTransitioning)
             return;
 
         currentHealth -= damage;
         contactDamageDisabledUntil = Time.time + 1.0f;
         ProceduralSoundManager.Instance?.PlayEnemyHit();
-        Debug.Log($"¡Vendedor Viral golpeado! Salud restante: {currentHealth}/{maxHealth}");
 
         if (bossRb != null)
-            bossRb.AddForce(knockbackDir * 1.2f, ForceMode2D.Impulse);
+            bossRb.AddForce(new Vector2(knockbackDir.x * 1.1f, 0.25f), ForceMode2D.Impulse);
+
+        for (int i = 0; i < 4; i++)
+            SpawnSteamSpark(transform.position + Vector3.up * 1.1f, new Color(1f, 0.92f, 0.45f), 0.95f);
 
         StartCoroutine(BossDamageFlash());
 
         if (currentHealth <= 0)
         {
             DefeatBoss();
+            return;
         }
+
+        if (!isEnraged && currentHealth <= maxHealth / 2)
+        {
+            StopAllCoroutines();
+            isAttacking = false;
+            StartCoroutine(EnterEnragePhaseRoutine());
+        }
+    }
+
+    private IEnumerator EnterEnragePhaseRoutine()
+    {
+        isEnraged = true;
+        isPhaseTransitioning = true;
+        ProceduralSoundManager.Instance?.PlayBossAlert();
+        TriggerVocalShout("¡¡ME HICE TENDENCIA EN DOLORES!! ¡¡GARBANZOS AL DOBLE!!");
+        Debug.Log("[ViralVendorBoss] ¡El Vendedor Viral entró en modo FURIA TENDENCIA!");
+
+        if (bossRb != null)
+            bossRb.linearVelocity = new Vector2(0f, 5.5f);
+
+        SetBossFrame(5, lluviaSprites, 0);
+
+        for (int i = 0; i < 12; i++)
+            SpawnSteamSpark(transform.position + new Vector3(Random.Range(-0.9f, 0.9f), Random.Range(0.4f, 1.9f), 0f),
+                            i % 2 == 0 ? Color.red : new Color(1f, 0.85f, 0.2f), 1.4f);
+
+        float elapsed = 0f;
+        bool blink = false;
+        while (elapsed < 0.75f)
+        {
+            blink = !blink;
+            if (bossRenderer != null)
+                bossRenderer.color = blink ? new Color(1f, 0.42f, 0.32f) : Color.white;
+            yield return new WaitForSeconds(0.09f);
+            elapsed += 0.09f;
+        }
+
+        if (bossRenderer != null)
+            bossRenderer.color = normalColor;
+        SetBossFrame(0, idleSprites, 0);
+
+        isPhaseTransitioning = false;
+        isAttacking = false;
+        nextAttackTime = Time.time + 0.35f;
     }
 
     private IEnumerator BossDamageFlash()
@@ -650,9 +953,9 @@ public class ViralVendorBoss : SimpleEnemy
         if (bossRenderer != null)
         {
             bossRenderer.color = Color.white;
-            yield return new WaitForSeconds(0.1f);
-            bossRenderer.color = Color.red;
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.08f);
+            bossRenderer.color = new Color(1f, 0.35f, 0.30f);
+            yield return new WaitForSeconds(0.08f);
             bossRenderer.color = normalColor;
         }
     }
@@ -660,12 +963,23 @@ public class ViralVendorBoss : SimpleEnemy
     private void DefeatBoss()
     {
         isDefeated = true;
+        isDead = true;
+        isAttacking = false;
+        isPhaseTransitioning = false;
         StopAllCoroutines();
+
         ProceduralSoundManager.Instance?.PlayVictoryFanfare();
         TriggerVocalShout("¡YA ESTUVO MARCHANTE! ME QUEDÉ SIN GARBANZOS...");
         Debug.Log("¡¡¡EL VENDEDOR VIRAL DERROTADO!!! ¡EL JARDÍN PRINCIPAL ESTÁ EN PAZ!");
 
-        // Guardar progresión: Desbloquear Nivel 2 en PlayerPrefs
+        // Destruir esbirros y proyectiles activos de la arena
+        foreach (GameObject m in summonedMinions)
+            if (m != null) Destroy(m);
+        summonedMinions.Clear();
+
+        foreach (GarbanzoProjectile gp in Object.FindObjectsByType<GarbanzoProjectile>())
+            if (gp != null) Destroy(gp.gameObject);
+
         LevelProgressionManager.UnlockNextLevel(1);
 
         if (levelPortal != null)
@@ -674,18 +988,17 @@ public class ViralVendorBoss : SimpleEnemy
         if (bossRb != null)
             bossRb.linearVelocity = Vector2.zero;
 
-        // Sprite de rendición sentado junto a su olla
-        if (defeatSprites != null && defeatSprites.Length > 0 && bossRenderer != null)
-        {
-            Sprite s = defeatSprites[defeatSprites.Length - 1];
-            if (s != null)
-                bossRenderer.sprite = s;
-        }
+        SetBossFrame(6, defeatSprites, defeatSprites != null ? defeatSprites.Length - 1 : 0);
+
+        if (bossRenderer != null)
+            bossRenderer.color = normalColor;
+
+        if (bossBoxCol != null)
+            bossBoxCol.enabled = false;
 
         if (arenaGate != null)
-            arenaGate.SetActive(false); // Abrir salida del nivel
+            arenaGate.SetActive(false);
 
-        // Liberar cámara y jugador
         CameraFollow cam = Object.FindAnyObjectByType<CameraFollow>();
         if (cam != null)
             cam.UnlockBossArena();
@@ -697,7 +1010,6 @@ public class ViralVendorBoss : SimpleEnemy
                 pm.UnlockFromArena();
         }
 
-        // Lanzar animación festiva de fin de nivel (fuegos artificiales, festejo de Finn y listón triunfal)
         LevelCompletionCelebration.PlayForLevel(
             1,
             bossTitle,
@@ -707,33 +1019,26 @@ public class ViralVendorBoss : SimpleEnemy
         );
     }
 
-    private IEnumerator TriggerVictoryMenuRoutine()
-    {
-        yield return new WaitForSeconds(1.8f);
-
-        PauseMenu pauseMenu = PauseMenu.Instance != null
-            ? PauseMenu.Instance
-            : Object.FindAnyObjectByType<PauseMenu>();
-
-        if (pauseMenu != null)
-        {
-            pauseMenu.ShowVictoryScreen(
-                1,
-                bossTitle,
-                "¡El Jardín Principal de Dolores Hidalgo está en paz!"
-            );
-        }
-    }
-
     public void ResetBoss()
     {
         StopAllCoroutines();
         isAwakened = false;
         isEnraged = false;
         isAttacking = false;
+        isPhaseTransitioning = false;
         isDefeated = false;
+        isDead = false;
         currentHealth = maxHealth;
+        displayedHealth = maxHealth;
+        attackCycleIndex = 0;
         activeVocalQuote = "";
+
+        foreach (GameObject m in summonedMinions)
+            if (m != null) Destroy(m);
+        summonedMinions.Clear();
+
+        foreach (GarbanzoProjectile gp in Object.FindObjectsByType<GarbanzoProjectile>())
+            if (gp != null) Destroy(gp.gameObject);
 
         transform.position = initialSpawnPosition;
 
@@ -744,11 +1049,16 @@ public class ViralVendorBoss : SimpleEnemy
         {
             bossRenderer.color = normalColor;
             bossRenderer.enabled = true;
+            SetBossFrame(0, idleSprites, 0);
         }
 
-        Collider2D col = GetComponent<Collider2D>();
-        if (col != null)
-            col.enabled = true;
+        if (bossBoxCol != null)
+            bossBoxCol.enabled = true;
+        else
+        {
+            Collider2D col = GetComponent<Collider2D>();
+            if (col != null) col.enabled = true;
+        }
 
         if (arenaGate != null)
             arenaGate.SetActive(false);
@@ -776,97 +1086,113 @@ public class ViralVendorBoss : SimpleEnemy
     private IEnumerator IdleAnimationRoutine()
     {
         int frame = 0;
-        while (!isDefeated)
+        while (!isDefeated && !isDead)
         {
-            // Solo animar Idle cuando aún no está persiguiendo ni atacando
-            if (!isAwakened && !isAttacking && idleSprites != null && idleSprites.Length > 0 && bossRenderer != null)
+            if (!isAwakened && !isAttacking && !isPhaseTransitioning && bossRenderer != null)
             {
-                Sprite s = idleSprites[frame % idleSprites.Length];
-                if (s != null)
-                    bossRenderer.sprite = s;
+                if (useProceduralPixelArt)
+                {
+                    SetBossFrame(frame % 2 == 0 ? 0 : 1);
+                }
+                else if (idleSprites != null && idleSprites.Length > 0)
+                {
+                    Sprite s = idleSprites[frame % idleSprites.Length];
+                    if (s != null) bossRenderer.sprite = s;
+                }
                 frame++;
             }
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.26f);
         }
     }
 
     protected override void OnGUI()
     {
-        // Globo de diálogo flotante (Ráfaga Vocal Viral)
-        if (Time.time < quoteExpireTime && !string.IsNullOrEmpty(activeVocalQuote) && Camera.main != null)
+        // Globo de diálogo flotante sin emojis sueltos
+        if (Time.time < quoteExpireTime && !string.IsNullOrEmpty(activeVocalQuote) && Camera.main != null && quoteBgTexture != null)
         {
-            Vector3 worldHead = transform.position + Vector3.up * 2.3f;
+            Vector3 worldHead = transform.position + Vector3.up * 2.35f;
             Vector3 screenHead = Camera.main.WorldToScreenPoint(worldHead);
-            if (screenHead.z > 0)
+            if (screenHead.z > 0f)
             {
-                GUIStyle quoteStyle = new GUIStyle(GUI.skin.box);
-                quoteStyle.fontSize = 13;
-                quoteStyle.fontStyle = FontStyle.Bold;
-                quoteStyle.normal.textColor = new Color(0.15f, 0.15f, 0.15f);
+                GUIStyle quoteStyle = new GUIStyle(GUI.skin.box)
+                {
+                    fontSize = 13,
+                    fontStyle = FontStyle.Bold,
+                    alignment = TextAnchor.MiddleCenter,
+                    wordWrap = true,
+                    padding = new RectOffset(8, 8, 5, 5)
+                };
+                quoteStyle.normal.textColor = new Color(0.14f, 0.09f, 0.06f, 1f);
                 quoteStyle.normal.background = quoteBgTexture;
-                quoteStyle.alignment = TextAnchor.MiddleCenter;
-                quoteStyle.wordWrap = true;
 
-                float bubbleW = 260f;
-                float bubbleH = 45f;
-                float bubbleX = screenHead.x - bubbleW / 2f;
+                float bubbleW = 280f;
+                float bubbleH = 46f;
+                float bubbleX = screenHead.x - bubbleW * 0.5f;
                 float bubbleY = Screen.height - screenHead.y - bubbleH;
 
-                GUI.Box(new Rect(bubbleX, bubbleY, bubbleW, bubbleH), $"💬 \"{activeVocalQuote}\"", quoteStyle);
+                GUI.Box(new Rect(bubbleX, bubbleY, bubbleW, bubbleH), $"\"{activeVocalQuote}\"", quoteStyle);
             }
         }
 
-        // Barra de Vida Cinemática del Jefe
-        if (!isAwakened || isDefeated)
+        // Barra de Vida Formal del Jefe (sin asignaciones de Texture2D por frame)
+        if (!isAwakened || isDefeated || barBgTexture == null || goldBorderTexture == null)
             return;
 
         float screenW = Screen.width;
-        float barW = Mathf.Min(460f, screenW * 0.7f);
+        float barW = Mathf.Min(490f, screenW * 0.72f);
         float barH = 22f;
-        float barX = (screenW - barW) / 2f;
-        float barY = 32f;
+        float barX = (screenW - barW) * 0.5f;
+        float barY = 34f;
 
-        // Fondo oscuro
-        GUI.DrawTexture(new Rect(barX - 4, barY - 22, barW + 8, barH + 34), barBgTexture);
+        Rect panelRect = new Rect(barX - 8f, barY - 26f, barW + 16f, barH + 44f);
+        GUI.DrawTexture(new Rect(panelRect.x - 2f, panelRect.y - 2f, panelRect.width + 4f, panelRect.height + 4f), goldBorderTexture);
+        GUI.DrawTexture(panelRect, barBgTexture);
 
-        // Título del Jefe
-        GUIStyle titleStyle = new GUIStyle(GUI.skin.label);
-        titleStyle.fontSize = 14;
-        titleStyle.fontStyle = FontStyle.Bold;
-        titleStyle.alignment = TextAnchor.MiddleCenter;
-        titleStyle.normal.textColor = isEnraged ? Color.red : new Color(1f, 0.85f, 0.3f);
-        GUI.Label(new Rect(barX, barY - 20, barW, 20), $"⚔️  {bossTitle}  ⚔️", titleStyle);
+        GUIStyle titleStyle = new GUIStyle(GUI.skin.label)
+        {
+            fontSize = 14,
+            fontStyle = FontStyle.Bold,
+            alignment = TextAnchor.MiddleCenter
+        };
+        titleStyle.normal.textColor = isEnraged
+            ? new Color(1.00f, 0.42f, 0.32f, 1f)
+            : new Color(0.955f, 0.785f, 0.340f, 1f);
+        string headerLabel = isEnraged ? $"{bossTitle}  —  FASE II: FURIA VIRAL" : bossTitle;
+        GUI.Label(new Rect(barX, barY - 23f, barW, 20f), headerLabel, titleStyle);
 
-        // Barra de fondo vacía
-        Texture2D emptyBg = MakeTex(2, 2, new Color(0.2f, 0.05f, 0.05f, 0.9f));
-        GUI.DrawTexture(new Rect(barX, barY, barW, barH), emptyBg);
+        GUI.DrawTexture(new Rect(barX, barY, barW, barH), emptyBarTexture);
 
-        // Barra de relleno
+        float lagPct = Mathf.Clamp01(displayedHealth / maxHealth);
+        if (lagPct > 0.001f)
+            GUI.DrawTexture(new Rect(barX, barY, barW * lagPct, barH), barLagTexture);
+
         float healthPct = Mathf.Clamp01((float)currentHealth / maxHealth);
-        GUI.DrawTexture(new Rect(barX, barY, barW * healthPct, barH), barFillTexture);
+        if (healthPct > 0.001f)
+            GUI.DrawTexture(new Rect(barX, barY, barW * healthPct, barH), isEnraged ? enrageFillTexture : barFillTexture);
 
-        // Texto de vida
-        GUIStyle hpStyle = new GUIStyle(GUI.skin.label);
-        hpStyle.fontSize = 12;
-        hpStyle.fontStyle = FontStyle.Bold;
-        hpStyle.alignment = TextAnchor.MiddleCenter;
+        GUIStyle hpStyle = new GUIStyle(GUI.skin.label)
+        {
+            fontSize = 12,
+            fontStyle = FontStyle.Bold,
+            alignment = TextAnchor.MiddleCenter
+        };
         hpStyle.normal.textColor = Color.white;
-        GUI.Label(new Rect(barX, barY + 1, barW, barH), $"{currentHealth} / {maxHealth} HP", hpStyle);
+        GUI.Label(new Rect(barX, barY + 1f, barW, barH), $"{currentHealth} / {maxHealth} HP", hpStyle);
 
-        // Subtítulo
-        GUIStyle subStyle = new GUIStyle(GUI.skin.label);
-        subStyle.fontSize = 10;
-        subStyle.fontStyle = FontStyle.Italic;
-        subStyle.alignment = TextAnchor.MiddleCenter;
-        subStyle.normal.textColor = new Color(0.8f, 0.8f, 0.8f, 0.9f);
-        GUI.Label(new Rect(barX, barY + barH + 2, barW, 16), bossSubtitle, subStyle);
+        GUIStyle subStyle = new GUIStyle(GUI.skin.label)
+        {
+            fontSize = 11,
+            fontStyle = FontStyle.Italic,
+            alignment = TextAnchor.MiddleCenter
+        };
+        subStyle.normal.textColor = new Color(0.92f, 0.89f, 0.82f, 0.92f);
+        GUI.Label(new Rect(barX, barY + barH + 2f, barW, 16f), bossSubtitle, subStyle);
     }
 
-    private Texture2D MakeTex(int width, int height, Color col)
+    private static Texture2D MakeTex(Color col)
     {
-        Texture2D pix = new Texture2D(width, height);
-        Color[] p = new Color[width * height];
-        for (int i = 0; i < p.Length; i++) p[i] = col;
+        Texture2D pix = new Texture2D(2, 2);
+        Color[] p = { col, col, col, col };
         pix.SetPixels(p);
         pix.Apply();
         return pix;

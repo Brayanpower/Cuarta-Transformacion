@@ -18,6 +18,11 @@ public class HazardSpikes : MonoBehaviour
     private Sprite[] lavaFrames;
     private SpriteRenderer glowRenderer;
     private float lavaWidth = 4f;
+    private float glowHeight = 1.25f;
+    private float emberMinSpeedY = 1.2f;
+    private float emberMaxSpeedY = 2.3f;
+    private float emberMinLife = 0.7f;
+    private float emberMaxLife = 1.1f;
     private float animTimer = 0f;
     private int animFrame = 0;
     private float nextEmberTime = 0f;
@@ -28,12 +33,35 @@ public class HazardSpikes : MonoBehaviour
         if (!renderAsLava)
             return;
 
+        string sceneName = SceneManager.GetActiveScene().name;
+
+        // Solo Nivel 1: desactivar los 21 objetos heredados FireballAssets apilados sobre el mismo foso
+        // y asentar la lava al ras del suelo empedrado sin tapar los puentes superiores
+        if (sceneName == "Nivel1")
+        {
+            if (gameObject.name.StartsWith("FireballAssets"))
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+        }
+
         lavaWidth = Mathf.Max(1f, Mathf.Abs(transform.localScale.x));
         float bottomY = transform.position.y - Mathf.Abs(transform.localScale.y) * 0.5f;
         float centerX = transform.position.x;
 
+        if (sceneName == "Nivel1")
+        {
+            lavaHeight = 0.36f;
+            bottomY = -2.14f;
+            glowHeight = 0.50f;
+            emberMinSpeedY = 0.55f;
+            emberMaxSpeedY = 1.05f;
+            emberMinLife = 0.40f;
+            emberMaxLife = 0.65f;
+        }
         // Sellar el foso de hornos en Nivel 2 de pared a pared sin huecos donde quedarse atrapado
-        if (SceneManager.GetActiveScene().name == "Nivel2")
+        else if (sceneName == "Nivel2")
         {
             if (gameObject.name == "Hazard_Horno_1")
             {
@@ -93,7 +121,7 @@ public class HazardSpikes : MonoBehaviour
         GameObject glowObj = new GameObject("Lava_AmbientGlow");
         glowObj.transform.SetParent(transform, false);
         glowObj.transform.localPosition = new Vector3(0f, lavaHeight * 0.45f, 0f);
-        glowObj.transform.localScale = new Vector3(lavaWidth, 1.25f, 1f);
+        glowObj.transform.localScale = new Vector3(lavaWidth, glowHeight, 1f);
 
         glowRenderer = glowObj.AddComponent<SpriteRenderer>();
         glowRenderer.sprite = ProceduralPixelArt.GetLavaGlowSprite();
@@ -149,7 +177,7 @@ public class HazardSpikes : MonoBehaviour
     {
         float halfSpan = Mathf.Max(0.3f, lavaWidth * 0.5f - 0.25f);
         Vector3 pos = transform.position + new Vector3(Random.Range(-halfSpan, halfSpan), lavaHeight * 0.85f, 0f);
-        SpawnEmberParticle(pos, new Vector2(Random.Range(-0.45f, 0.45f), Random.Range(1.2f, 2.3f)), Random.Range(0.7f, 1.1f), 0.85f, 0f);
+        SpawnEmberParticle(pos, new Vector2(Random.Range(-0.45f, 0.45f), Random.Range(emberMinSpeedY, emberMaxSpeedY)), Random.Range(emberMinLife, emberMaxLife), 0.85f, 0f);
     }
 
     private void SpawnLavaSplash(Vector3 origin)

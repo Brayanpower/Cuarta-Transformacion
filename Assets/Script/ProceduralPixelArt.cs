@@ -769,4 +769,236 @@ public static class ProceduralPixelArt
             return corner ? Color.clear : new Color(1.00f, 0.50f, 0.08f, 0.90f);
         });
     }
+
+    // ─── JEFE 1: EL VENDEDOR VIRAL — DON CHAVA (PIXEL ART 40x44, 7 FRAMES) ────
+    public static Sprite GetVendorBossSprite(int frame)
+    {
+        // frame: 0=Idle, 1=WalkA, 2=WalkB, 3=Cucharazo Windup, 4=Cucharazo Swing, 5=Olla/Lluvia, 6=Derrota
+        int f = Mathf.Clamp(frame, 0, 6);
+        return GetOrCreate($"VendorBoss_F{f}", 40, 44, 18f, new Vector2(0.5f, 0f), (x, y) =>
+        {
+            Color outline   = new Color(0.08f, 0.06f, 0.10f, 1f);
+            Color shirt     = new Color(0.20f, 0.44f, 0.22f, 1f); // Camisa verde vendedor
+            Color shirtLit  = new Color(0.28f, 0.56f, 0.30f, 1f);
+            Color apron     = new Color(0.84f, 0.74f, 0.55f, 1f); // Mandil beige
+            Color apronShd  = new Color(0.68f, 0.58f, 0.42f, 1f);
+            Color pants     = new Color(0.14f, 0.18f, 0.30f, 1f);
+            Color shoes     = new Color(0.22f, 0.13f, 0.09f, 1f);
+            Color skin      = new Color(0.92f, 0.72f, 0.54f, 1f);
+            Color hair      = new Color(0.16f, 0.11f, 0.09f, 1f);
+            Color capGreen  = new Color(0.16f, 0.36f, 0.18f, 1f);
+            Color capBrim   = new Color(0.26f, 0.52f, 0.24f, 1f);
+            Color steelPot  = new Color(0.62f, 0.68f, 0.76f, 1f);
+            Color steelDark = new Color(0.36f, 0.42f, 0.50f, 1f);
+            Color steelLit  = new Color(0.88f, 0.94f, 1.00f, 1f);
+            Color garbanzo  = new Color(0.38f, 0.86f, 0.22f, 1f);
+            Color garbanLit = new Color(0.76f, 0.98f, 0.40f, 1f);
+            Color steam     = new Color(0.92f, 0.96f, 1.00f, 0.85f);
+            Color slashGold = new Color(1.00f, 0.90f, 0.42f, 1f);
+
+            // Frame 6: Sentado derrotado en el empedrado junto a su olla volcada y cucharón
+            if (f == 6)
+            {
+                // Olla tirada a la izquierda (x: 3..14, y: 1..12)
+                if (x >= 3 && x <= 14 && y >= 1 && y <= 11)
+                {
+                    if (x == 3 || x == 14 || y == 1 || y == 11) return outline;
+                    if (x >= 12 && y >= 4 && y <= 8) return garbanzo;
+                    return (y == 9) ? steelLit : steelPot;
+                }
+                // Cucharón caído al frente (x: 16..34, y: 1..4)
+                if (y >= 1 && y <= 4)
+                {
+                    if (y == 2 && x >= 15 && x <= 30) return steelLit;
+                    if (x >= 30 && x <= 35 && y >= 1 && y <= 4)
+                        return (x == 30 || x == 35 || y == 1 || y == 4) ? outline : steelPot;
+                }
+                // Cuerpo sentado de Don Chava (x: 15..28, y: 2..24)
+                if (x >= 15 && x <= 28 && y >= 2 && y <= 14)
+                {
+                    if (x == 15 || x == 28 || y == 2 || y == 14) return outline;
+                    if (y <= 5 && x >= 23) return shoes;
+                    if (x >= 19 && x <= 25 && y <= 8) return pants;
+                    if (x >= 18 && x <= 23 && y >= 6 && y <= 13) return apron;
+                    return shirt;
+                }
+                // Cabeza agachada + gorra ladeada (x: 16..26, y: 15..25)
+                if (x >= 16 && x <= 26 && y >= 15 && y <= 24)
+                {
+                    if (x == 16 || x == 26 || y == 15 || y == 24) return outline;
+                    if (y >= 21) return capGreen;
+                    if (y == 20 && x >= 21) return capBrim;
+                    if (y == 17 && x >= 21 && x <= 24) return hair; // Bigote
+                    if (y == 19 && (x == 21 || x == 24)) return outline; // Ojos cerrados
+                    return skin;
+                }
+                return Color.clear;
+            }
+
+            int bobY = (f == 1) ? 1 : (f == 2 ? -1 : 0);
+            int ly = y - bobY;
+
+            // 1. Cucharón gigante de plata según postura
+            if (f == 0 || f == 1 || f == 2) // Descansando al hombro / cintura apuntando atrás-arriba
+            {
+                float diag = (x - 10) * 0.65f + 16f;
+                if (x >= 4 && x <= 24 && Mathf.Abs(ly - diag) <= 1.1f)
+                    return steelLit;
+                // Cazo redondo atrás-izquierda (x: 2..8, y: 15..21)
+                float scoopD = Vector2.Distance(new Vector2(x, ly), new Vector2(5.5f, 17.5f));
+                if (scoopD <= 3.6f)
+                    return scoopD > 2.5f ? outline : steelPot;
+            }
+            else if (f == 3) // Wind-up: cucharón alzado bien alto sobre la cabeza
+            {
+                if (x >= 18 && x <= 21 && ly >= 26 && ly <= 42)
+                {
+                    if (ly >= 36)
+                        return (x == 18 || x == 21 || ly == 42) ? outline : slashGold;
+                    return (x == 18 || x == 21) ? outline : steelLit;
+                }
+                // Destello dorado en la punta del cucharón
+                if (Vector2.Distance(new Vector2(x, ly), new Vector2(20f, 39f)) <= 4.5f && ly >= 36)
+                    return (ly == 42 || x <= 16 || x >= 24) ? slashGold : steelLit;
+            }
+            else if (f == 4) // Swing: cucharón barrido hacia la derecha + estela dorada
+            {
+                if (x >= 20 && x <= 37 && ly >= 18 && ly <= 22)
+                {
+                    if (x >= 32)
+                        return (ly == 18 || ly == 22 || x == 37) ? outline : steelLit;
+                    return (ly == 19 || ly == 21) ? outline : steelPot;
+                }
+                // Estela de ataque en arco al frente
+                float arcD = Vector2.Distance(new Vector2(x, ly), new Vector2(26f, 20f));
+                if (x >= 29 && arcD >= 9.5f && arcD <= 13.5f && ly >= 10 && ly <= 32)
+                    return (arcD > 11.5f) ? slashGold : Color.white;
+            }
+
+            // 2. Piernas y botas (animadas en Walk A / B)
+            int leftFootX = f == 1 ? 11 : (f == 2 ? 15 : 13);
+            int rightFootX = f == 1 ? 23 : (f == 2 ? 19 : 21);
+            if (y >= 0 && y <= 11)
+            {
+                if (Mathf.Abs(x - leftFootX) <= 2 || Mathf.Abs(x - rightFootX) <= 2)
+                {
+                    if (y <= 3) return (y == 0) ? outline : shoes;
+                    return pants;
+                }
+            }
+
+            // 3. Olla de garbanzos hirviendo (en cadera izquierda, o al frente en frame 5)
+            if (f == 5)
+            {
+                // Sosteniendo la olla gigante delante/arriba para arrojar garbanzos (x: 20..35, y: 18..31)
+                if (x >= 20 && x <= 35 && ly >= 18 && ly <= 30)
+                {
+                    if (x == 20 || x == 35 || ly == 18 || ly == 30) return outline;
+                    if (ly >= 27) return ((x + ly) % 2 == 0) ? garbanLit : garbanzo;
+                    if (x >= 31) return steelDark;
+                    return ly == 25 ? steelLit : steelPot;
+                }
+                // Garbanzos saliendo disparados
+                if (ly >= 31 && ly <= 36 && ((x == 25 && ly == 33) || (x == 29 && ly == 35) || (x == 33 && ly == 32)))
+                    return garbanLit;
+            }
+            else
+            {
+                // Olla colgada a la izquierda/cadera (x: 5..16, y: 11..22)
+                if (x >= 5 && x <= 16 && ly >= 11 && ly <= 22)
+                {
+                    if (x == 5 || x == 16 || ly == 11 || ly == 22) return outline;
+                    if (ly >= 19) return ((x + ly) % 2 == 0) ? garbanLit : garbanzo;
+                    if (x >= 13) return steelDark;
+                    return (ly == 17) ? steelLit : steelPot;
+                }
+                // Nubecitas de vapor subiendo de la olla
+                if ((x == 8 && (ly == 24 || ly == 26)) || (x == 11 && (ly == 25 || ly == 27)))
+                    return steam;
+            }
+
+            // 4. Torso robusto con camisa verde y mandil manchado
+            if (ly >= 11 && ly <= 26 && x >= 12 && x <= 25)
+            {
+                if (x == 12 || x == 25 || ly == 11 || ly == 26) return outline;
+                // Mandil central
+                if (x >= 15 && x <= 24 && ly <= 22)
+                {
+                    if (x == 15 || x == 24) return outline;
+                    if (ly == 14 && (x == 18 || x == 21)) return garbanzo; // Mancha de caldo
+                    return (x >= 21) ? apronShd : apron;
+                }
+                return (x <= 15) ? shirtLit : shirt;
+            }
+
+            // 5. Brazo extendido según acción
+            if (ly >= 18 && ly <= 23 && x >= 22 && x <= 28)
+            {
+                if (f == 4 || f == 5)
+                    return (ly == 18 || ly == 23 || x == 28) ? outline : skin;
+            }
+
+            // 6. Cabeza expresiva, bigote y gorra de Don Chava
+            if (ly >= 26 && ly <= 38 && x >= 13 && x <= 25)
+            {
+                if (x == 13 || x == 25 || ly == 26 || ly == 38) return outline;
+                // Gorra verde + visera hacia la derecha
+                if (ly >= 34)
+                {
+                    if (ly == 34 && x >= 21) return capBrim;
+                    return capGreen;
+                }
+                // Visera extendida al frente (x: 25..28, y: 33..34)
+                // (se maneja abajo)
+                // Ojos y ceño decidido
+                if (ly == 31 && (x == 19 || x == 23)) return outline;
+                if (ly == 32 && x >= 18 && x <= 24) return hair;
+                // Bigote clásico
+                if (ly == 28 && x >= 19 && x <= 24) return hair;
+                // Patilla
+                if (x <= 15 && ly >= 29 && ly <= 33) return hair;
+                return skin;
+            }
+
+            // Visera de la gorra sobresaliendo hacia la derecha
+            if ((ly == 33 || ly == 34) && x >= 25 && x <= 28)
+                return (ly == 33 || x == 28) ? outline : capBrim;
+
+            return Color.clear;
+        });
+    }
+
+    public static Sprite GetGarbanzoProjectileSprite()
+    {
+        return GetOrCreate("Boss1_GarbanzoProj", 14, 14, 28f, new Vector2(0.5f, 0.5f), (x, y) =>
+        {
+            float d = Vector2.Distance(new Vector2(x, y), new Vector2(6.5f, 6.5f));
+            if (d <= 6.2f)
+            {
+                if (d > 5.0f) return new Color(0.10f, 0.24f, 0.06f, 1f);
+                if (x >= 4 && x <= 6 && y >= 7 && y <= 9) return new Color(0.84f, 1.00f, 0.52f, 1f);
+                if (y <= 4 && x >= 7) return new Color(0.95f, 0.45f, 0.12f, 1f); // Toque picoso caliente
+                return new Color(0.32f, 0.88f, 0.20f, 1f);
+            }
+            return Color.clear;
+        });
+    }
+
+    public static Sprite GetBrothShockwaveSprite()
+    {
+        return GetOrCreate("Boss1_BrothWave", 24, 16, 20f, new Vector2(0.5f, 0f), (x, y) =>
+        {
+            // Ola creciente de caldo hirviendo verde-dorado hacia la derecha (flipX cuando va a la izquierda)
+            float crest = Mathf.Sin((x / 23f) * Mathf.PI) * 10f + (x / 23f) * 5f;
+            if (y <= crest && y >= 0)
+            {
+                if (y >= crest - 1.5f || y == 0 || x == 23)
+                    return new Color(1.00f, 0.94f, 0.55f, 1f); // Cresta luminosa
+                if (y >= crest - 4f)
+                    return new Color(0.45f, 0.92f, 0.26f, 0.95f); // Caldo de garbanzo
+                return new Color(0.22f, 0.62f, 0.16f, 0.88f);
+            }
+            return Color.clear;
+        });
+    }
 }
