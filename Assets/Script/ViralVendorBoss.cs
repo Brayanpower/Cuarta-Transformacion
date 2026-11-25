@@ -53,7 +53,6 @@ public class ViralVendorBoss : SimpleEnemy
     public Sprite[] walkLeftSprites;
     public Sprite[] cucharazoSprites;
     public Sprite[] lluviaSprites;
-    public new Sprite[] defeatSprites;
 
     // Cachés de respaldo PNG
     private static Sprite[] sharedBossIdle;
@@ -76,6 +75,8 @@ public class ViralVendorBoss : SimpleEnemy
 
     public bool isAwakened = false;
     public bool isEnraged = false;
+    public bool IsBossFightActive => isAwakened && !isDefeated && !isDead;
+    public Vector3 BossRespawnAnchor => new Vector3(arenaTriggerX - 1.8f, initialSpawnPosition.y + 0.65f, 0f);
     private bool isAttacking = false;
     private bool isDefeated = false;
     private bool isPhaseTransitioning = false;
@@ -357,7 +358,7 @@ public class ViralVendorBoss : SimpleEnemy
         else
             displayedHealth = currentHealth;
 
-        if (isDefeated || isDead)
+        if (isDefeated || isDead || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
             return;
 
         if (playerTransform == null)

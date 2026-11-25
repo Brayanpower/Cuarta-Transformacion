@@ -46,13 +46,16 @@ public class SpotlightHazard : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale <= 0f || PauseMenu.IsGamePaused)
+            return;
+
         float angle = Mathf.Sin(Time.time * swingSpeed + phaseOffset) * swingAngle;
         transform.localRotation = Quaternion.Euler(0f, 0f, angle);
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (Time.time < nextDamageTime)
+        if (Time.timeScale <= 0f || PauseMenu.IsGamePaused || Time.time < nextDamageTime)
             return;
 
         PlayerMovement player = collision.GetComponent<PlayerMovement>() ?? collision.GetComponentInParent<PlayerMovement>();

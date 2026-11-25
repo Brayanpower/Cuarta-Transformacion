@@ -5,14 +5,8 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 
-[InitializeOnLoad]
 public static class SetupLevel1Assets
 {
-    static SetupLevel1Assets()
-    {
-        EditorApplication.delayCall += ExecuteSetup;
-    }
-
     [MenuItem("Tools/Fix Level 1 Sprites and Platforms")]
     public static void ExecuteSetup()
     {
@@ -180,7 +174,6 @@ public static class SetupLevel1Assets
         // Cargar sprites importados
         Dictionary<string, Sprite> esbirroSprites = LoadSpritesFromPath("Assets/Images/Nivel1/enemigos/esbirro.png");
         Dictionary<string, Sprite> bossSprites = LoadSpritesFromPath("Assets/Images/Nivel1/Boos/vendedor_garbanos.png");
-        Dictionary<string, Sprite> terrainSprites = LoadSpritesFromPath("Assets/Images/Nivel1/Terrain/mainlev_build.png");
 
         // 1. Configurar Boss_VendedorViral
         GameObject bossObj = GameObject.Find("Boss_VendedorViral");
@@ -229,12 +222,8 @@ public static class SetupLevel1Assets
         }
         logs.Add($"Esbirros actualizados en escena: {esbirrosActualizados}");
 
-        // 3. Configurar Plataformas con sprites limpios de terrain (sin estiramiento)
-        Sprite platformSprite = null;
-        if (terrainSprites.ContainsKey("mainlev_build_12"))
-            platformSprite = terrainSprites["mainlev_build_12"];
-        else if (terrainSprites.ContainsKey("mainlev_build_21"))
-            platformSprite = terrainSprites["mainlev_build_21"];
+        // 3. Actualizar solo plataformas que aún no usen el estilo medieval de cantera
+        Sprite canteraSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Images/Medieval/Platform_Medieval_Cantera.png");
 
         var allObjects = UnityEngine.Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
         int platformsFixed = 0;
@@ -245,28 +234,32 @@ public static class SetupLevel1Assets
                 var sr = go.GetComponent<SpriteRenderer>();
                 var col = go.GetComponent<BoxCollider2D>();
 
-                if (sr != null && platformSprite != null)
-                {
-                    sr.sprite = platformSprite;
-                    sr.drawMode = SpriteDrawMode.Simple;
+                if (sr != null && sr.sprite != null && sr.sprite.name.StartsWith("Platform_Medieval_"))
+                    continue;
 
-                    // Escala armónica sin deformación vertical
-                    float curScaleX = Mathf.Abs(go.transform.localScale.x);
-                    if (curScaleX < 1.5f) curScaleX = 2.0f;
-                    go.transform.localScale = new Vector3(curScaleX, 1.0f, 1.0f);
+                if (sr != null && canteraSprite != null)
+                {
+                    sr.sprite = canteraSprite;
+                    sr.drawMode = SpriteDrawMode.Simple;
+                    sr.color = Color.white;
+                    sr.sortingOrder = 1;
+
+                    go.transform.localScale = new Vector3(0.96052f, 1.0f, 1.0f);
 
                     if (col != null)
                     {
-                        // mainlev_build_12 mide 1.72 de ancho y 0.18 de alto a PPU 100
-                        col.size = new Vector2(1.72f, 0.22f);
-                        col.offset = new Vector2(0f, 0f);
+                        col.size = new Vector2(3.46f, 0.40f);
+                        col.offset = new Vector2(0f, -0.02f);
                     }
+                    EditorUtility.SetDirty(sr);
+                    EditorUtility.SetDirty(go.transform);
+                    if (col != null) EditorUtility.SetDirty(col);
                     EditorUtility.SetDirty(go);
                     platformsFixed++;
                 }
             }
         }
-        logs.Add($"Plataformas actualizadas con mainlev_build: {platformsFixed}");
+        logs.Add($"Plataformas actualizadas a cantera medieval: {platformsFixed}");
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);

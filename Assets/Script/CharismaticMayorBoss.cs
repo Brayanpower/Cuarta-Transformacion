@@ -46,6 +46,8 @@ public class CharismaticMayorBoss : SimpleEnemy
 
     public bool isAwakened = false;
     public bool isEnraged = false;
+    public bool IsBossFightActive => isAwakened && !isDefeated;
+    public Vector3 BossRespawnAnchor => new Vector3(arenaTriggerX - 1.8f, initialSpawnPosition.y + 0.65f, 0f);
     private bool isAttacking = false;
     private bool isShielded = false;
     private bool isDefeated = false;
@@ -171,7 +173,7 @@ public class CharismaticMayorBoss : SimpleEnemy
 
     protected override void Update()
     {
-        if (isDefeated)
+        if (isDefeated || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
             return;
 
         if (playerTransform == null)

@@ -1,5 +1,6 @@
 using System.IO;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -11,11 +12,13 @@ public class PauseMenu : MonoBehaviour
 {
     public static PauseMenu Instance { get; private set; }
     public static bool BlockPauseDuringTransition { get; set; } = false;
+    public static bool IsGamePaused => Instance != null && (Instance.isPaused || Instance.isVictoryActive);
 
     private enum MenuSubView
     {
         PauseMain,
         LevelSelect,
+        Controls,
         Settings,
         Victory
     }
@@ -43,7 +46,9 @@ public class PauseMenu : MonoBehaviour
     private MenuSubView currentView = MenuSubView.PauseMain;
 
     private bool audioMuted = false;
-    private float currentVolume = 0.85f;
+    private float currentMusicVolume = LevelProgressionManager.DEFAULT_VOLUME;
+    private float currentSfxVolume = LevelProgressionManager.DEFAULT_VOLUME;
+    private float nextSfxPreviewTime = 0f;
     private bool isFullscreen = true;
     private float currentCameraZoom = LevelProgressionManager.DEFAULT_CAMERA_ZOOM;
 
@@ -85,10 +90,12 @@ public class PauseMenu : MonoBehaviour
 
     void Start()
     {
-        currentVolume = PlayerPrefs.GetFloat(LevelProgressionManager.VOLUME_KEY, 0.85f);
+        currentMusicVolume = LevelProgressionManager.GetMusicVolume();
+        currentSfxVolume = LevelProgressionManager.GetSfxVolume();
         isFullscreen = PlayerPrefs.GetInt(LevelProgressionManager.FULLSCREEN_KEY, 1) == 1;
         currentCameraZoom = LevelProgressionManager.GetCameraZoom();
-        AudioListener.volume = currentVolume;
+        AudioListener.volume = audioMuted ? 0f : 1f;
+        ProceduralSoundManager.Instance?.RefreshVolumesFromPrefs();
         Screen.fullScreen = isFullscreen;
         CameraFollow.ApplyZoomToActiveCamera(currentCameraZoom, true);
     }
@@ -98,11 +105,14 @@ public class PauseMenu : MonoBehaviour
         if (notificationTimer > 0f)
             notificationTimer -= Time.unscaledDeltaTime;
 
+        if ((isPaused || isVictoryActive) && Time.timeScale != 0f)
+            SetWorldSimulationPaused(true);
+
         // No abrir el menú de pausa en MainMenu ni durante transiciones/tarjetas estilo Sonic
         if (SceneManager.GetActiveScene().name == mainMenuSceneName || BlockPauseDuringTransition)
             return;
 
-        if (Input.GetKeyDown(pauseKey) && !isVictoryActive)
+        if (WasPauseKeyPressed() && !isVictoryActive)
         {
             if (isPaused)
             {
@@ -118,6 +128,35 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
+    private bool WasPauseKeyPressed()
+    {
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+            return true;
+
+        try
+        {
+            return Input.GetKeyDown(pauseKey);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static void SetWorldSimulationPaused(bool paused)
+    {
+        Time.timeScale = paused ? 0f : 1f;
+        Physics2D.simulationMode = paused ? SimulationMode2D.Script : SimulationMode2D.FixedUpdate;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            SetWorldSimulationPaused(false);
+        }
+    }
+
     // ═══════════════════════════════════════════════════════════
     // API PÚBLICA DE PAUSA Y VICTORIA
     // ═══════════════════════════════════════════════════════════
@@ -127,7 +166,10 @@ public class PauseMenu : MonoBehaviour
         isPaused = true;
         currentView = MenuSubView.PauseMain;
         statusNotification = "";
-        Time.timeScale = 0f;
+        currentMusicVolume = LevelProgressionManager.GetMusicVolume();
+        currentSfxVolume = LevelProgressionManager.GetSfxVolume();
+        currentCameraZoom = LevelProgressionManager.GetCameraZoom();
+        SetWorldSimulationPaused(true);
     }
 
     public void ResumeGame()
@@ -135,7 +177,7 @@ public class PauseMenu : MonoBehaviour
         isPaused = false;
         isVictoryActive = false;
         currentView = MenuSubView.PauseMain;
-        Time.timeScale = 1f;
+        SetWorldSimulationPaused(false);
     }
 
     public void ShowVictoryScreen(int completedLevel, string bossName, string customMessage = "")
@@ -151,7 +193,7 @@ public class PauseMenu : MonoBehaviour
         isPaused = true;
         currentView = MenuSubView.Victory;
         statusNotification = "";
-        Time.timeScale = 0f;
+        SetWorldSimulationPaused(true);
     }
 
     public void OpenLevelSelection()
@@ -159,11 +201,12 @@ public class PauseMenu : MonoBehaviour
         isPaused = true;
         currentView = MenuSubView.LevelSelect;
         statusNotification = "";
+        SetWorldSimulationPaused(true);
     }
 
     public void RestartGame()
     {
-        Time.timeScale = 1f;
+        SetWorldSimulationPaused(false);
         isPaused = false;
         isVictoryActive = false;
         Level1IntroCutsceneTrigger.SkipOnNextLoad();
@@ -175,7 +218,7 @@ public class PauseMenu : MonoBehaviour
         if (Application.CanStreamedLevelBeLoaded(mainMenuSceneName) &&
             SceneManager.GetActiveScene().name != mainMenuSceneName)
         {
-            Time.timeScale = 1f;
+            SetWorldSimulationPaused(false);
             isPaused = false;
             isVictoryActive = false;
             SceneManager.LoadScene(mainMenuSceneName);
@@ -189,7 +232,7 @@ public class PauseMenu : MonoBehaviour
 
     public void QuitGame()
     {
-        Time.timeScale = 1f;
+        SetWorldSimulationPaused(false);
         Debug.Log("[PauseMenu] Saliendo del juego...");
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
@@ -201,7 +244,7 @@ public class PauseMenu : MonoBehaviour
     public void ToggleAudio()
     {
         audioMuted = !audioMuted;
-        AudioListener.volume = audioMuted ? 0f : (currentVolume > 0.05f ? currentVolume : 0.85f);
+        AudioListener.volume = audioMuted ? 0f : 1f;
     }
 
     private void Notify(string message)
@@ -350,6 +393,7 @@ public class PauseMenu : MonoBehaviour
         if (!isPaused && !isVictoryActive)
             return;
 
+        GUI.depth = -50;
         InitializeStyles();
 
         float screenW = Screen.width;
@@ -364,6 +408,9 @@ public class PauseMenu : MonoBehaviour
                 break;
             case MenuSubView.LevelSelect:
                 DrawLevelSelectPanel(screenW, screenH);
+                break;
+            case MenuSubView.Controls:
+                DrawControlsPanel(screenW, screenH);
                 break;
             case MenuSubView.Settings:
                 DrawSettingsPanel(screenW, screenH);
@@ -381,7 +428,7 @@ public class PauseMenu : MonoBehaviour
     private void DrawPauseMainPanel(float screenW, float screenH)
     {
         float panelW = Mathf.Min(430f, screenW * 0.88f);
-        float panelH = 420f;
+        float panelH = 480f;
         float panelX = (screenW - panelW) / 2f;
         float panelY = (screenH - panelH) / 2f;
 
@@ -402,6 +449,14 @@ public class PauseMenu : MonoBehaviour
         {
             ProceduralSoundManager.Instance?.PlayButtonClick();
             currentView = MenuSubView.LevelSelect;
+            statusNotification = "";
+        }
+        currentY += 60f;
+
+        if (DrawPlankButton(new Rect(btnX, currentY, btnW, 50f), "CÓMO JUGAR / CONTROLES"))
+        {
+            ProceduralSoundManager.Instance?.PlayButtonClick();
+            currentView = MenuSubView.Controls;
             statusNotification = "";
         }
         currentY += 60f;
@@ -430,6 +485,60 @@ public class PauseMenu : MonoBehaviour
     }
 
     // ═══════════════════════════════════════════════════════════
+    // 1.5. PANEL DE CÓMO JUGAR Y CONTROLES
+    // ═══════════════════════════════════════════════════════════
+
+    private void DrawControlsPanel(float screenW, float screenH)
+    {
+        float panelW = Mathf.Min(540f, screenW * 0.92f);
+        float panelH = 460f;
+        float panelX = (screenW - panelW) / 2f;
+        float panelY = (screenH - panelH) / 2f;
+
+        DrawPanelFrame(panelX, panelY, panelW, panelH, "CÓMO JUGAR Y CONTROLES");
+
+        float contentX = panelX + 38f;
+        float contentW = panelW - 76f;
+        float currentY = panelY + 84f;
+
+        GUIStyle keyTitleStyle = new GUIStyle(labelStyle);
+        keyTitleStyle.normal.textColor = new Color(0.955f, 0.785f, 0.340f);
+        keyTitleStyle.fontSize = 15;
+
+        GUIStyle tipStyle = new GUIStyle(subtitleStyle);
+        tipStyle.alignment = TextAnchor.MiddleLeft;
+        tipStyle.fontSize = 14;
+
+        string[,] rows =
+        {
+            { "MOVERSE:", "Teclas A / D o Flechas Izquierda / Derecha" },
+            { "SALTAR / PISOTÓN:", "Espacio (salta sobre enemigos para rebotar y dañarlos)" },
+            { "DASH (ESQUIVE):", "Left Shift (atraviesa ataques y enemigos siendo invulnerable)" },
+            { "ESPADAZO:", "Clic Izquierdo o Enter (corta a enemigos y activa jarrones)" },
+            { "PAUSA:", "ESC (pausa la partida, ajusta sonido o cambia de nivel)" }
+        };
+
+        for (int i = 0; i < rows.GetLength(0); i++)
+        {
+            GUI.Label(new Rect(contentX, currentY, contentW, 22f), rows[i, 0], keyTitleStyle);
+            GUI.Label(new Rect(contentX, currentY + 20f, contentW, 24f), rows[i, 1], tipStyle);
+            currentY += 54f;
+        }
+
+        GUI.Label(
+            new Rect(contentX, currentY + 4f, contentW, 38f),
+            "Objetivo: Cruza cada sector, esquiva la lava y derrota al jefe final de cada nivel.",
+            subtitleStyle
+        );
+
+        if (DrawPlankButton(new Rect(contentX + 40f, panelY + panelH - 68f, contentW - 80f, 48f), "VOLVER"))
+        {
+            ProceduralSoundManager.Instance?.PlayButtonClick();
+            currentView = MenuSubView.PauseMain;
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════
     // 2. PANEL DE SELECCIÓN DE NIVELES IN-GAME
     // ═══════════════════════════════════════════════════════════
 
@@ -454,7 +563,7 @@ public class PauseMenu : MonoBehaviour
         if (DrawPlankButton(new Rect(btnX, currentY, btnW, 52f), "NIVEL 1 — JARDÍN PRINCIPAL"))
         {
             ProceduralSoundManager.Instance?.PlayButtonClick();
-            Time.timeScale = 1f;
+            SetWorldSimulationPaused(false);
             isPaused = false;
             isVictoryActive = false;
             Level1IntroCutsceneTrigger.SkipOnNextLoad();
@@ -470,6 +579,7 @@ public class PauseMenu : MonoBehaviour
             ProceduralSoundManager.Instance?.PlayButtonClick();
             if (lvl2Unlocked)
             {
+                SetWorldSimulationPaused(false);
                 if (LevelProgressionManager.TryLoadScene(level2SceneName))
                 {
                     isPaused = false;
@@ -477,6 +587,7 @@ public class PauseMenu : MonoBehaviour
                 }
                 else
                 {
+                    SetWorldSimulationPaused(true);
                     Notify("Escena Nivel2 no registrada en Build Settings.");
                 }
             }
@@ -495,6 +606,7 @@ public class PauseMenu : MonoBehaviour
             ProceduralSoundManager.Instance?.PlayButtonClick();
             if (lvl3Unlocked)
             {
+                SetWorldSimulationPaused(false);
                 if (LevelProgressionManager.TryLoadScene(level3SceneName))
                 {
                     isPaused = false;
@@ -502,6 +614,7 @@ public class PauseMenu : MonoBehaviour
                 }
                 else
                 {
+                    SetWorldSimulationPaused(true);
                     Notify("Escena Nivel3 no registrada en Build Settings.");
                 }
             }
@@ -535,40 +648,60 @@ public class PauseMenu : MonoBehaviour
     private void DrawSettingsPanel(float screenW, float screenH)
     {
         float panelW = Mathf.Min(480f, screenW * 0.90f);
-        float panelH = 475f;
+        float panelH = Mathf.Min(515f, screenH * 0.94f);
         float panelX = (screenW - panelW) / 2f;
         float panelY = (screenH - panelH) / 2f;
 
         DrawPanelFrame(panelX, panelY, panelW, panelH, "AJUSTES");
 
-        float contentX = panelX + 40f;
-        float contentW = panelW - 80f;
-        float currentY = panelY + 80f;
+        float contentX = panelX + 38f;
+        float contentW = panelW - 76f;
+        float currentY = panelY + 72f;
 
-        int volPercent = Mathf.RoundToInt((audioMuted ? 0f : currentVolume) * 100f);
-        GUI.Label(new Rect(contentX, currentY, contentW, 24), $"VOLUMEN GENERAL: {volPercent}%", labelStyle);
-        currentY += 28f;
+        int musicPct = Mathf.RoundToInt((audioMuted ? 0f : currentMusicVolume) * 100f);
+        GUI.Label(new Rect(contentX, currentY, contentW, 22), $"VOLUMEN DE MÚSICA: {musicPct}%", labelStyle);
+        currentY += 23f;
 
-        float newVol = GUI.HorizontalSlider(new Rect(contentX, currentY, contentW, 22), currentVolume, 0f, 1f);
-        if (Mathf.Abs(newVol - currentVolume) > 0.005f)
+        float newMusicVol = GUI.HorizontalSlider(new Rect(contentX, currentY, contentW, 20), currentMusicVolume, 0f, 1f);
+        if (Mathf.Abs(newMusicVol - currentMusicVolume) > 0.005f)
         {
-            currentVolume = newVol;
+            currentMusicVolume = newMusicVol;
             audioMuted = false;
-            AudioListener.volume = currentVolume;
-            PlayerPrefs.SetFloat(LevelProgressionManager.VOLUME_KEY, currentVolume);
-            PlayerPrefs.Save();
+            AudioListener.volume = 1f;
+            LevelProgressionManager.SetMusicVolume(currentMusicVolume);
+            ProceduralSoundManager.Instance?.SetMusicVolume(currentMusicVolume);
         }
-        currentY += 34f;
+        currentY += 27f;
+
+        int sfxPct = Mathf.RoundToInt((audioMuted ? 0f : currentSfxVolume) * 100f);
+        GUI.Label(new Rect(contentX, currentY, contentW, 22), $"VOLUMEN DE EFECTOS: {sfxPct}%", labelStyle);
+        currentY += 23f;
+
+        float newSfxVol = GUI.HorizontalSlider(new Rect(contentX, currentY, contentW, 20), currentSfxVolume, 0f, 1f);
+        if (Mathf.Abs(newSfxVol - currentSfxVolume) > 0.005f)
+        {
+            currentSfxVolume = newSfxVol;
+            audioMuted = false;
+            AudioListener.volume = 1f;
+            LevelProgressionManager.SetSfxVolume(currentSfxVolume);
+            ProceduralSoundManager.Instance?.SetSfxVolume(currentSfxVolume);
+            if (Time.unscaledTime >= nextSfxPreviewTime)
+            {
+                nextSfxPreviewTime = Time.unscaledTime + 0.22f;
+                ProceduralSoundManager.Instance?.PlayButtonClick();
+            }
+        }
+        currentY += 27f;
 
         GUI.Label(
-            new Rect(contentX, currentY, contentW, 24),
+            new Rect(contentX, currentY, contentW, 22),
             $"FOV / ZOOM DE CÁMARA: {LevelProgressionManager.FormatCameraZoomLabel(currentCameraZoom)}",
             labelStyle
         );
-        currentY += 28f;
+        currentY += 24f;
 
         float newZoom = GUI.HorizontalSlider(
-            new Rect(contentX, currentY, contentW, 22),
+            new Rect(contentX, currentY, contentW, 20),
             currentCameraZoom,
             LevelProgressionManager.MIN_CAMERA_ZOOM,
             LevelProgressionManager.MAX_CAMERA_ZOOM
@@ -579,27 +712,27 @@ public class PauseMenu : MonoBehaviour
             LevelProgressionManager.SetCameraZoom(currentCameraZoom);
             CameraFollow.ApplyZoomToActiveCamera(currentCameraZoom, true);
         }
-        currentY += 30f;
+        currentY += 25f;
 
-        if (DrawPlankButton(new Rect(contentX, currentY, contentW, 40f), "RESTABLECER ZOOM (100%)"))
+        if (DrawPlankButton(new Rect(contentX, currentY, contentW, 38f), "RESTABLECER ZOOM (100%)"))
         {
             ProceduralSoundManager.Instance?.PlayButtonClick();
             currentCameraZoom = LevelProgressionManager.DEFAULT_CAMERA_ZOOM;
             LevelProgressionManager.SetCameraZoom(currentCameraZoom);
             CameraFollow.ApplyZoomToActiveCamera(currentCameraZoom, true);
         }
-        currentY += 52f;
+        currentY += 44f;
 
         string muteText = audioMuted ? "SONIDO: SILENCIADO" : "SONIDO: ACTIVO";
-        if (DrawPlankButton(new Rect(contentX, currentY, contentW, 46f), muteText))
+        if (DrawPlankButton(new Rect(contentX, currentY, contentW, 42f), muteText))
         {
             ToggleAudio();
             ProceduralSoundManager.Instance?.PlayButtonClick();
         }
-        currentY += 56f;
+        currentY += 48f;
 
         string screenText = Screen.fullScreen ? "PANTALLA: COMPLETA" : "PANTALLA: VENTANA";
-        if (DrawPlankButton(new Rect(contentX, currentY, contentW, 46f), screenText))
+        if (DrawPlankButton(new Rect(contentX, currentY, contentW, 42f), screenText))
         {
             ProceduralSoundManager.Instance?.PlayButtonClick();
             isFullscreen = !Screen.fullScreen;
@@ -607,9 +740,20 @@ public class PauseMenu : MonoBehaviour
             PlayerPrefs.SetInt(LevelProgressionManager.FULLSCREEN_KEY, isFullscreen ? 1 : 0);
             PlayerPrefs.Save();
         }
-        currentY += 62f;
+        currentY += 48f;
 
-        if (DrawPlankButton(new Rect(contentX, currentY, contentW, 48f), "GUARDAR Y VOLVER"))
+        int touchMode = LevelProgressionManager.GetTouchControlsMode();
+        string touchText = $"CONTROLES TÁCTILES: {LevelProgressionManager.FormatTouchControlsModeLabel(touchMode)}";
+        if (DrawPlankButton(new Rect(contentX, currentY, contentW, 42f), touchText))
+        {
+            ProceduralSoundManager.Instance?.PlayButtonClick();
+            int nextMode = (touchMode + 1) % 3;
+            LevelProgressionManager.SetTouchControlsMode(nextMode);
+            MobileTouchControls.Instance?.RefreshVisibility();
+        }
+        currentY += 52f;
+
+        if (DrawPlankButton(new Rect(contentX, currentY, contentW, 44f), "GUARDAR Y VOLVER"))
         {
             ProceduralSoundManager.Instance?.PlayButtonClick();
             PlayerPrefs.Save();

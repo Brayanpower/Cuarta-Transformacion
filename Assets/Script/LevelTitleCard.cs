@@ -11,6 +11,7 @@ using UnityEngine.SceneManagement;
 public class LevelTitleCard : MonoBehaviour
 {
     private static LevelTitleCard activeCard;
+    public static bool IsActive => activeCard != null && activeCard.isShowing;
 
     private string levelTag = "";
     private string zoneTitle = "";

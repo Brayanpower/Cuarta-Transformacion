@@ -36,6 +36,9 @@ public class MedievalPropAnimator : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale <= 0f || PauseMenu.IsGamePaused)
+            return;
+
         switch (propStyle)
         {
             case PropStyle.TorchFlicker:

@@ -108,6 +108,9 @@ public class FallingPropagandaProjectile : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale <= 0f || PauseMenu.IsGamePaused)
+            return;
+
         if (Mathf.Abs(spinSpeed) > 0.1f)
             transform.Rotate(0f, 0f, spinSpeed * Time.deltaTime);
 

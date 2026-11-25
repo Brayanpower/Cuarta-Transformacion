@@ -11,11 +11,41 @@ public static class LevelProgressionManager
 {
     public const string UNLOCKED_LEVEL_KEY = "CuartaTransformacion_UnlockedLevel";
     public const string VOLUME_KEY = "CuartaTransformacion_Volume";
+    public const string MUSIC_VOLUME_KEY = "CuartaTransformacion_MusicVolume";
+    public const string SFX_VOLUME_KEY = "CuartaTransformacion_SfxVolume";
     public const string FULLSCREEN_KEY = "CuartaTransformacion_Fullscreen";
     public const string CAMERA_ZOOM_KEY = "CuartaTransformacion_CameraZoom";
+    public const string TOUCH_CONTROLS_MODE_KEY = "CuartaTransformacion_TouchControlsMode";
+    public const float DEFAULT_VOLUME = 0.85f;
     public const float DEFAULT_CAMERA_ZOOM = 1.0f;
     public const float MIN_CAMERA_ZOOM = 0.70f;
     public const float MAX_CAMERA_ZOOM = 3.00f;
+
+    public static float GetMusicVolume()
+    {
+        float fallback = PlayerPrefs.GetFloat(VOLUME_KEY, DEFAULT_VOLUME);
+        return Mathf.Clamp01(PlayerPrefs.GetFloat(MUSIC_VOLUME_KEY, fallback));
+    }
+
+    public static void SetMusicVolume(float volume)
+    {
+        float clamped = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat(MUSIC_VOLUME_KEY, clamped);
+        PlayerPrefs.Save();
+    }
+
+    public static float GetSfxVolume()
+    {
+        float fallback = PlayerPrefs.GetFloat(VOLUME_KEY, DEFAULT_VOLUME);
+        return Mathf.Clamp01(PlayerPrefs.GetFloat(SFX_VOLUME_KEY, fallback));
+    }
+
+    public static void SetSfxVolume(float volume)
+    {
+        float clamped = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat(SFX_VOLUME_KEY, clamped);
+        PlayerPrefs.Save();
+    }
 
     public static float GetCameraZoom()
     {
@@ -43,6 +73,43 @@ public static class LevelProgressionManager
         else
             tag = "Panorámico";
         return $"{pct}% ({tag})";
+    }
+
+    /// <summary>
+    /// Modo de controles táctiles: 0 = Auto (Móvil / WebGL), 1 = Siempre Visible, 2 = Oculto.
+    /// </summary>
+    public static int GetTouchControlsMode()
+    {
+        return Mathf.Clamp(PlayerPrefs.GetInt(TOUCH_CONTROLS_MODE_KEY, 0), 0, 2);
+    }
+
+    public static void SetTouchControlsMode(int mode)
+    {
+        int clamped = Mathf.Clamp(mode, 0, 2);
+        PlayerPrefs.SetInt(TOUCH_CONTROLS_MODE_KEY, clamped);
+        PlayerPrefs.Save();
+    }
+
+    public static bool ShouldShowTouchControls()
+    {
+        int mode = GetTouchControlsMode();
+        if (mode == 1) return true;
+        if (mode == 2) return false;
+
+        return Application.isMobilePlatform
+            || SystemInfo.deviceType == DeviceType.Handheld
+            || Input.touchSupported
+            || Application.platform == RuntimePlatform.WebGLPlayer;
+    }
+
+    public static string FormatTouchControlsModeLabel(int mode)
+    {
+        switch (Mathf.Clamp(mode, 0, 2))
+        {
+            case 1:  return "SIEMPRE VISIBLE";
+            case 2:  return "OCULTO";
+            default: return "AUTO (MÓVIL/WEB)";
+        }
     }
 
     /// <summary>

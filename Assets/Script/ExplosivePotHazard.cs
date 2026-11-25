@@ -52,7 +52,7 @@ public class ExplosivePotHazard : MonoBehaviour
 
     private void Update()
     {
-        if (isPrimed || isExploded)
+        if (isPrimed || isExploded || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
             return;
 
         if (playerTransform == null)

@@ -11,12 +11,15 @@ public class SettingsMenuUI : MonoBehaviour
     [Header("Controles de UI")]
     public Slider volumeSlider;
     public Text volumeValueLabel;
+    public Slider sfxVolumeSlider;
+    public Text sfxVolumeValueLabel;
     public Slider cameraZoomSlider;
     public Text cameraZoomValueLabel;
     public Toggle fullscreenToggle;
     public Dropdown resolutionDropdown;
 
     private Resolution[] availableResolutions;
+    private float nextSfxPreviewTime = 0f;
 
     private void OnEnable()
     {
@@ -25,7 +28,7 @@ public class SettingsMenuUI : MonoBehaviour
 
     private void Start()
     {
-        EnsureCameraZoomControlExists();
+        EnsureSettingsControlsExist();
         InitializeResolutions();
         LoadSettings();
 
@@ -33,6 +36,12 @@ public class SettingsMenuUI : MonoBehaviour
         {
             volumeSlider.onValueChanged.RemoveListener(SetVolume);
             volumeSlider.onValueChanged.AddListener(SetVolume);
+        }
+
+        if (sfxVolumeSlider != null)
+        {
+            sfxVolumeSlider.onValueChanged.RemoveListener(SetSfxVolume);
+            sfxVolumeSlider.onValueChanged.AddListener(SetSfxVolume);
         }
 
         if (cameraZoomSlider != null)
@@ -57,93 +66,175 @@ public class SettingsMenuUI : MonoBehaviour
         }
     }
 
-    private void EnsureCameraZoomControlExists()
+    private void EnsureSettingsControlsExist()
     {
-        if (cameraZoomSlider != null || volumeSlider == null)
+        if (volumeSlider == null)
             return;
 
         Transform parent = volumeSlider.transform.parent;
         if (parent == null)
             return;
 
+        bool needsLayoutUpdate = (sfxVolumeSlider == null || cameraZoomSlider == null);
+        if (!needsLayoutUpdate)
+            return;
+
         RectTransform frameRt = parent as RectTransform;
         if (frameRt != null)
-            frameRt.sizeDelta = new Vector2(frameRt.sizeDelta.x, Mathf.Max(frameRt.sizeDelta.y, 760f));
+            frameRt.sizeDelta = new Vector2(frameRt.sizeDelta.x, Mathf.Max(frameRt.sizeDelta.y, 860f));
 
-        SetChildAnchoredY(parent, "Title_Ajustes", 295f);
-        SetChildAnchoredY(parent, "Label_Volumen", 190f);
-        SetChildAnchoredY(parent, "Value_VolumenPct", 190f);
-        SetChildAnchoredY(parent, "Slider_VolumenGeneral", 130f);
-        SetChildAnchoredY(parent, "Toggle_PantallaCompleta", -115f);
-        SetChildAnchoredY(parent, "Btn_GuardarYVolver", -255f);
+        SetChildAnchoredY(parent, "Title_Ajustes", 350f);
+        SetChildAnchoredY(parent, "Label_Volumen", 260f);
+        SetChildAnchoredY(parent, "Value_VolumenPct", 260f);
+        SetChildAnchoredY(parent, "Slider_VolumenGeneral", 205f);
 
-        Transform volLabelTf = parent.Find("Label_Volumen");
-        if (volLabelTf != null)
+        Transform musicLabelTf = parent.Find("Label_Volumen");
+        if (musicLabelTf != null)
         {
-            GameObject zoomLabelObj = Object.Instantiate(volLabelTf.gameObject, parent);
-            zoomLabelObj.name = "Label_CameraZoom";
-            RectTransform zLblRt = zoomLabelObj.GetComponent<RectTransform>();
-            zLblRt.anchoredPosition = new Vector2(-110f, 42f);
-            zLblRt.sizeDelta = new Vector2(500f, 40f);
-            Text zLbl = zoomLabelObj.GetComponent<Text>();
-            if (zLbl != null)
-                zLbl.text = "FOV / ZOOM DE CÁMARA";
+            Text musicLbl = musicLabelTf.GetComponent<Text>();
+            if (musicLbl != null)
+                musicLbl.text = "VOLUMEN DE MÚSICA";
+        }
+
+        if (sfxVolumeSlider == null)
+        {
+            CreateOrCloneLabel(parent, "Label_VolumenSfx", "Label_Volumen", "VOLUMEN DE EFECTOS", new Vector2(-130f, 125f), new Vector2(460f, 40f));
+            sfxVolumeValueLabel = CreateOrCloneValueText(parent, "Value_VolumenSfxPct", volumeValueLabel, new Vector2(260f, 125f), new Vector2(140f, 40f), "85%");
+            sfxVolumeSlider = CloneSliderClean(volumeSlider, parent, "Slider_VolumenSfx", new Vector2(0f, 70f), 0f, 1f);
         }
         else
         {
-            GameObject zoomLabelObj = new GameObject("Label_CameraZoom");
-            zoomLabelObj.transform.SetParent(parent, false);
-            RectTransform zLblRt = zoomLabelObj.AddComponent<RectTransform>();
-            zLblRt.anchoredPosition = new Vector2(-110f, 42f);
-            zLblRt.sizeDelta = new Vector2(500f, 40f);
-            Text zLbl = zoomLabelObj.AddComponent<Text>();
-            zLbl.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            zLbl.text = "FOV / ZOOM DE CÁMARA";
-            zLbl.fontSize = 24;
-            zLbl.fontStyle = FontStyle.Bold;
-            zLbl.alignment = TextAnchor.MiddleCenter;
-            zLbl.color = new Color(0.965f, 0.940f, 0.875f, 1f);
+            SetChildAnchoredY(parent, "Label_VolumenSfx", 125f);
+            SetChildAnchoredY(parent, "Value_VolumenSfxPct", 125f);
+            SetChildAnchoredY(parent, "Slider_VolumenSfx", 70f);
         }
 
-        if (volumeValueLabel != null)
+        if (cameraZoomSlider == null)
         {
-            GameObject zoomValObj = Object.Instantiate(volumeValueLabel.gameObject, parent);
-            zoomValObj.name = "Value_CameraZoom";
-            RectTransform zValRt = zoomValObj.GetComponent<RectTransform>();
-            zValRt.anchoredPosition = new Vector2(255f, 42f);
-            zValRt.sizeDelta = new Vector2(220f, 40f);
-            cameraZoomValueLabel = zoomValObj.GetComponent<Text>();
+            CreateOrCloneLabel(parent, "Label_CameraZoom", "Label_Volumen", "FOV / ZOOM DE CÁMARA", new Vector2(-110f, -10f), new Vector2(500f, 40f));
+            cameraZoomValueLabel = CreateOrCloneValueText(parent, "Value_CameraZoom", volumeValueLabel, new Vector2(255f, -10f), new Vector2(220f, 40f), "100% (Normal)");
+            cameraZoomSlider = CloneSliderClean(volumeSlider, parent, "Slider_CameraZoom", new Vector2(0f, -65f), LevelProgressionManager.MIN_CAMERA_ZOOM, LevelProgressionManager.MAX_CAMERA_ZOOM);
         }
         else
         {
-            GameObject zoomValObj = new GameObject("Value_CameraZoom");
-            zoomValObj.transform.SetParent(parent, false);
-            RectTransform zValRt = zoomValObj.AddComponent<RectTransform>();
-            zValRt.anchoredPosition = new Vector2(255f, 42f);
-            zValRt.sizeDelta = new Vector2(220f, 40f);
-            cameraZoomValueLabel = zoomValObj.AddComponent<Text>();
-            cameraZoomValueLabel.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            cameraZoomValueLabel.fontSize = 24;
-            cameraZoomValueLabel.fontStyle = FontStyle.Bold;
-            cameraZoomValueLabel.alignment = TextAnchor.MiddleCenter;
-            cameraZoomValueLabel.color = new Color(0.955f, 0.785f, 0.340f, 1f);
+            SetChildAnchoredY(parent, "Label_CameraZoom", -10f);
+            SetChildAnchoredY(parent, "Value_CameraZoom", -10f);
+            SetChildAnchoredY(parent, "Slider_CameraZoom", -65f);
         }
 
-        GameObject zoomSliderObj = Object.Instantiate(volumeSlider.gameObject, parent);
-        zoomSliderObj.name = "Slider_CameraZoom";
-        RectTransform zSliderRt = zoomSliderObj.GetComponent<RectTransform>();
-        zSliderRt.anchoredPosition = new Vector2(0f, -18f);
+        SetChildAnchoredY(parent, "Toggle_PantallaCompleta", -165f);
+        SetChildAnchoredY(parent, "Btn_GuardarYVolver", -315f);
+    }
 
-        Slider clonedSlider = zoomSliderObj.GetComponent<Slider>();
-        if (clonedSlider != null)
+    private static void CreateOrCloneLabel(Transform parent, string newName, string templateName, string content, Vector2 pos, Vector2 size)
+    {
+        Transform existing = parent.Find(newName);
+        if (existing != null)
         {
-            // Desvincular por completo los listeners serializados de volumen del prefab clonado
-            clonedSlider.onValueChanged = new Slider.SliderEvent();
-            clonedSlider.minValue = LevelProgressionManager.MIN_CAMERA_ZOOM;
-            clonedSlider.maxValue = LevelProgressionManager.MAX_CAMERA_ZOOM;
-            clonedSlider.wholeNumbers = false;
-            cameraZoomSlider = clonedSlider;
+            RectTransform ert = existing as RectTransform;
+            if (ert != null)
+            {
+                ert.anchoredPosition = pos;
+                ert.sizeDelta = size;
+            }
+            Text et = existing.GetComponent<Text>();
+            if (et != null) et.text = content;
+            return;
         }
+
+        Transform templateTf = parent.Find(templateName);
+        if (templateTf != null)
+        {
+            GameObject clone = Object.Instantiate(templateTf.gameObject, parent);
+            clone.name = newName;
+            RectTransform rt = clone.GetComponent<RectTransform>();
+            rt.anchoredPosition = pos;
+            rt.sizeDelta = size;
+            Text txt = clone.GetComponent<Text>();
+            if (txt != null)
+                txt.text = content;
+            return;
+        }
+
+        GameObject go = new GameObject(newName);
+        go.transform.SetParent(parent, false);
+        RectTransform grt = go.AddComponent<RectTransform>();
+        grt.anchoredPosition = pos;
+        grt.sizeDelta = size;
+        Text gtxt = go.AddComponent<Text>();
+        gtxt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        gtxt.text = content;
+        gtxt.fontSize = 24;
+        gtxt.fontStyle = FontStyle.Bold;
+        gtxt.alignment = TextAnchor.MiddleCenter;
+        gtxt.color = new Color(0.965f, 0.940f, 0.875f, 1f);
+    }
+
+    private static Text CreateOrCloneValueText(Transform parent, string newName, Text templateText, Vector2 pos, Vector2 size, string initialText)
+    {
+        Transform existing = parent.Find(newName);
+        if (existing != null)
+        {
+            RectTransform ert = existing as RectTransform;
+            if (ert != null)
+            {
+                ert.anchoredPosition = pos;
+                ert.sizeDelta = size;
+            }
+            return existing.GetComponent<Text>();
+        }
+
+        if (templateText != null)
+        {
+            GameObject clone = Object.Instantiate(templateText.gameObject, parent);
+            clone.name = newName;
+            RectTransform rt = clone.GetComponent<RectTransform>();
+            rt.anchoredPosition = pos;
+            rt.sizeDelta = size;
+            return clone.GetComponent<Text>();
+        }
+
+        GameObject go = new GameObject(newName);
+        go.transform.SetParent(parent, false);
+        RectTransform grt = go.AddComponent<RectTransform>();
+        grt.anchoredPosition = pos;
+        grt.sizeDelta = size;
+        Text txt = go.AddComponent<Text>();
+        txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        txt.text = initialText;
+        txt.fontSize = 24;
+        txt.fontStyle = FontStyle.Bold;
+        txt.alignment = TextAnchor.MiddleCenter;
+        txt.color = new Color(0.955f, 0.785f, 0.340f, 1f);
+        return txt;
+    }
+
+    private static Slider CloneSliderClean(Slider sourceSlider, Transform parent, string newName, Vector2 pos, float minVal, float maxVal)
+    {
+        Transform existing = parent.Find(newName);
+        if (existing != null)
+        {
+            RectTransform ert = existing as RectTransform;
+            if (ert != null)
+                ert.anchoredPosition = pos;
+            return existing.GetComponent<Slider>();
+        }
+
+        GameObject cloneObj = Object.Instantiate(sourceSlider.gameObject, parent);
+        cloneObj.name = newName;
+        RectTransform rt = cloneObj.GetComponent<RectTransform>();
+        rt.anchoredPosition = pos;
+
+        Slider s = cloneObj.GetComponent<Slider>();
+        if (s != null)
+        {
+            // Desvincular por completo los listeners serializados de volumen de música del prefab clonado
+            s.onValueChanged = new Slider.SliderEvent();
+            s.minValue = minVal;
+            s.maxValue = maxVal;
+            s.wholeNumbers = false;
+        }
+        return s;
     }
 
     private static void SetChildAnchoredY(Transform parent, string childName, float newY)
@@ -187,19 +278,27 @@ public class SettingsMenuUI : MonoBehaviour
 
     public void LoadSettings()
     {
-        float savedVolume = PlayerPrefs.GetFloat(LevelProgressionManager.VOLUME_KEY, 0.85f);
+        float savedMusicVol = LevelProgressionManager.GetMusicVolume();
+        float savedSfxVol = LevelProgressionManager.GetSfxVolume();
         bool isFullscreen = PlayerPrefs.GetInt(LevelProgressionManager.FULLSCREEN_KEY, 1) == 1;
         float savedZoom = LevelProgressionManager.GetCameraZoom();
 
-        AudioListener.volume = savedVolume;
+        AudioListener.volume = 1f;
+        ProceduralSoundManager.Instance?.RefreshVolumesFromPrefs();
         Screen.fullScreen = isFullscreen;
         CameraFollow.ApplyZoomToActiveCamera(savedZoom, true);
 
         if (volumeSlider != null)
-            volumeSlider.SetValueWithoutNotify(savedVolume);
+            volumeSlider.SetValueWithoutNotify(savedMusicVol);
 
         if (volumeValueLabel != null)
-            volumeValueLabel.text = $"{Mathf.RoundToInt(savedVolume * 100f)}%";
+            volumeValueLabel.text = $"{Mathf.RoundToInt(savedMusicVol * 100f)}%";
+
+        if (sfxVolumeSlider != null)
+            sfxVolumeSlider.SetValueWithoutNotify(savedSfxVol);
+
+        if (sfxVolumeValueLabel != null)
+            sfxVolumeValueLabel.text = $"{Mathf.RoundToInt(savedSfxVol * 100f)}%";
 
         if (cameraZoomSlider != null)
             cameraZoomSlider.SetValueWithoutNotify(savedZoom);
@@ -213,12 +312,33 @@ public class SettingsMenuUI : MonoBehaviour
 
     public void SetVolume(float volume)
     {
-        AudioListener.volume = Mathf.Clamp01(volume);
-        PlayerPrefs.SetFloat(LevelProgressionManager.VOLUME_KEY, AudioListener.volume);
-        PlayerPrefs.Save();
+        SetMusicVolume(volume);
+    }
+
+    public void SetMusicVolume(float volume)
+    {
+        LevelProgressionManager.SetMusicVolume(volume);
+        float clamped = LevelProgressionManager.GetMusicVolume();
+        ProceduralSoundManager.Instance?.SetMusicVolume(clamped);
 
         if (volumeValueLabel != null)
-            volumeValueLabel.text = $"{Mathf.RoundToInt(AudioListener.volume * 100f)}%";
+            volumeValueLabel.text = $"{Mathf.RoundToInt(clamped * 100f)}%";
+    }
+
+    public void SetSfxVolume(float volume)
+    {
+        LevelProgressionManager.SetSfxVolume(volume);
+        float clamped = LevelProgressionManager.GetSfxVolume();
+        ProceduralSoundManager.Instance?.SetSfxVolume(clamped);
+
+        if (sfxVolumeValueLabel != null)
+            sfxVolumeValueLabel.text = $"{Mathf.RoundToInt(clamped * 100f)}%";
+
+        if (Time.unscaledTime >= nextSfxPreviewTime)
+        {
+            nextSfxPreviewTime = Time.unscaledTime + 0.22f;
+            ProceduralSoundManager.Instance?.PlayButtonClick();
+        }
     }
 
     public void SetCameraZoom(float zoomScale)

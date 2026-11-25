@@ -145,6 +145,28 @@ public class SimpleEnemy : MonoBehaviour
 
         if (sharedEsbirroWalk == null || sharedEsbirroWalk.Length == 0 || sharedEsbirroWalk[0] == null)
         {
+            // Reutilizar sprites ya enlazados en otros esbirros de la escena (funciona en builds sin IO de disco)
+            SimpleEnemy[] existingEnemies = Object.FindObjectsByType<SimpleEnemy>();
+            foreach (SimpleEnemy other in existingEnemies)
+            {
+                if (other == null || other == this || !other.UseGarbanzoSprites)
+                    continue;
+                if (other.walkSprites != null && other.walkSprites.Length > 0 && other.walkSprites[0] != null)
+                {
+                    sharedEsbirroWalk = other.walkSprites;
+                    if (other.defeatSprites != null && other.defeatSprites.Length > 0 && other.defeatSprites[0] != null)
+                        sharedEsbirroDefeat = other.defeatSprites;
+                    SpriteRenderer osr = other.GetComponent<SpriteRenderer>();
+                    if (osr != null && osr.sprite != null)
+                        sharedEsbirroIdle = osr.sprite;
+                    break;
+                }
+            }
+        }
+
+        if (sharedEsbirroWalk == null || sharedEsbirroWalk.Length == 0 || sharedEsbirroWalk[0] == null)
+        {
+            Texture2D tex = null;
             string path = Path.Combine(Application.dataPath, "Images/Nivel1/enemigos/esbirro.png");
             if (!File.Exists(path))
                 path = "Assets/Images/Nivel1/enemigos/esbirro.png";
@@ -152,35 +174,50 @@ public class SimpleEnemy : MonoBehaviour
             if (File.Exists(path))
             {
                 byte[] bytes = File.ReadAllBytes(path);
-                Texture2D tex = new Texture2D(2048, 2048, TextureFormat.RGBA32, false);
+                tex = new Texture2D(2048, 2048, TextureFormat.RGBA32, false);
                 tex.filterMode = FilterMode.Point;
                 tex.wrapMode = TextureWrapMode.Clamp;
-                tex.LoadImage(bytes);
+                if (!tex.LoadImage(bytes))
+                    tex = null;
+            }
 
-                sharedEsbirroIdle = Sprite.Create(tex, new Rect(88, 1654, 142, 159), new Vector2(0.5f, 0f), 160f);
+            if (tex == null)
+            {
+                tex = Resources.Load<Texture2D>("Enemies/esbirro");
+                if (tex != null)
+                    tex.filterMode = FilterMode.Point;
+            }
+
+            if (tex != null)
+            {
+                float sx = tex.width / 2048f;
+                float sy = tex.height / 2048f;
+                float ppu = 160f * Mathf.Min(sx, sy);
+
+                sharedEsbirroIdle = Sprite.Create(tex, new Rect(88 * sx, 1654 * sy, 142 * sx, 159 * sy), new Vector2(0.5f, 0f), ppu);
 
                 sharedEsbirroWalk = new Sprite[]
                 {
-                    Sprite.Create(tex, new Rect(76, 1156, 165, 165), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(329, 1157, 142, 143), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(583, 1157, 144, 143), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(829, 1153, 165, 175), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(1082, 1167, 157, 165), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(1338, 1157, 118, 174), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(1587, 1157, 117, 168), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(1822, 1156, 170, 164), new Vector2(0.5f, 0f), 160f)
+                    Sprite.Create(tex, new Rect(76 * sx, 1156 * sy, 165 * sx, 165 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(329 * sx, 1157 * sy, 142 * sx, 143 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(583 * sx, 1157 * sy, 144 * sx, 143 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(829 * sx, 1153 * sy, 165 * sx, 175 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(1082 * sx, 1167 * sy, 157 * sx, 165 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(1338 * sx, 1157 * sy, 118 * sx, 174 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(1587 * sx, 1157 * sy, 117 * sx, 168 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(1822 * sx, 1156 * sy, 170 * sx, 164 * sy), new Vector2(0.5f, 0f), ppu)
                 };
 
                 sharedEsbirroDefeat = new Sprite[]
                 {
-                    Sprite.Create(tex, new Rect(70, 121, 145, 171), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(337, 123, 165, 163), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(604, 10, 164, 267), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(768, 10, 215, 199), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(1034, 9, 246, 222), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(1280, 9, 256, 269), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(1536, 9, 256, 258), new Vector2(0.5f, 0f), 160f),
-                    Sprite.Create(tex, new Rect(1792, 10, 216, 237), new Vector2(0.5f, 0f), 160f)
+                    Sprite.Create(tex, new Rect(70 * sx, 121 * sy, 145 * sx, 171 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(337 * sx, 123 * sy, 165 * sx, 163 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(604 * sx, 10 * sy, 164 * sx, 267 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(768 * sx, 10 * sy, 215 * sx, 199 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(1034 * sx, 9 * sy, 246 * sx, 222 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(1280 * sx, 9 * sy, 256 * sx, 269 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(1536 * sx, 9 * sy, 256 * sx, 258 * sy), new Vector2(0.5f, 0f), ppu),
+                    Sprite.Create(tex, new Rect(1792 * sx, 10 * sy, 216 * sx, 237 * sy), new Vector2(0.5f, 0f), ppu)
                 };
             }
         }
@@ -202,7 +239,7 @@ public class SimpleEnemy : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (isDead)
+        if (isDead || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
             return;
 
         // Si cae al vacío por accidente

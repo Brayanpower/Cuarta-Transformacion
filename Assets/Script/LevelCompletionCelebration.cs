@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Animación automática de fin de nivel estilo Sonic / Mario al derrotar a cada Jefe:
@@ -225,13 +226,26 @@ public class LevelCompletionCelebration : MonoBehaviour
                 yield break;
         }
 
-        // Si fue el Nivel 3 (Gran Final) o si no existe la siguiente escena en Build Settings:
+        // Si fue el Nivel 3 (Gran Final): lanzar animación temática de Fiestas Patronales y regresar al Menú Principal
         isCelebrating = false;
-        PauseMenu.BlockPauseDuringTransition = false;
+        if (completedLevel >= 3)
+        {
+            GrandFinaleCutscene.Play(bossTitle, victoryMessage, () =>
+            {
+                PauseMenu.BlockPauseDuringTransition = false;
+                Time.timeScale = 1f;
+                if (!LevelProgressionManager.TryLoadScene("MainMenu"))
+                    SceneManager.LoadScene(0);
+            });
+            Destroy(gameObject);
+            yield break;
+        }
+
+        // Fallback si no existe la siguiente escena en Build Settings (Niveles 1 o 2)
         PauseMenu pauseMenu = PauseMenu.Instance != null
             ? PauseMenu.Instance
             : UnityEngine.Object.FindAnyObjectByType<PauseMenu>();
-
+        PauseMenu.BlockPauseDuringTransition = false;
         if (pauseMenu != null)
         {
             pauseMenu.ShowVictoryScreen(completedLevel, bossTitle, victoryMessage);

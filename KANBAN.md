@@ -54,6 +54,7 @@ Este tablero refleja el avance del proyecto organizado mediante issues individua
   * Correccion de colisiones en suelo plano con `CompositeCollider2D` + collider redondeado sin friccion, tope izquierdo del mapa, cooldown tras golpe, bloqueo total de controles en fin de nivel/titulos, opcion de **FOV / Zoom de Camara** (`CameraFollow.cs`) y reemplazo de trampas rojas por lava pixel-art animada con rebote de rescate (`HazardSpikes.cs`).
 * **[Issue #9: Gestion de Proyecto: Control de Riesgos y Mitigaciones para Desarrollo Individual](https://github.com/Brayanpower/Cuarta-Transformacion/issues/9)**
   * Cumplimiento de los 3 niveles jugables completos, seguimiento por ramas/PRs de noviembre y actualizacion integral del tablero Kanban.
+  * Pulido final: soundtrack regional WAV con volumen separado (Musica/SFX y cierre al 50%), pausa total de fisica y enemigos, HUD en barras y menu de controles, fondo animado en MainMenu, rediseño organico de enemigos/jefes en N2 y N3, final directo sin creditos Star Wars, joystick tactil multi-touch y preparacion para despliegue WebGL/Android.
 
 ---
 
