@@ -120,19 +120,22 @@ public static class CuartaTransformacionMenuBuilder
         // 4. Paisaje nocturno limpio de Dolores Hidalgo + franja de suelo empedrado + señal colonial
         BuildScenicDoloresBackground(canvasObj.transform, ui);
 
-        // 5. Pantallas formales: Inicio, Selección de Nivel, Ajustes y Créditos
+        // 5. Pantallas formales: Inicio, Selección de Nivel, Cómo Jugar, Ajustes y Créditos
         GameObject panelMain     = BuildMainScreen(canvasObj.transform, mainMenuController, ui);
         GameObject panelLevels   = BuildLevelSelectScreen(canvasObj.transform, mainMenuController, ui);
+        GameObject panelControls = BuildControlsScreen(canvasObj.transform, mainMenuController, ui);
         GameObject panelSettings = BuildSettingsScreen(canvasObj.transform, mainMenuController, settingsController, ui);
         GameObject panelCredits  = BuildCreditsScreen(canvasObj.transform, mainMenuController, ui);
 
         mainMenuController.panelMain = panelMain;
         mainMenuController.panelLevelSelect = panelLevels;
+        mainMenuController.panelControls = panelControls;
         mainMenuController.panelSettings = panelSettings;
         mainMenuController.panelCredits = panelCredits;
 
         panelMain.SetActive(true);
         panelLevels.SetActive(false);
+        panelControls.SetActive(false);
         panelSettings.SetActive(false);
         panelCredits.SetActive(false);
 
@@ -339,10 +342,10 @@ public static class CuartaTransformacionMenuBuilder
         );
         AddPixelOutlineAndShadow(subTxt.gameObject, new Color(0.06f, 0.04f, 0.10f, 1f), 2f);
 
-        // Columna central limpia de 5 botones de tablón pixel-art (exactamente como la referencia)
-        Vector2 btnSize = new Vector2(540f, 108f);
-        float startY = 205f;
-        float stepY  = 118f;
+        // Columna central limpia de 6 botones de tablón pixel-art
+        Vector2 btnSize = new Vector2(540f, 92f);
+        float startY = 230f;
+        float stepY  = 102f;
 
         Button btnPlay = CreateWoodPlankButton(
             "Btn_Jugar",
@@ -350,7 +353,7 @@ public static class CuartaTransformacionMenuBuilder
             "JUGAR",
             new Vector2(0f, startY),
             btnSize,
-            34,
+            32,
             ui
         );
 
@@ -360,6 +363,16 @@ public static class CuartaTransformacionMenuBuilder
             "SELECCIONAR NIVEL",
             new Vector2(0f, startY - stepY * 1f),
             btnSize,
+            28,
+            ui
+        );
+
+        Button btnControls = CreateWoodPlankButton(
+            "Btn_ComoJugar",
+            panel.transform,
+            "CÓMO JUGAR",
+            new Vector2(0f, startY - stepY * 2f),
+            btnSize,
             30,
             ui
         );
@@ -368,9 +381,9 @@ public static class CuartaTransformacionMenuBuilder
             "Btn_Ajustes",
             panel.transform,
             "AJUSTES",
-            new Vector2(0f, startY - stepY * 2f),
+            new Vector2(0f, startY - stepY * 3f),
             btnSize,
-            32,
+            30,
             ui
         );
 
@@ -378,9 +391,9 @@ public static class CuartaTransformacionMenuBuilder
             "Btn_Creditos",
             panel.transform,
             "CRÉDITOS",
-            new Vector2(0f, startY - stepY * 3f),
+            new Vector2(0f, startY - stepY * 4f),
             btnSize,
-            32,
+            30,
             ui
         );
 
@@ -388,9 +401,9 @@ public static class CuartaTransformacionMenuBuilder
             "Btn_Salir",
             panel.transform,
             "SALIR",
-            new Vector2(0f, startY - stepY * 4f),
+            new Vector2(0f, startY - stepY * 5f),
             btnSize,
-            32,
+            30,
             ui
         );
 
@@ -398,12 +411,14 @@ public static class CuartaTransformacionMenuBuilder
         controller.btnPlayDirect = btnPlay;
         controller.btnWatchStory = null;
         controller.btnOpenLevelSelect = btnLevels;
+        controller.btnOpenControls = btnControls;
         controller.btnOpenSettings = btnSettings;
         controller.btnOpenCredits = btnCredits;
         controller.btnQuitGame = btnQuit;
 
         UnityEventTools.AddPersistentListener(btnPlay.onClick, controller.PlayLevel1Direct);
         UnityEventTools.AddPersistentListener(btnLevels.onClick, controller.ShowLevelSelectPanel);
+        UnityEventTools.AddPersistentListener(btnControls.onClick, controller.ShowControlsPanel);
         UnityEventTools.AddPersistentListener(btnSettings.onClick, controller.ShowSettingsPanel);
         UnityEventTools.AddPersistentListener(btnCredits.onClick, controller.ShowCreditsPanel);
         UnityEventTools.AddPersistentListener(btnQuit.onClick, controller.QuitGame);
@@ -633,34 +648,41 @@ public static class CuartaTransformacionMenuBuilder
         StretchFull(dim.GetComponent<RectTransform>());
         dim.AddComponent<Image>().color = new Color(0.04f, 0.03f, 0.08f, 0.65f);
 
-        GameObject frame = CreateFormalPanel("Frame_Ajustes", panel.transform, new Vector2(960f, 760f), new Vector2(0f, 25f), ui.formalPanel);
+        GameObject frame = CreateFormalPanel("Frame_Ajustes", panel.transform, new Vector2(960f, 860f), new Vector2(0f, 15f), ui.formalPanel);
 
-        Text title = CreateStyledText("Title_Ajustes", frame.transform, "AJUSTES", 44, FontStyle.Bold, ColDoradoFormal, new Vector2(0f, 295f), new Vector2(600f, 56f));
+        Text title = CreateStyledText("Title_Ajustes", frame.transform, "AJUSTES", 44, FontStyle.Bold, ColDoradoFormal, new Vector2(0f, 350f), new Vector2(600f, 56f));
         AddPixelOutlineAndShadow(title.gameObject, Color.black, 3f);
 
-        CreateStyledText("Label_Volumen", frame.transform, "VOLUMEN GENERAL", 24, FontStyle.Bold, ColCremaFormal, new Vector2(-130f, 190f), new Vector2(460f, 40f));
-        Text volPctText = CreateStyledText("Value_VolumenPct", frame.transform, "85%", 26, FontStyle.Bold, ColDoradoFormal, new Vector2(260f, 190f), new Vector2(140f, 40f));
-        Slider volSlider = CreateThematicSlider("Slider_VolumenGeneral", frame.transform, new Vector2(0f, 130f), new Vector2(700f, 44f));
+        CreateStyledText("Label_Volumen", frame.transform, "VOLUMEN DE MÚSICA", 24, FontStyle.Bold, ColCremaFormal, new Vector2(-130f, 260f), new Vector2(460f, 40f));
+        Text volPctText = CreateStyledText("Value_VolumenPct", frame.transform, "85%", 26, FontStyle.Bold, ColDoradoFormal, new Vector2(260f, 260f), new Vector2(140f, 40f));
+        Slider volSlider = CreateThematicSlider("Slider_VolumenGeneral", frame.transform, new Vector2(0f, 205f), new Vector2(700f, 44f));
 
-        CreateStyledText("Label_CameraZoom", frame.transform, "FOV / ZOOM DE CÁMARA", 24, FontStyle.Bold, ColCremaFormal, new Vector2(-110f, 42f), new Vector2(500f, 40f));
-        Text zoomValText = CreateStyledText("Value_CameraZoom", frame.transform, "100% (Normal)", 24, FontStyle.Bold, ColDoradoFormal, new Vector2(255f, 42f), new Vector2(220f, 40f));
-        Slider zoomSlider = CreateThematicSlider("Slider_CameraZoom", frame.transform, new Vector2(0f, -18f), new Vector2(700f, 44f));
+        CreateStyledText("Label_VolumenSfx", frame.transform, "VOLUMEN DE EFECTOS", 24, FontStyle.Bold, ColCremaFormal, new Vector2(-130f, 125f), new Vector2(460f, 40f));
+        Text sfxPctText = CreateStyledText("Value_VolumenSfxPct", frame.transform, "85%", 26, FontStyle.Bold, ColDoradoFormal, new Vector2(260f, 125f), new Vector2(140f, 40f));
+        Slider sfxSlider = CreateThematicSlider("Slider_VolumenSfx", frame.transform, new Vector2(0f, 70f), new Vector2(700f, 44f));
+
+        CreateStyledText("Label_CameraZoom", frame.transform, "FOV / ZOOM DE CÁMARA", 24, FontStyle.Bold, ColCremaFormal, new Vector2(-110f, -10f), new Vector2(500f, 40f));
+        Text zoomValText = CreateStyledText("Value_CameraZoom", frame.transform, "100% (Normal)", 24, FontStyle.Bold, ColDoradoFormal, new Vector2(255f, -10f), new Vector2(220f, 40f));
+        Slider zoomSlider = CreateThematicSlider("Slider_CameraZoom", frame.transform, new Vector2(0f, -65f), new Vector2(700f, 44f));
         zoomSlider.minValue = LevelProgressionManager.MIN_CAMERA_ZOOM;
         zoomSlider.maxValue = LevelProgressionManager.MAX_CAMERA_ZOOM;
         zoomSlider.value = LevelProgressionManager.DEFAULT_CAMERA_ZOOM;
 
-        Toggle fsToggle = CreateThematicToggle("Toggle_PantallaCompleta", frame.transform, "PANTALLA COMPLETA", new Vector2(0f, -115f), new Vector2(480f, 56f));
+        Toggle fsToggle = CreateThematicToggle("Toggle_PantallaCompleta", frame.transform, "PANTALLA COMPLETA", new Vector2(0f, -165f), new Vector2(480f, 56f));
 
-        Button btnSaveBack = CreateWoodPlankButton("Btn_GuardarYVolver", frame.transform, "GUARDAR Y VOLVER", new Vector2(0f, -255f), new Vector2(460f, 88f), 26, ui);
+        Button btnSaveBack = CreateWoodPlankButton("Btn_GuardarYVolver", frame.transform, "GUARDAR Y VOLVER", new Vector2(0f, -315f), new Vector2(460f, 88f), 26, ui);
 
         settingsController.volumeSlider = volSlider;
         settingsController.volumeValueLabel = volPctText;
+        settingsController.sfxVolumeSlider = sfxSlider;
+        settingsController.sfxVolumeValueLabel = sfxPctText;
         settingsController.cameraZoomSlider = zoomSlider;
         settingsController.cameraZoomValueLabel = zoomValText;
         settingsController.fullscreenToggle = fsToggle;
         mainController.btnSaveAndBackFromSettings = btnSaveBack;
 
-        UnityEventTools.AddPersistentListener(volSlider.onValueChanged, settingsController.SetVolume);
+        UnityEventTools.AddPersistentListener(volSlider.onValueChanged, settingsController.SetMusicVolume);
+        UnityEventTools.AddPersistentListener(sfxSlider.onValueChanged, settingsController.SetSfxVolume);
         UnityEventTools.AddPersistentListener(zoomSlider.onValueChanged, settingsController.SetCameraZoom);
         UnityEventTools.AddPersistentListener(fsToggle.onValueChanged, settingsController.SetFullscreen);
         UnityEventTools.AddPersistentListener(btnSaveBack.onClick, mainController.ShowMainPanel);
@@ -697,6 +719,39 @@ public static class CuartaTransformacionMenuBuilder
 
         Button btnBack = CreateWoodPlankButton("Btn_VolverCreditos", frame.transform, "VOLVER", new Vector2(0f, -210f), new Vector2(400f, 84f), 26, ui);
         mainController.btnBackFromCredits = btnBack;
+        UnityEventTools.AddPersistentListener(btnBack.onClick, mainController.ShowMainPanel);
+
+        return panel;
+    }
+
+    // ───────────────────────────────────────────────────────────────────────────
+    // PANTALLA 5: CÓMO JUGAR Y CONTROLES FORMAL
+    // ───────────────────────────────────────────────────────────────────────────
+    private static GameObject BuildControlsScreen(Transform canvasTransform, MainMenuUI mainController, UIAssets ui)
+    {
+        GameObject panel = CreateUIObject("Panel_Controls", canvasTransform);
+        StretchFull(panel.GetComponent<RectTransform>());
+
+        GameObject dim = CreateUIObject("Dim_Controls", panel.transform);
+        StretchFull(dim.GetComponent<RectTransform>());
+        dim.AddComponent<Image>().color = new Color(0.04f, 0.03f, 0.08f, 0.65f);
+
+        GameObject frame = CreateFormalPanel("Frame_Controles", panel.transform, new Vector2(980f, 700f), new Vector2(0f, 20f), ui.formalPanel);
+
+        Text title = CreateStyledText("Title_Controles", frame.transform, "CÓMO JUGAR Y CONTROLES", 42, FontStyle.Bold, ColDoradoFormal, new Vector2(0f, 265f), new Vector2(760f, 56f));
+        AddPixelOutlineAndShadow(title.gameObject, Color.black, 3f);
+
+        string controlsBody =
+            "MOVERSE:  Teclas A / D o Flechas Izquierda / Derecha\n\n" +
+            "SALTAR / PISOTÓN:  Espacio (salta sobre enemigos para rebotar)\n\n" +
+            "DASH (ESQUIVE):  Left Shift (atraviesa golpes y proyectiles)\n\n" +
+            "ESPADAZO:  Clic Izquierdo o Enter\n\n" +
+            "PAUSA:  Tecla ESC (ajustes de música, efectos, zoom y nivel)";
+
+        CreateStyledText("Body_Controles", frame.transform, controlsBody, 23, FontStyle.Normal, ColCremaFormal, new Vector2(0f, 15f), new Vector2(840f, 380f));
+
+        Button btnBack = CreateWoodPlankButton("Btn_VolverControles", frame.transform, "VOLVER", new Vector2(0f, -245f), new Vector2(400f, 84f), 26, ui);
+        mainController.btnBackFromControls = btnBack;
         UnityEventTools.AddPersistentListener(btnBack.onClick, mainController.ShowMainPanel);
 
         return panel;

@@ -1,0 +1,43 @@
+====================================================================
+CUARTA TRANSFORMACIÓN — MÚSICA PERSONALIZADA LOCAL (OPCIONAL)
+====================================================================
+
+El juego ya incluye música procedural estilo Mariachi Regional (Dolores
+Hidalgo / 15 de Septiembre) y Electrónica NCS generada por código.
+
+Si deseas usar tus propias canciones reales locales (por ejemplo:
+José Alfredo Jiménez, Mariachi o pistas NCS sin copyright),
+solo copia tus archivos .mp3, .wav o .ogg aquí dentro de:
+
+  Assets/Resources/Music/
+
+con cualquiera de los siguientes nombres (sin la extensión al buscar):
+
+1. MENÚ PRINCIPAL (ej. Caminos de Guanajuato o El Rey):
+   - Caminos_de_Guanajuato.mp3
+   - CaminosDeGuanajuato.mp3
+   - El_Rey.mp3
+   - JoseAlfredo_Menu.mp3
+   - MainMenu.mp3
+
+2. WIN FINAL / GRAN CASTILLO DE FIESTAS PATRONALES (ej. 15 de Septiembre):
+   - 15_de_septiembre.mp3
+   - 15_de_Septiembre.mp3
+   - 15DeSeptiembre.mp3
+   - Finale.mp3
+   - Final.mp3
+
+3. CRÉDITOS ESTILO STAR WARS (ej. Si Nos Dejan o Caminos de Guanajuato):
+   - Credits.mp3
+   - Creditos.mp3
+   - Si_Nos_Dejan.mp3
+
+4. NIVELES Y JEFES (opcional):
+   - Nivel1.mp3  (o Level1.mp3)
+   - Nivel2.mp3  (o Level2.mp3)
+   - Nivel3.mp3  (o Level3.mp3)
+   - Jefe.mp3    (o BossBattle.mp3)
+
+¡No necesitas editar ningún script ni asignar AudioClips en el Inspector!
+Al dar Play en Unity, ProceduralSoundManager cargará tu archivo real
+automáticamente con prioridad sobre la música procedural.

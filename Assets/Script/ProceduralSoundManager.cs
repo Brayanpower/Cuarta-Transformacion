@@ -20,10 +20,15 @@ public class ProceduralSoundManager : MonoBehaviour
         Level1,
         Level2,
         Level3,
-        BossBattle
+        BossBattle,
+        Finale,
+        Credits
     }
 
     private const int SampleRate = 44100;
+    private const int MusicSampleRate = 22050;
+    private const int SinTableSize = 4096;
+    private static readonly float[] sinTable = BuildSinTable();
 
     private AudioSource sfxSource;
     private AudioSource musicSource;
@@ -35,9 +40,29 @@ public class ProceduralSoundManager : MonoBehaviour
     private MusicTheme savedLevelTheme = MusicTheme.Level1;
     private bool isInitialized = false;
 
-    [Header("Volúmenes Internos (escalados por AudioListener.volume)")]
+    [Header("Volúmenes Internos (escalados por Preferencias de Usuario)")]
     [Range(0f, 1f)] public float sfxVolume = 0.72f;
-    [Range(0f, 1f)] public float musicVolume = 0.28f;
+    [Range(0f, 1f)] public float musicVolume = 0.36f;
+
+    private float userMusicScale = LevelProgressionManager.DEFAULT_VOLUME;
+    private float userSfxScale = LevelProgressionManager.DEFAULT_VOLUME;
+
+    private static float[] BuildSinTable()
+    {
+        float[] t = new float[SinTableSize];
+        for (int i = 0; i < SinTableSize; i++)
+            t[i] = Mathf.Sin((i / (float)SinTableSize) * Mathf.PI * 2f);
+        return t;
+    }
+
+    private static float FastSin(float turns)
+    {
+        float frac = turns - Mathf.Floor(turns);
+        int idx = (int)(frac * SinTableSize);
+        if (idx >= SinTableSize) idx -= SinTableSize;
+        if (idx < 0) idx += SinTableSize;
+        return sinTable[idx];
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoInitialize()
@@ -88,11 +113,33 @@ public class ProceduralSoundManager : MonoBehaviour
 
     private void Start()
     {
-        // Aplicar volumen guardado en PlayerPrefs si existe
-        float savedVol = PlayerPrefs.GetFloat(LevelProgressionManager.VOLUME_KEY, 0.85f);
-        AudioListener.volume = Mathf.Clamp01(savedVol);
-
+        RefreshVolumesFromPrefs();
         PlayThemeForSceneName(SceneManager.GetActiveScene().name);
+    }
+
+    private static float GetThemeVolumeMultiplier(MusicTheme theme)
+    {
+        return theme == MusicTheme.Finale ? 0.50f : 1.0f;
+    }
+
+    public void RefreshVolumesFromPrefs()
+    {
+        userMusicScale = LevelProgressionManager.GetMusicVolume();
+        userSfxScale = LevelProgressionManager.GetSfxVolume();
+        if (musicSource != null)
+            musicSource.volume = musicVolume * userMusicScale * GetThemeVolumeMultiplier(currentTheme);
+    }
+
+    public void SetMusicVolume(float normalized)
+    {
+        userMusicScale = Mathf.Clamp01(normalized);
+        if (musicSource != null)
+            musicSource.volume = musicVolume * userMusicScale * GetThemeVolumeMultiplier(currentTheme);
+    }
+
+    public void SetSfxVolume(float normalized)
+    {
+        userSfxScale = Mathf.Clamp01(normalized);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -105,6 +152,9 @@ public class ProceduralSoundManager : MonoBehaviour
         if (isInitialized)
             return;
 
+        userMusicScale = LevelProgressionManager.GetMusicVolume();
+        userSfxScale = LevelProgressionManager.GetSfxVolume();
+
         sfxSource = gameObject.AddComponent<AudioSource>();
         sfxSource.playOnAwake = false;
         sfxSource.loop = false;
@@ -114,7 +164,7 @@ public class ProceduralSoundManager : MonoBehaviour
         musicSource.playOnAwake = false;
         musicSource.loop = true;
         musicSource.spatialBlend = 0f;
-        musicSource.volume = musicVolume;
+        musicSource.volume = musicVolume * userMusicScale;
 
         GenerateAllSfx();
         GenerateAllMusicThemes();
@@ -157,14 +207,14 @@ public class ProceduralSoundManager : MonoBehaviour
         if (!isInitialized)
             InitializeAudioSystem();
 
-        if (sfxSource == null || !sfxClips.TryGetValue(key, out AudioClip clip) || clip == null)
+        if (userSfxScale <= 0.001f || sfxSource == null || !sfxClips.TryGetValue(key, out AudioClip clip) || clip == null)
             return;
 
         sfxSource.pitch = Mathf.Approximately(minPitch, maxPitch)
             ? minPitch
             : UnityEngine.Random.Range(minPitch, maxPitch);
 
-        sfxSource.PlayOneShot(clip, sfxVolume * volumeScale);
+        sfxSource.PlayOneShot(clip, sfxVolume * userSfxScale * volumeScale);
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
@@ -201,12 +251,27 @@ public class ProceduralSoundManager : MonoBehaviour
 
     public void PlayBossMusic()
     {
-        PlayMusicTheme(MusicTheme.BossBattle);
+        PlayMusicTheme(MusicTheme.BossBattle, true);
+    }
+
+    public void PlayFinaleMusic()
+    {
+        PlayMusicTheme(MusicTheme.Finale);
+    }
+
+    public void PlayCreditsMusic()
+    {
+        PlayMusicTheme(MusicTheme.Credits);
     }
 
     public void RestoreLevelMusic()
     {
         PlayMusicTheme(savedLevelTheme);
+    }
+
+    public void RestartLevelMusic()
+    {
+        PlayMusicTheme(savedLevelTheme, true);
     }
 
     public void StopMusic()
@@ -216,7 +281,7 @@ public class ProceduralSoundManager : MonoBehaviour
         currentTheme = MusicTheme.None;
     }
 
-    public void PlayMusicTheme(MusicTheme theme)
+    public void PlayMusicTheme(MusicTheme theme, bool forceRestart = false)
     {
         if (!isInitialized)
             InitializeAudioSystem();
@@ -230,15 +295,23 @@ public class ProceduralSoundManager : MonoBehaviour
             return;
         }
 
-        if (currentTheme == theme && musicSource.isPlaying)
+        if (!forceRestart && currentTheme == theme && musicSource.isPlaying)
             return;
 
-        if (musicClips.TryGetValue(theme, out AudioClip clip) && clip != null)
+        AudioClip clip = GetOrCreateMusicClip(theme);
+        if (clip != null)
         {
+            if (clip.loadState == AudioDataLoadState.Unloaded)
+                clip.LoadAudioData();
+
+            if (forceRestart && musicSource.isPlaying)
+                musicSource.Stop();
+
             currentTheme = theme;
             musicSource.clip = clip;
-            musicSource.volume = musicVolume;
+            musicSource.volume = musicVolume * userMusicScale * GetThemeVolumeMultiplier(currentTheme);
             musicSource.loop = true;
+            musicSource.time = 0f;
             musicSource.Play();
         }
     }
@@ -553,35 +626,41 @@ public class ProceduralSoundManager : MonoBehaviour
 
     private AudioClip CreateVictoryFanfareClip(string clipName)
     {
-        // Fanfarria triunfal estilo mariachi / 16-bit en Do Mayor
-        float[] freqs = { 523.25f, 659.25f, 783.99f, 1046.50f, 783.99f, 1046.50f };
-        float[] durs  = { 0.12f,   0.12f,   0.12f,   0.26f,    0.14f,   0.52f };
+        // Fanfarria triunfal de trompetas de mariachi en tercera paralela (Re Mayor -> Sol/La/Re)
+        float[] freqsLead = { 587.33f, 739.99f, 880.00f, 1174.66f, 987.77f, 1174.66f };
+        float[] freqsHarm = { 493.88f, 587.33f, 739.99f,  987.77f, 783.99f,  987.77f };
+        float[] durs      = { 0.13f,   0.13f,   0.13f,    0.28f,   0.15f,    0.58f };
 
         int totalSamples = 0;
         for (int i = 0; i < durs.Length; i++)
             totalSamples += Mathf.RoundToInt(SampleRate * durs[i]);
 
         float[] data = new float[totalSamples];
-        System.Random rng = new System.Random(9999);
         int cursor = 0;
 
-        for (int n = 0; n < freqs.Length; n++)
+        for (int n = 0; n < freqsLead.Length; n++)
         {
             int count = Mathf.RoundToInt(SampleRate * durs[n]);
-            float f1 = freqs[n];
-            float f2 = f1 * 0.5f; // Octava inferior armónica
-            float p1 = 0f, p2 = 0f;
+            float f1 = freqsLead[n];
+            float f2 = freqsHarm[n];
+            float fb = f1 * 0.25f;
+            float p1 = 0f, p2 = 0f, pb = 0f;
 
             for (int i = 0; i < count; i++)
             {
+                float t = (float)i / SampleRate;
                 float norm = (float)i / count;
-                float env = Mathf.Clamp01(norm * 20f) * Mathf.Clamp01((1f - norm) * 3.5f);
-                p1 += f1 / SampleRate;
-                p2 += f2 / SampleRate;
+                float env = Mathf.Clamp01(norm * 24f) * Mathf.Clamp01((1f - norm) * 3.8f);
+                float vib = (n == freqsLead.Length - 1) ? (1f + 0.009f * Mathf.Sin(t * 36f)) : 1f;
 
-                float lead = SampleWave(WaveType.Square, p1, rng) * 0.36f;
-                float bass = SampleWave(WaveType.Triangle, p2, rng) * 0.30f;
-                data[cursor + i] = (lead + bass) * env;
+                p1 += (f1 * vib) / SampleRate;
+                p2 += (f2 * vib) / SampleRate;
+                pb += fb / SampleRate;
+
+                float t1 = MariachiBrassSample(p1);
+                float t2 = MariachiBrassSample(p2) * 0.72f;
+                float gbass = FastSin(pb) * 0.45f;
+                data[cursor + i] = Mathf.Clamp((t1 * 0.34f + t2 * 0.24f + gbass * 0.28f) * env, -0.95f, 0.95f);
             }
             cursor += count;
         }
@@ -592,130 +671,530 @@ public class ProceduralSoundManager : MonoBehaviour
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // SÍNTESIS PROCEDURAL DE MÚSICA DE FONDO (LOOPS CHIPTUNE / REGIONALES)
+    // BANDA SONORA PROCEDURAL MULTI-INSTRUMENTO (REGIONAL DOLORES HIDALGO + NCS EDM)
+    // También soporta archivos locales en Assets/Resources/Music/<Theme>.mp3|.wav|.ogg
     // ═══════════════════════════════════════════════════════════════════════════
 
     private void GenerateAllMusicThemes()
     {
-        // 1. Menú Principal: Serenata colonial alegre en Sol Mayor (118 BPM)
-        musicClips[MusicTheme.MainMenu] = CreateChiptuneLoop(
-            "BGM_MainMenu",
-            118f,
-            new int[] { 67, 71, 74, 79, 76, 74, 71, 0,  69, 72, 76, 74, 71, 69, 67, 0,
-                        67, 71, 74, 79, 81, 79, 76, 74, 76, 74, 71, 69, 67, 0,  67, 0 },
-            new int[] { 43, 50, 43, 50, 48, 55, 43, 50, 45, 52, 50, 57, 43, 50, 43, 50,
-                        43, 50, 43, 50, 48, 55, 48, 55, 50, 57, 50, 57, 43, 50, 43, 47 },
-            WaveType.Triangle,
-            0.30f
-        );
-
-        // 2. Nivel 1 (Jardín Principal): Fiesta patronal viva en Do Mayor (138 BPM)
-        musicClips[MusicTheme.Level1] = CreateChiptuneLoop(
-            "BGM_Level1",
-            138f,
-            new int[] { 72, 76, 79, 76, 81, 79, 76, 72, 74, 77, 81, 79, 77, 74, 71, 0,
-                        72, 76, 79, 84, 83, 81, 79, 76, 74, 76, 74, 71, 72, 0,  79, 0 },
-            new int[] { 48, 55, 48, 55, 53, 60, 48, 55, 50, 57, 43, 50, 43, 50, 43, 47,
-                        48, 55, 48, 55, 53, 60, 48, 55, 50, 57, 43, 50, 48, 55, 48, 52 },
-            WaveType.Square,
-            0.24f
-        );
-
-        // 3. Nivel 2 (Talleres de Talavera): Ritmo sincopado artesanal en Re Menor (132 BPM)
-        musicClips[MusicTheme.Level2] = CreateChiptuneLoop(
-            "BGM_Level2",
-            132f,
-            new int[] { 62, 65, 69, 70, 69, 65, 64, 0,  62, 65, 69, 74, 72, 70, 69, 0,
-                        70, 74, 77, 76, 74, 72, 70, 69, 67, 69, 65, 64, 62, 0,  69, 0 },
-            new int[] { 38, 45, 38, 45, 41, 48, 45, 52, 38, 45, 38, 45, 46, 53, 45, 52,
-                        46, 53, 46, 53, 48, 55, 48, 55, 43, 50, 45, 52, 38, 45, 38, 41 },
-            WaveType.Square,
-            0.24f
-        );
-
-        // 4. Nivel 3 (Callejones de Guanajuato): Nocturno rápido y dramático en Mi Menor (148 BPM)
-        musicClips[MusicTheme.Level3] = CreateChiptuneLoop(
-            "BGM_Level3",
-            148f,
-            new int[] { 64, 67, 71, 76, 75, 71, 67, 64, 66, 71, 75, 78, 76, 71, 67, 0,
-                        76, 79, 78, 76, 74, 72, 71, 69, 67, 71, 75, 71, 76, 0,  71, 0 },
-            new int[] { 40, 47, 40, 47, 47, 54, 40, 47, 42, 47, 47, 54, 40, 47, 40, 47,
-                        48, 55, 47, 54, 45, 52, 43, 50, 42, 47, 47, 51, 40, 47, 40, 43 },
-            WaveType.Sawtooth,
-            0.22f
-        );
-
-        // 5. Batalla contra Jefe: Tema veloz de alta adrenalina en La Menor (166 BPM)
-        musicClips[MusicTheme.BossBattle] = CreateChiptuneLoop(
-            "BGM_BossBattle",
-            166f,
-            new int[] { 69, 69, 72, 76, 75, 76, 72, 69, 71, 71, 74, 77, 76, 74, 71, 68,
-                        69, 72, 76, 81, 80, 76, 74, 72, 76, 74, 72, 71, 69, 0,  76, 0 },
-            new int[] { 45, 45, 52, 45, 45, 45, 52, 48, 43, 43, 50, 43, 44, 44, 52, 44,
-                        45, 45, 52, 45, 48, 48, 55, 48, 50, 50, 52, 52, 45, 52, 45, 44 },
-            WaveType.Sawtooth,
-            0.25f
-        );
+        // Pre-cargar únicamente el tema inicial para arranque instantáneo;
+        // los demás temas se cargan o sintetizan al vuelo en el primer uso y quedan en caché.
+        GetOrCreateMusicClip(MusicTheme.MainMenu);
     }
 
-    private AudioClip CreateChiptuneLoop(string clipName, float bpm, int[] melodyMidi, int[] bassMidi, WaveType leadWave, float masterAmp)
+    private static AudioClip TryLoadCustomMusic(MusicTheme theme)
     {
-        float stepDuration = (60f / bpm) * 0.5f; // Corcheas
-        int steps = Mathf.Min(melodyMidi.Length, bassMidi.Length);
-        int samplesPerStep = Mathf.RoundToInt(SampleRate * stepDuration);
+        string[] aliases;
+        switch (theme)
+        {
+            case MusicTheme.MainMenu:
+                aliases = new[] { "MainMenu", "Menu", "Caminos_de_Guanajuato", "CaminosDeGuanajuato", "El_Rey", "ElRey", "JoseAlfredo_Menu" };
+                break;
+            case MusicTheme.Level1:
+                aliases = new[] { "Level1", "Nivel1" };
+                break;
+            case MusicTheme.Level2:
+                aliases = new[] { "Level2", "Nivel2" };
+                break;
+            case MusicTheme.Level3:
+                aliases = new[] { "Level3", "Nivel3" };
+                break;
+            case MusicTheme.BossBattle:
+                aliases = new[] { "BossBattle", "Boss", "Jefe" };
+                break;
+            case MusicTheme.Finale:
+                aliases = new[] { "Finale", "Final", "15_de_septiembre", "15_de_Septiembre", "15DeSeptiembre", "Grito", "FiestaFinal" };
+                break;
+            case MusicTheme.Credits:
+                aliases = new[] { "Credits", "Creditos", "Si_Nos_Dejan", "SiNosDejan" };
+                break;
+            default:
+                return null;
+        }
+
+        for (int i = 0; i < aliases.Length; i++)
+        {
+            AudioClip loaded = Resources.Load<AudioClip>("Music/" + aliases[i]);
+            if (loaded != null)
+            {
+                Debug.Log($"🎵 [ProceduralSoundManager] Música local cargada para {theme}: Resources/Music/{aliases[i]} ({loaded.length:F1}s)");
+                return loaded;
+            }
+        }
+        return null;
+    }
+
+    private AudioClip GetOrCreateMusicClip(MusicTheme theme)
+    {
+        if (theme == MusicTheme.None)
+            return null;
+
+        if (musicClips.TryGetValue(theme, out AudioClip cached) && cached != null)
+            return cached;
+
+        // 1. Prioridad a música local colocada en Assets/Resources/Music/
+        AudioClip custom = TryLoadCustomMusic(theme);
+        if (custom != null)
+        {
+            musicClips[theme] = custom;
+            return custom;
+        }
+
+        // 2. Síntesis multi-instrumento (Mariachi Regional / Electrónica estilo NCS)
+        AudioClip generated = null;
+        switch (theme)
+        {
+            case MusicTheme.MainMenu:
+                // Serenata Ranchera Nocturna de Dolores Hidalgo en Sol Mayor (3/4, 108 BPM)
+                generated = CreateRancheraTrack(
+                    "BGM_MainMenu_Ranchera",
+                    108f,
+                    true,
+                    new int[]
+                    {
+                        79, 79, 83,  86, 86, 83,  81, 79, 78,  79,  0,  0,
+                        81, 81, 84,  88, 86, 84,  83, 81, 79,  81,  0,  0,
+                        83, 83, 86,  91, 89, 86,  84, 83, 81,  79,  0,  0,
+                        81, 83, 84,  86, 84, 81,  79, 78, 79,  79,  0,  0,
+                        74, 78, 81,  83, 81, 79,  76, 79, 83,  81,  0,  0
+                    },
+                    new int[]
+                    {
+                        43, 55, 59,  43, 55, 59,  45, 57, 60,  43, 55, 59,
+                        45, 57, 60,  48, 60, 64,  50, 57, 62,  43, 55, 59,
+                        47, 59, 62,  48, 60, 64,  45, 57, 60,  43, 55, 59,
+                        45, 57, 60,  50, 57, 62,  43, 55, 59,  43, 50, 55,
+                        50, 57, 62,  43, 55, 59,  48, 60, 64,  50, 57, 62
+                    },
+                    0.35f,
+                    true,
+                    false
+                );
+                break;
+
+            case MusicTheme.Level1:
+                // Son Alegre de Fiesta Patronal en Do Mayor (2/4, 138 BPM) — Jardín Principal
+                generated = CreateRancheraTrack(
+                    "BGM_Level1_FiestaSon",
+                    138f,
+                    false,
+                    new int[]
+                    {
+                        72, 76, 79, 76,  81, 84, 81, 79,  77, 79, 77, 74,  72, 76, 79,  0,
+                        76, 79, 84, 83,  81, 83, 81, 79,  77, 76, 74, 71,  72,  0, 72,  0,
+                        84, 83, 81, 79,  81, 79, 76, 72,  74, 77, 81, 79,  77, 74, 71,  0,
+                        72, 76, 79, 84,  86, 84, 81, 79,  77, 76, 74, 79,  72,  0,  0,  0
+                    },
+                    new int[]
+                    {
+                        48, 60, 48, 60,  53, 65, 48, 60,  55, 62, 55, 62,  48, 60, 55, 62,
+                        48, 60, 48, 60,  53, 65, 48, 60,  50, 62, 55, 62,  48, 60, 48, 55,
+                        53, 65, 48, 60,  53, 65, 48, 60,  50, 62, 53, 65,  55, 62, 43, 55,
+                        48, 60, 48, 60,  53, 65, 55, 62,  50, 62, 55, 62,  48, 60, 48,  0
+                    },
+                    0.33f,
+                    false,
+                    false
+                );
+                break;
+
+            case MusicTheme.Level2:
+                // Electrónica Melódica estilo NCS en Re Menor (128 BPM) — Talleres de Talavera
+                generated = CreateNcsElectronicTrack(
+                    "BGM_Level2_NCS_Talavera",
+                    128f,
+                    new int[]
+                    {
+                        74,  0, 77, 81,  79,  0, 77, 76,  74,  0, 77, 81,  86,  0, 84, 81,
+                        82,  0, 81, 79,  77,  0, 76, 74,  76, 77, 79, 81,  79, 77, 76,  0,
+                        74, 77, 81, 86,  84, 81, 79, 77,  82, 81, 79, 77,  79, 81, 82,  0,
+                        86,  0, 84, 81,  79, 77, 76, 74,  77, 76, 74, 73,  74,  0,  0,  0
+                    },
+                    new int[]
+                    {
+                        38, 38, 50, 38,  41, 41, 53, 41,  46, 46, 58, 46,  45, 45, 57, 45,
+                        46, 46, 58, 46,  43, 43, 55, 43,  45, 45, 57, 45,  45, 45, 52, 45,
+                        38, 38, 50, 38,  41, 41, 53, 41,  46, 46, 58, 46,  48, 48, 60, 48,
+                        46, 46, 58, 46,  43, 43, 55, 43,  45, 45, 57, 45,  38, 38, 50, 45
+                    },
+                    0.34f,
+                    false
+                );
+                break;
+
+            case MusicTheme.Level3:
+                // Electrónica Oscura Épica estilo NCS (vibra Mortals) en Mi Menor (134 BPM) — Guanajuato
+                generated = CreateNcsElectronicTrack(
+                    "BGM_Level3_NCS_Guanajuato",
+                    134f,
+                    new int[]
+                    {
+                        76,  0, 79, 83,  82, 83, 79, 76,  78,  0, 83, 86,  84, 83, 79,  0,
+                        84,  0, 83, 81,  79,  0, 78, 76,  79, 78, 76, 75,  76,  0,  0,  0,
+                        76, 79, 83, 88,  86, 83, 81, 79,  84, 83, 81, 79,  78, 79, 83,  0,
+                        88,  0, 86, 83,  84, 83, 81, 79,  78, 79, 78, 75,  76,  0,  0,  0
+                    },
+                    new int[]
+                    {
+                        40, 40, 52, 40,  47, 47, 59, 47,  42, 42, 54, 42,  48, 48, 60, 48,
+                        48, 48, 60, 48,  43, 43, 55, 43,  47, 47, 59, 47,  40, 40, 52, 47,
+                        40, 40, 52, 40,  43, 43, 55, 43,  48, 48, 60, 48,  47, 47, 59, 47,
+                        48, 48, 60, 48,  45, 45, 57, 45,  47, 47, 59, 47,  40, 40, 52, 40
+                    },
+                    0.35f,
+                    true
+                );
+                break;
+
+            case MusicTheme.BossBattle:
+                // Batalla de Jefe estilo NCS Drop Intenso en La Menor (148 BPM)
+                generated = CreateNcsElectronicTrack(
+                    "BGM_BossBattle_NCS_Drop",
+                    148f,
+                    new int[]
+                    {
+                        69, 69, 72, 76,  75, 76, 72, 69,  71, 71, 74, 77,  76, 74, 71, 68,
+                        69, 72, 76, 81,  80, 76, 74, 72,  76, 74, 72, 71,  69,  0, 76,  0,
+                        81, 81, 84, 88,  87, 88, 84, 81,  79, 79, 83, 86,  84, 83, 79, 76,
+                        77, 81, 84, 83,  81, 79, 77, 76,  74, 76, 74, 71,  69,  0, 76,  0
+                    },
+                    new int[]
+                    {
+                        45, 45, 57, 45,  45, 45, 57, 48,  43, 43, 55, 43,  44, 44, 56, 44,
+                        45, 45, 57, 45,  48, 48, 60, 48,  50, 50, 52, 52,  45, 57, 45, 44,
+                        45, 45, 57, 45,  48, 48, 60, 48,  43, 43, 55, 43,  48, 48, 60, 48,
+                        41, 41, 53, 41,  43, 43, 55, 43,  44, 44, 56, 44,  45, 57, 45,  0
+                    },
+                    0.36f,
+                    true
+                );
+                break;
+
+            case MusicTheme.Finale:
+                // Fiesta Patria estilo 15 de Septiembre en Dolores Hidalgo (Re Mayor 2/4, 134 BPM)
+                generated = CreateRancheraTrack(
+                    "BGM_Finale_15Septiembre",
+                    134f,
+                    false,
+                    new int[]
+                    {
+                        74, 78, 81, 86,  86, 83, 81, 78,  79, 83, 86, 83,  81,  0, 81,  0,
+                        81, 85, 88, 90,  88, 86, 85, 81,  79, 78, 76, 79,  78,  0, 74,  0,
+                        86, 86, 88, 90,  91, 90, 88, 86,  83, 86, 88, 86,  81,  0, 81,  0,
+                        86, 85, 83, 81,  79, 81, 83, 85,  86, 81, 78, 86,  86,  0,  0,  0
+                    },
+                    new int[]
+                    {
+                        38, 50, 45, 57,  38, 50, 45, 57,  43, 55, 43, 55,  45, 57, 45, 57,
+                        45, 57, 45, 57,  38, 50, 45, 57,  43, 55, 45, 57,  38, 50, 38, 50,
+                        38, 50, 42, 54,  43, 55, 43, 55,  43, 55, 45, 57,  45, 57, 45, 57,
+                        38, 50, 43, 55,  45, 57, 45, 57,  38, 50, 45, 57,  38, 50, 38,  0
+                    },
+                    0.37f,
+                    false,
+                    true
+                );
+                break;
+
+            case MusicTheme.Credits:
+                // Serenata Nostálgica de Dolores Hidalgo (3/4 lento, 88 BPM) para los créditos estilo Star Wars
+                generated = CreateRancheraTrack(
+                    "BGM_Credits_CaminosDolores",
+                    88f,
+                    true,
+                    new int[]
+                    {
+                        79,  0, 83,  86, 84, 83,  81,  0, 79,  79,  0,  0,
+                        81,  0, 84,  88, 86, 84,  83,  0, 81,  81,  0,  0,
+                        83, 84, 86,  91,  0, 89,  88, 86, 84,  83,  0,  0,
+                        81, 83, 84,  86, 84, 81,  79, 78, 79,  79,  0,  0,
+                        74, 78, 81,  83, 81, 79,  76, 79, 83,  81,  0,  0,
+                        84, 83, 81,  79, 78, 76,  74, 78, 81,  79,  0,  0
+                    },
+                    new int[]
+                    {
+                        43, 55, 59,  43, 55, 59,  45, 57, 60,  43, 55, 59,
+                        45, 57, 60,  48, 60, 64,  50, 57, 62,  50, 57, 62,
+                        47, 59, 62,  48, 60, 64,  48, 60, 64,  43, 55, 59,
+                        45, 57, 60,  50, 57, 62,  43, 55, 59,  43, 55, 59,
+                        50, 57, 62,  43, 55, 59,  48, 60, 64,  50, 57, 62,
+                        48, 60, 64,  45, 57, 60,  50, 57, 62,  43, 55, 59
+                    },
+                    0.35f,
+                    true,
+                    false
+                );
+                break;
+        }
+
+        if (generated != null)
+            musicClips[theme] = generated;
+        return generated;
+    }
+
+    private AudioClip CreateRancheraTrack(
+        string clipName,
+        float bpm,
+        bool isWaltz34,
+        int[] melodyMidi,
+        int[] bassChordMidi,
+        float masterAmp,
+        bool warmSerenade,
+        bool festiveDrums)
+    {
+        // En vals 3/4 cada elemento equivale a 1 negra; en son 2/4 cada elemento equivale a 1 corchea.
+        float stepDuration = isWaltz34 ? (60f / bpm) : (60f / bpm) * 0.5f;
+        int steps = Mathf.Min(melodyMidi.Length, bassChordMidi.Length);
+        int samplesPerStep = Mathf.RoundToInt(MusicSampleRate * stepDuration);
         int totalSamples = samplesPerStep * steps;
         float[] data = new float[totalSamples];
 
         System.Random rng = new System.Random(clipName.GetHashCode());
-        float leadPhase = 0f;
+        float lead1Phase = 0f;
+        float lead2Phase = 0f;
+        float violinPhase = 0f;
         float bassPhase = 0f;
+        float strumP1 = 0f, strumP2 = 0f, strumP3 = 0f, strumP4 = 0f;
 
         for (int s = 0; s < steps; s++)
         {
-            float leadFreq = MidiToFreq(melodyMidi[s]);
-            float bassFreq = MidiToFreq(bassMidi[s]);
-            bool isKick = (s % 4 == 0);
-            bool isHat  = (s % 2 == 1);
+            int midiLead = melodyMidi[s];
+            int midiHarm = midiLead > 0 ? (midiLead - 4) : 0; // Dueto de mariachi en 3a/6a inferior
+            float f1 = MidiToFreq(midiLead);
+            float f2 = MidiToFreq(midiHarm);
+
+            int bcMidi = bassChordMidi[s];
+            float fBass = MidiToFreq(bcMidi);
+
+            // En 3/4: tiempo 1 = guitarrón grave, tiempos 2 y 3 = rasgueo de vihuela.
+            // En 2/4: pares = guitarrón, impares = contratiempo de vihuela.
+            bool isBassHit = isWaltz34 ? (s % 3 == 0) : (s % 2 == 0);
+            bool isStrumHit = !isBassHit && bcMidi > 0;
+            bool isSnareHit = festiveDrums && (s % 4 == 2);
+
+            float chord1 = fBass;
+            float chord2 = fBass * 1.25f;
+            float chord3 = fBass * 1.50f;
+            float chord4 = fBass * 2.00f;
 
             for (int i = 0; i < samplesPerStep; i++)
             {
                 float norm = (float)i / samplesPerStep;
-                float leadEnv = Mathf.Clamp01(norm * 30f) * Mathf.Clamp01((1f - norm) * 2.2f);
-                float bassEnv = Mathf.Clamp01(norm * 25f) * Mathf.Pow(1f - norm, 0.8f);
+                float t = (float)i / MusicSampleRate;
 
+                float vib = 1f + (warmSerenade ? 0.0085f : 0.006f) * FastSin(t * 5.8f);
                 float sample = 0f;
-                if (leadFreq > 1f)
+
+                if (f1 > 1f)
                 {
-                    leadPhase += leadFreq / SampleRate;
-                    sample += SampleWave(leadWave, leadPhase, rng) * 0.44f * leadEnv;
+                    float leadEnv = Mathf.Clamp01(norm * 18f) * Mathf.Clamp01((1f - norm) * 2.4f);
+                    lead1Phase += (f1 * vib) / MusicSampleRate;
+                    lead2Phase += (f2 * vib) / MusicSampleRate;
+                    violinPhase += (f1 * (1f + 0.009f * FastSin(t * 6.4f + 0.4f))) / MusicSampleRate;
+
+                    float voice1 = warmSerenade ? WarmHornSample(lead1Phase) : MariachiBrassSample(lead1Phase);
+                    float voice2 = warmSerenade ? WarmHornSample(lead2Phase) : MariachiBrassSample(lead2Phase);
+                    float violin = MariachiViolinSample(violinPhase);
+                    sample += (voice1 * 0.36f + voice2 * 0.22f + violin * (warmSerenade ? 0.22f : 0.14f)) * leadEnv;
                 }
 
-                if (bassFreq > 1f)
+                if (isBassHit && fBass > 1f)
                 {
-                    bassPhase += bassFreq / SampleRate;
-                    sample += SampleWave(WaveType.Triangle, bassPhase, rng) * 0.46f * bassEnv;
+                    float gEnv = Mathf.Clamp01(norm * 35f) * Mathf.Pow(1f - norm, 1.35f);
+                    bassPhase += fBass / MusicSampleRate;
+                    // Guitarrón cálido con cuerpo grave + armónico de cuerda pulsada
+                    float guitarron = FastSin(bassPhase) * 0.72f + FastSin(bassPhase * 2f) * 0.28f;
+                    sample += guitarron * gEnv * 0.56f;
+                }
+                else if (isStrumHit)
+                {
+                    float sEnv = Mathf.Clamp01(norm * 45f) * Mathf.Pow(1f - norm, 2.2f);
+                    strumP1 += chord1 / MusicSampleRate;
+                    strumP2 += chord2 / MusicSampleRate;
+                    strumP3 += chord3 / MusicSampleRate;
+                    strumP4 += chord4 / MusicSampleRate;
+
+                    float vihuela = (PluckedStringSample(strumP1) + PluckedStringSample(strumP2) + PluckedStringSample(strumP3) + PluckedStringSample(strumP4)) * 0.25f;
+                    float pickClick = norm < 0.04f ? (float)(rng.NextDouble() * 2.0 - 1.0) * (1f - norm / 0.04f) * 0.14f : 0f;
+                    sample += (vihuela * 0.38f + pickClick) * sEnv;
                 }
 
-                // Percusión rítmica chiptune ligera
-                if (isKick && norm < 0.25f)
+                if (isSnareHit && norm < 0.22f)
                 {
-                    float kickNorm = norm / 0.25f;
-                    float kickFreq = Mathf.Lerp(130f, 45f, kickNorm);
-                    sample += Mathf.Sin(kickNorm * kickFreq * 0.2f) * (1f - kickNorm) * 0.35f;
+                    // Redoblante festivo de banda/desfile del 15 de Septiembre
+                    float sn = norm / 0.22f;
+                    float sEnv = Mathf.Pow(1f - sn, 1.8f);
+                    sample += (float)(rng.NextDouble() * 2.0 - 1.0) * sEnv * 0.20f;
                 }
-                else if (isHat && norm < 0.12f)
+                else if (!warmSerenade && !isBassHit && norm < 0.10f)
                 {
-                    float hatNorm = norm / 0.12f;
-                    sample += SampleWave(WaveType.Noise, 0f, rng) * (1f - hatNorm) * 0.10f;
+                    float maracaEnv = 1f - (norm / 0.10f);
+                    sample += (float)(rng.NextDouble() * 2.0 - 1.0) * maracaEnv * 0.06f;
                 }
 
                 data[s * samplesPerStep + i] = Mathf.Clamp(sample * masterAmp, -0.95f, 0.95f);
             }
         }
 
-        AudioClip clip = AudioClip.Create(clipName, totalSamples, 1, SampleRate, false);
+        // Fundido mínimo de 8 ms en extremos del clip para bucle 100% libre de clics
+        ApplyLoopCrossfadeSafe(data, Mathf.Min(180, totalSamples / 16));
+        AudioClip clip = AudioClip.Create(clipName, totalSamples, 1, MusicSampleRate, false);
         clip.SetData(data, 0);
         return clip;
+    }
+
+    private AudioClip CreateNcsElectronicTrack(
+        string clipName,
+        float bpm,
+        int[] melodyMidi,
+        int[] bassMidi,
+        float masterAmp,
+        bool aggressiveDrop)
+    {
+        float stepDuration = (60f / bpm) * 0.5f; // Corcheas en 4/4 (4 pasos por compás kick)
+        int steps = Mathf.Min(melodyMidi.Length, bassMidi.Length);
+        int samplesPerStep = Mathf.RoundToInt(MusicSampleRate * stepDuration);
+        int totalSamples = samplesPerStep * steps;
+        float[] data = new float[totalSamples];
+
+        System.Random rng = new System.Random(clipName.GetHashCode());
+        float leadPhaseA = 0f, leadPhaseB = 0f, leadPhaseC = 0f;
+        float padP1 = 0f, padP2 = 0f, padP3 = 0f;
+        float subPhase = 0f;
+
+        for (int s = 0; s < steps; s++)
+        {
+            float fLead = MidiToFreq(melodyMidi[s]);
+            float fBass = MidiToFreq(bassMidi[s]);
+
+            // Kick four-on-the-floor cada negra (s % 2 == 0) + Clap/Snare en tiempos 2 y 4 (s % 4 == 2)
+            bool isKick = (s % 2 == 0);
+            bool isSnare = (s % 4 == 2);
+            bool isOffHat = (s % 2 == 1);
+
+            float padRoot = fBass * 2f;
+            float padThird = padRoot * 1.1892f; // 3a menor melódica
+            float padFifth = padRoot * 1.4983f;
+
+            for (int i = 0; i < samplesPerStep; i++)
+            {
+                float norm = (float)i / samplesPerStep;
+                // Sidechain pumping clásico de NCS tras cada kick
+                int stepInBeat = s % 2;
+                float beatProgress = (stepInBeat + norm) * 0.5f;
+                float sidechain = Mathf.Clamp(0.24f + beatProgress * 0.92f, 0.24f, 1.0f);
+
+                float sample = 0f;
+
+                // Supersaw / Pluck lead estilo NCS
+                if (fLead > 1f)
+                {
+                    float leadEnv = Mathf.Clamp01(norm * 35f) * Mathf.Pow(1f - norm * 0.65f, 1.1f);
+                    leadPhaseA += fLead / MusicSampleRate;
+                    leadPhaseB += (fLead * 1.0065f) / MusicSampleRate;
+                    leadPhaseC += (fLead * 0.9935f) / MusicSampleRate;
+
+                    float sA = SawSample(leadPhaseA);
+                    float sB = SawSample(leadPhaseB);
+                    float sC = SawSample(leadPhaseC);
+                    float superSaw = (sA + sB * 0.7f + sC * 0.7f) / 2.4f;
+                    sample += superSaw * 0.34f * leadEnv * (aggressiveDrop ? 1.05f : 0.90f);
+                }
+
+                // Acordes Pad con sidechain + Sub-Bass EDM
+                if (fBass > 1f)
+                {
+                    subPhase += fBass / MusicSampleRate;
+                    float sub = FastSin(subPhase) * 0.44f + SawSample(subPhase) * 0.10f;
+                    sample += sub * sidechain;
+
+                    padP1 += padRoot / MusicSampleRate;
+                    padP2 += padThird / MusicSampleRate;
+                    padP3 += padFifth / MusicSampleRate;
+                    float pad = (SawSample(padP1) + SawSample(padP2) + SawSample(padP3)) * 0.085f;
+                    sample += pad * sidechain;
+                }
+
+                // Kick EDM punchy
+                if (isKick && norm < 0.48f)
+                {
+                    float kn = norm / 0.48f;
+                    float kf = Mathf.Lerp(145f, 44f, Mathf.Pow(kn, 0.45f));
+                    float kEnv = Mathf.Pow(1f - kn, 1.6f);
+                    sample += FastSin(kn * kf * 0.14f) * kEnv * (aggressiveDrop ? 0.52f : 0.44f);
+                }
+
+                // Clap / Snare NCS
+                if (isSnare && norm < 0.35f)
+                {
+                    float sn = norm / 0.35f;
+                    float sEnv = Mathf.Pow(1f - sn, 2.0f);
+                    float clapNoise = (float)(rng.NextDouble() * 2.0 - 1.0) * sEnv * 0.24f;
+                    sample += clapNoise;
+                }
+
+                // Crisp Hi-Hat offbeat
+                if ((isOffHat || aggressiveDrop) && norm < 0.14f)
+                {
+                    float hn = norm / 0.14f;
+                    float hEnv = Mathf.Pow(1f - hn, 2.2f);
+                    sample += (float)(rng.NextDouble() * 2.0 - 1.0) * hEnv * (isOffHat ? 0.11f : 0.06f);
+                }
+
+                data[s * samplesPerStep + i] = Mathf.Clamp(sample * masterAmp, -0.95f, 0.95f);
+            }
+        }
+
+        ApplyLoopCrossfadeSafe(data, Mathf.Min(180, totalSamples / 16));
+        AudioClip clip = AudioClip.Create(clipName, totalSamples, 1, MusicSampleRate, false);
+        clip.SetData(data, 0);
+        return clip;
+    }
+
+    private static float MariachiBrassSample(float turns)
+    {
+        return FastSin(turns) * 0.56f
+             + FastSin(turns * 2f) * 0.28f
+             + FastSin(turns * 3f) * 0.12f
+             + FastSin(turns * 4f) * 0.05f;
+    }
+
+    private static float WarmHornSample(float turns)
+    {
+        return FastSin(turns) * 0.68f
+             + FastSin(turns * 2f) * 0.22f
+             + FastSin(turns * 3f) * 0.08f;
+    }
+
+    private static float MariachiViolinSample(float turns)
+    {
+        float p = turns - Mathf.Floor(turns);
+        float bowed = (2f * p - 1f) * 0.40f + FastSin(turns) * 0.45f + FastSin(turns * 3f) * 0.12f;
+        return bowed * 0.72f;
+    }
+
+    private static float PluckedStringSample(float turns)
+    {
+        return FastSin(turns) * 0.55f
+             + FastSin(turns * 2f) * 0.28f
+             + FastSin(turns * 3f) * 0.14f;
+    }
+
+    private static float SawSample(float turns)
+    {
+        float p = turns - Mathf.Floor(turns);
+        return 2f * p - 1f;
+    }
+
+    private static void ApplyLoopCrossfadeSafe(float[] data, int edgeSamples)
+    {
+        int n = data.Length;
+        for (int i = 0; i < edgeSamples && i < n; i++)
+        {
+            float t = (float)i / edgeSamples;
+            data[i] *= t;
+            data[n - 1 - i] *= t;
+        }
     }
 
     private static float MidiToFreq(int midi)
