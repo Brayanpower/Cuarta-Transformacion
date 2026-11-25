@@ -1,0 +1,3148 @@
+fileFormatVersion: 2
+guid: 34b264b4c1d3748c5bac3924f4a1cffe
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8558043834014379239
+    second: esbirro_0
+  - first:
+      213: -8631105303858577677
+    second: esbirro_1
+  - first:
+      213: -4024589930614602761
+    second: esbirro_2
+  - first:
+      213: -7857318555716927359
+    second: esbirro_3
+  - first:
+      213: 6928987514817160003
+    second: esbirro_4
+  - first:
+      213: -3991206929831674093
+    second: esbirro_5
+  - first:
+      213: 7483544995661910701
+    second: esbirro_6
+  - first:
+      213: -6487611667466690557
+    second: esbirro_7
+  - first:
+      213: 4389429282051627795
+    second: esbirro_8
+  - first:
+      213: -4094139995357635475
+    second: esbirro_9
+  - first:
+      213: -1523840945960873256
+    second: esbirro_10
+  - first:
+      213: 8201652015335364452
+    second: esbirro_11
+  - first:
+      213: 6411121018797606762
+    second: esbirro_12
+  - first:
+      213: 8849143790151205649
+    second: esbirro_13
+  - first:
+      213: 6713102074774673362
+    second: esbirro_14
+  - first:
+      213: -7942765170528222445
+    second: esbirro_15
+  - first:
+      213: -5259666945757145766
+    second: esbirro_16
+  - first:
+      213: -2645984431723420910
+    second: esbirro_17
+  - first:
+      213: -1796303293536911378
+    second: esbirro_18
+  - first:
+      213: -7723572700179246674
+    second: esbirro_19
+  - first:
+      213: -8560088828211396612
+    second: esbirro_20
+  - first:
+      213: -7538480684383895089
+    second: esbirro_21
+  - first:
+      213: -3422807787536234304
+    second: esbirro_22
+  - first:
+      213: 5811968627751573762
+    second: esbirro_23
+  - first:
+      213: -3842044200705051328
+    second: esbirro_24
+  - first:
+      213: 4276324576742670876
+    second: esbirro_25
+  - first:
+      213: 517880021962811859
+    second: esbirro_26
+  - first:
+      213: 8389260766762264664
+    second: esbirro_27
+  - first:
+      213: -679656255249334917
+    second: esbirro_28
+  - first:
+      213: -2108222042188826144
+    second: esbirro_29
+  - first:
+      213: -2244704484286212400
+    second: esbirro_30
+  - first:
+      213: -4447666190958930097
+    second: esbirro_31
+  - first:
+      213: 3340846936393990443
+    second: esbirro_32
+  - first:
+      213: -2177635407794190704
+    second: esbirro_33
+  - first:
+      213: -3875682238447365550
+    second: esbirro_34
+  - first:
+      213: 6796151800498258727
+    second: esbirro_35
+  - first:
+      213: -1383932034081036553
+    second: esbirro_36
+  - first:
+      213: 7325086412317661348
+    second: esbirro_37
+  - first:
+      213: 6565236538225420934
+    second: esbirro_38
+  - first:
+      213: -8353575580837885481
+    second: esbirro_39
+  - first:
+      213: -4250314845860125675
+    second: esbirro_40
+  - first:
+      213: -8989701780179172319
+    second: esbirro_41
+  - first:
+      213: 7239864325392983928
+    second: esbirro_42
+  - first:
+      213: -8207318295837416782
+    second: esbirro_43
+  - first:
+      213: 1300664854064148476
+    second: esbirro_44
+  - first:
+      213: -4337101218766908880
+    second: esbirro_45
+  - first:
+      213: 2697233633694606540
+    second: esbirro_46
+  - first:
+      213: -8635045534968398703
+    second: esbirro_47
+  - first:
+      213: 1280100657207604457
+    second: esbirro_48
+  - first:
+      213: -3317023640858237979
+    second: esbirro_49
+  - first:
+      213: 3954585145663480396
+    second: esbirro_50
+  - first:
+      213: 2476463776273192414
+    second: esbirro_51
+  - first:
+      213: -8671157578171324561
+    second: esbirro_52
+  - first:
+      213: -8245665315310772976
+    second: esbirro_53
+  - first:
+      213: 7592883577742582563
+    second: esbirro_54
+  - first:
+      213: 4774201894996489058
+    second: esbirro_55
+  - first:
+      213: -2494633095919640976
+    second: esbirro_56
+  - first:
+      213: 5859451722994727924
+    second: esbirro_57
+  - first:
+      213: -3646378769591959644
+    second: esbirro_58
+  - first:
+      213: 7513940699825781237
+    second: esbirro_59
+  - first:
+      213: 7740303373975179004
+    second: esbirro_60
+  - first:
+      213: -9102428679612486634
+    second: esbirro_61
+  - first:
+      213: 423925531221437975
+    second: esbirro_62
+  - first:
+      213: -8762474619753290825
+    second: esbirro_63
+  - first:
+      213: -2567897475452809111
+    second: esbirro_64
+  - first:
+      213: -3596306437375078550
+    second: esbirro_65
+  - first:
+      213: 5409969405984950242
+    second: esbirro_66
+  - first:
+      213: -6338189306202038765
+    second: esbirro_67
+  - first:
+      213: 3556329768360881636
+    second: esbirro_68
+  - first:
+      213: -4233136087443650833
+    second: esbirro_69
+  - first:
+      213: 3615286177547448881
+    second: esbirro_70
+  - first:
+      213: -6340295835536730809
+    second: esbirro_71
+  - first:
+      213: 1149311273578562568
+    second: esbirro_72
+  - first:
+      213: -404082456721927165
+    second: esbirro_73
+  - first:
+      213: -5700651394092943009
+    second: esbirro_74
+  - first:
+      213: -879717821701944194
+    second: esbirro_75
+  - first:
+      213: 739370049061751952
+    second: esbirro_76
+  - first:
+      213: 8543380135250189232
+    second: esbirro_77
+  - first:
+      213: -2600266083192106008
+    second: esbirro_78
+  - first:
+      213: -5955624539251975810
+    second: esbirro_79
+  - first:
+      213: 7024741535688092012
+    second: esbirro_80
+  - first:
+      213: 4859665217602650445
+    second: esbirro_81
+  - first:
+      213: -1616903260743567488
+    second: esbirro_82
+  - first:
+      213: -6526829106710894879
+    second: esbirro_83
+  - first:
+      213: -2685692050932355700
+    second: esbirro_84
+  - first:
+      213: -1407075619701508779
+    second: esbirro_85
+  - first:
+      213: -9186099992801675105
+    second: esbirro_86
+  - first:
+      213: -4476155656515891074
+    second: esbirro_87
+  - first:
+      213: -1453216476546120558
+    second: esbirro_88
+  - first:
+      213: -8396929439508388296
+    second: esbirro_89
+  - first:
+      213: 2005052054102149166
+    second: esbirro_90
+  - first:
+      213: -3668584109580586260
+    second: esbirro_91
+  - first:
+      213: -5386557849939530326
+    second: esbirro_92
+  - first:
+      213: -3271870132040945560
+    second: esbirro_93
+  - first:
+      213: 8283382091823813302
+    second: esbirro_94
+  - first:
+      213: 7820989059566126938
+    second: esbirro_95
+  - first:
+      213: -1778005388209147787
+    second: esbirro_96
+  - first:
+      213: 5972179900535452488
+    second: esbirro_97
+  - first:
+      213: 7067868801025760860
+    second: esbirro_98
+  - first:
+      213: -6717924702407097937
+    second: esbirro_99
+  - first:
+      213: -2635338323961612008
+    second: esbirro_100
+  - first:
+      213: -4382147142857750673
+    second: esbirro_101
+  - first:
+      213: 4672755864666172397
+    second: esbirro_102
+  - first:
+      213: -9143265073383353285
+    second: esbirro_103
+  - first:
+      213: 1495313230473733497
+    second: esbirro_104
+  - first:
+      213: 5813195529042274325
+    second: esbirro_105
+  - first:
+      213: -2815540613597481449
+    second: esbirro_106
+  - first:
+      213: -4433253923815698594
+    second: esbirro_107
+  - first:
+      213: 3644393979794368910
+    second: esbirro_108
+  - first:
+      213: 5469240942707431627
+    second: esbirro_109
+  - first:
+      213: 8619746135683807347
+    second: esbirro_110
+  - first:
+      213: -4464702672427266576
+    second: esbirro_111
+  - first:
+      213: -7786092302054660381
+    second: esbirro_112
+  - first:
+      213: -8356012033387406164
+    second: esbirro_113
+  - first:
+      213: 6801080228338056942
+    second: esbirro_114
+  - first:
+      213: -1222090970370935431
+    second: esbirro_115
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: esbirro_0
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 1791
+        width: 61
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 913d955b978bb3980800000000000000
+      internalID: -8558043834014379239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_1
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 1791
+        width: 49
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fef488a477283880800000000000000
+      internalID: -8631105303858577677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_2
+      rect:
+        serializedVersion: 2
+        x: 562
+        y: 1785
+        width: 56
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f34a1308c8c528c0800000000000000
+      internalID: -4024589930614602761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_3
+      rect:
+        serializedVersion: 2
+        x: 834
+        y: 1791
+        width: 60
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1804867476235f290800000000000000
+      internalID: -7857318555716927359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_4
+      rect:
+        serializedVersion: 2
+        x: 1085
+        y: 1678
+        width: 135
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3432bc1fe65b82060800000000000000
+      internalID: 6928987514817160003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_5
+      rect:
+        serializedVersion: 2
+        x: 1360
+        y: 1795
+        width: 55
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31f3e4291726c98c0800000000000000
+      internalID: -3991206929831674093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_6
+      rect:
+        serializedVersion: 2
+        x: 1596
+        y: 1652
+        width: 116
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da294172684ead760800000000000000
+      internalID: 7483544995661910701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_7
+      rect:
+        serializedVersion: 2
+        x: 1848
+        y: 1791
+        width: 58
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 300e7ffaf8f57f5a0800000000000000
+      internalID: -6487611667466690557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_8
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 1653
+        width: 144
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31b92630da26aec30800000000000000
+      internalID: 4389429282051627795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_9
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 1653
+        width: 129
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6c1dfbad51be27c0800000000000000
+      internalID: -4094139995357635475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_10
+      rect:
+        serializedVersion: 2
+        x: 538
+        y: 1648
+        width: 143
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d29ec9bbba3adae0800000000000000
+      internalID: -1523840945960873256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_11
+      rect:
+        serializedVersion: 2
+        x: 812
+        y: 1652
+        width: 145
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4675e61cd0f12d170800000000000000
+      internalID: 8201652015335364452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_12
+      rect:
+        serializedVersion: 2
+        x: 1330
+        y: 1652
+        width: 139
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a67c8795990e8f850800000000000000
+      internalID: 6411121018797606762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_13
+      rect:
+        serializedVersion: 2
+        x: 1468
+        y: 1698
+        width: 18
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 113015274697eca70800000000000000
+      internalID: 8849143790151205649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_14
+      rect:
+        serializedVersion: 2
+        x: 1817
+        y: 1648
+        width: 164
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d7d1ebf4cab92d50800000000000000
+      internalID: 6713102074774673362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_15
+      rect:
+        serializedVersion: 2
+        x: 1112
+        y: 1656
+        width: 16
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3130254f821a5c190800000000000000
+      internalID: -7942765170528222445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_16
+      rect:
+        serializedVersion: 2
+        x: 1171
+        y: 1665
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a55184d97c8e107b0800000000000000
+      internalID: -5259666945757145766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_17
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 1669
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21369e9ad23974bd0800000000000000
+      internalID: -2645984431723420910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_18
+      rect:
+        serializedVersion: 2
+        x: 1623
+        y: 1651
+        width: 16
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eef3ed7fbaf3217e0800000000000000
+      internalID: -1796303293536911378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_19
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 1155
+        width: 142
+        height: 167
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea159e8ec8b50d490800000000000000
+      internalID: -7723572700179246674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_20
+      rect:
+        serializedVersion: 2
+        x: 859
+        y: 1294
+        width: 58
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cff7ba46094743980800000000000000
+      internalID: -8560088828211396612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_21
+      rect:
+        serializedVersion: 2
+        x: 1081
+        y: 1166
+        width: 143
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc1872512cfe16790800000000000000
+      internalID: -7538480684383895089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_22
+      rect:
+        serializedVersion: 2
+        x: 1114
+        y: 1305
+        width: 59
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c84679b37ebf70d0800000000000000
+      internalID: -3422807787536234304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_23
+      rect:
+        serializedVersion: 2
+        x: 1337
+        y: 1186
+        width: 120
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 209d8de7ca248a050800000000000000
+      internalID: 5811968627751573762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_24
+      rect:
+        serializedVersion: 2
+        x: 1594
+        y: 1299
+        width: 59
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04530adc7215eaac0800000000000000
+      internalID: -3842044200705051328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_25
+      rect:
+        serializedVersion: 2
+        x: 1853
+        y: 1295
+        width: 58
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c12050dab8e885b30800000000000000
+      internalID: 4276324576742670876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_26
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 1156
+        width: 144
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d96d59d221ef2700800000000000000
+      internalID: 517880021962811859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_27
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 1278
+        width: 56
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8586cfa1834ac6470800000000000000
+      internalID: 8389260766762264664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_28
+      rect:
+        serializedVersion: 2
+        x: 582
+        y: 1156
+        width: 146
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7dbd70ac306196f0800000000000000
+      internalID: -679656255249334917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_29
+      rect:
+        serializedVersion: 2
+        x: 828
+        y: 1158
+        width: 141
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e9bfa3f8371eb2e0800000000000000
+      internalID: -2108222042188826144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_30
+      rect:
+        serializedVersion: 2
+        x: 1586
+        y: 1176
+        width: 119
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d6d46c1a2539d0e0800000000000000
+      internalID: -2244704484286212400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_31
+      rect:
+        serializedVersion: 2
+        x: 1821
+        y: 1162
+        width: 172
+        height: 131
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f47d0600a27b642c0800000000000000
+      internalID: -4447666190958930097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_32
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 1207
+        width: 23
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2147bc86921d5e20800000000000000
+      internalID: 3340846936393990443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_33
+      rect:
+        serializedVersion: 2
+        x: 970
+        y: 1207
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0964d1c522c77c1e0800000000000000
+      internalID: -2177635407794190704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_34
+      rect:
+        serializedVersion: 2
+        x: 1227
+        y: 1229
+        width: 13
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 252dd03d98fc63ac0800000000000000
+      internalID: -3875682238447365550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_35
+      rect:
+        serializedVersion: 2
+        x: 934
+        y: 1152
+        width: 31
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72384541e08c05e50800000000000000
+      internalID: 6796151800498258727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_36
+      rect:
+        serializedVersion: 2
+        x: 1351
+        y: 1163
+        width: 32
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f6e05bb5294bcce0800000000000000
+      internalID: -1383932034081036553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_37
+      rect:
+        serializedVersion: 2
+        x: 1407
+        y: 1163
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a81c33384fe7a560800000000000000
+      internalID: 7325086412317661348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_38
+      rect:
+        serializedVersion: 2
+        x: 1417
+        y: 1156
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68a675fe8d76c1b50800000000000000
+      internalID: 6565236538225420934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_39
+      rect:
+        serializedVersion: 2
+        x: 1608
+        y: 1161
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d9c7c3b443221c80800000000000000
+      internalID: -8353575580837885481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_40
+      rect:
+        serializedVersion: 2
+        x: 1657
+        y: 1156
+        width: 24
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51420f4ba29d305c0800000000000000
+      internalID: -4250314845860125675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_41
+      rect:
+        serializedVersion: 2
+        x: 1931
+        y: 1155
+        width: 31
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12449b34cd92e3380800000000000000
+      internalID: -8989701780179172319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_42
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 701
+        width: 149
+        height: 175
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8776219de3a297460800000000000000
+      internalID: 7239864325392983928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_43
+      rect:
+        serializedVersion: 2
+        x: 609
+        y: 864
+        width: 57
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b2eb028e7fb91e80800000000000000
+      internalID: -8207318295837416782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_44
+      rect:
+        serializedVersion: 2
+        x: 819
+        y: 747
+        width: 169
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cff24562bc3ec0210800000000000000
+      internalID: 1300664854064148476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_45
+      rect:
+        serializedVersion: 2
+        x: 859
+        y: 869
+        width: 58
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0321c74ab658fc3c0800000000000000
+      internalID: -4337101218766908880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_46
+      rect:
+        serializedVersion: 2
+        x: 1101
+        y: 849
+        width: 62
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc46a9403bf7e6520800000000000000
+      internalID: 2697233633694606540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_47
+      rect:
+        serializedVersion: 2
+        x: 1346
+        y: 849
+        width: 58
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19cb2ec16d72a2880800000000000000
+      internalID: -8635045534968398703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_48
+      rect:
+        serializedVersion: 2
+        x: 1559
+        y: 692
+        width: 149
+        height: 179
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e47a95f3c4d3c110800000000000000
+      internalID: 1280100657207604457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_49
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 839
+        width: 56
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e3621fa29097f1d0800000000000000
+      internalID: -3317023640858237979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_50
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 834
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c42ee49dc3281e630800000000000000
+      internalID: 3954585145663480396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_51
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 716
+        width: 157
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed5d2e30faa2e5220800000000000000
+      internalID: 2476463776273192414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_52
+      rect:
+        serializedVersion: 2
+        x: 1076
+        y: 705
+        width: 138
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6769a9df1cd9a780800000000000000
+      internalID: -8671157578171324561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_53
+      rect:
+        serializedVersion: 2
+        x: 1316
+        y: 701
+        width: 141
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01d54284513819d80800000000000000
+      internalID: -8245665315310772976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_54
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 691
+        width: 156
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3236e3892675f5960800000000000000
+      internalID: 7592883577742582563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_55
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 758
+        width: 18
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2633345245f514240800000000000000
+      internalID: 4774201894996489058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_56
+      rect:
+        serializedVersion: 2
+        x: 1458
+        y: 788
+        width: 18
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07ed6c89a68416dd0800000000000000
+      internalID: -2494633095919640976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_57
+      rect:
+        serializedVersion: 2
+        x: 1709
+        y: 767
+        width: 25
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fbb6af1c44f05150800000000000000
+      internalID: 5859451722994727924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_58
+      rect:
+        serializedVersion: 2
+        x: 1837
+        y: 787
+        width: 58
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4aff1f114d5756dc0800000000000000
+      internalID: -3646378769591959644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_59
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 732
+        width: 16
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f937748141e64860800000000000000
+      internalID: 7513940699825781237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_60
+      rect:
+        serializedVersion: 2
+        x: 1213
+        y: 752
+        width: 17
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfe4c83a8e41b6b60800000000000000
+      internalID: 7740303373975179004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_61
+      rect:
+        serializedVersion: 2
+        x: 1804
+        y: 657
+        width: 153
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61cae56b75dada180800000000000000
+      internalID: -9102428679612486634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_62
+      rect:
+        serializedVersion: 2
+        x: 860
+        y: 721
+        width: 26
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71e2cab460612e500800000000000000
+      internalID: 423925531221437975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_63
+      rect:
+        serializedVersion: 2
+        x: 920
+        y: 716
+        width: 13
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b3aa3842cf656680800000000000000
+      internalID: -8762474619753290825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_64
+      rect:
+        serializedVersion: 2
+        x: 1959
+        y: 707
+        width: 29
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9605304f9defc5cd0800000000000000
+      internalID: -2567897475452809111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_65
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 690
+        width: 18
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6fcec8695a571ec0800000000000000
+      internalID: -3596306437375078550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_66
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 270
+        width: 39
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e7c671f282141b40800000000000000
+      internalID: 5409969405984950242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_67
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 251
+        width: 48
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31ed5ac386a3a08a0800000000000000
+      internalID: -6338189306202038765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_68
+      rect:
+        serializedVersion: 2
+        x: 655
+        y: 240
+        width: 53
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ed2c43051f9a5130800000000000000
+      internalID: 3556329768360881636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_69
+      rect:
+        serializedVersion: 2
+        x: 1433
+        y: 246
+        width: 23
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe6c8061821e045c0800000000000000
+      internalID: -4233136087443650833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_70
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 147
+        width: 147
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1327816bf931c2230800000000000000
+      internalID: 3615286177547448881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_71
+      rect:
+        serializedVersion: 2
+        x: 1779
+        y: 251
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 745d1f7a78eb208a0800000000000000
+      internalID: -6340295835536730809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_72
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 122
+        width: 167
+        height: 127
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8048006938c23ff00800000000000000
+      internalID: 1149311273578562568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_73
+      rect:
+        serializedVersion: 2
+        x: 603
+        y: 90
+        width: 177
+        height: 147
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3045f138529646af0800000000000000
+      internalID: -404082456721927165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_74
+      rect:
+        serializedVersion: 2
+        x: 1104
+        y: 193
+        width: 33
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5931caa2c733e0b0800000000000000
+      internalID: -5700651394092943009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_75
+      rect:
+        serializedVersion: 2
+        x: 1535
+        y: 213
+        width: 27
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7c00e65d4d9ac3f0800000000000000
+      internalID: -879717821701944194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_76
+      rect:
+        serializedVersion: 2
+        x: 1912
+        y: 225
+        width: 20
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09c83eb6425c24a00800000000000000
+      internalID: 739370049061751952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_77
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 164
+        width: 23
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bb57bed7fe209670800000000000000
+      internalID: 8543380135250189232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_78
+      rect:
+        serializedVersion: 2
+        x: 1371
+        y: 178
+        width: 23
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e396dd26cff9ebd0800000000000000
+      internalID: -2600266083192106008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_79
+      rect:
+        serializedVersion: 2
+        x: 1531
+        y: 193
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e79594a290f595da0800000000000000
+      internalID: -5955624539251975810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_80
+      rect:
+        serializedVersion: 2
+        x: 1626
+        y: 173
+        width: 23
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c69ee914535ec7160800000000000000
+      internalID: 7024741535688092012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_81
+      rect:
+        serializedVersion: 2
+        x: 1698
+        y: 193
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d41078e84cff07340800000000000000
+      internalID: 4859665217602650445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_82
+      rect:
+        serializedVersion: 2
+        x: 1841
+        y: 194
+        width: 13
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08775331d0b9f89e0800000000000000
+      internalID: -1616903260743567488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_83
+      rect:
+        serializedVersion: 2
+        x: 1987
+        y: 178
+        width: 21
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e621d0128b0c65a0800000000000000
+      internalID: -6526829106710894879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_84
+      rect:
+        serializedVersion: 2
+        x: 889
+        y: 152
+        width: 14
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8d26102f418abad0800000000000000
+      internalID: -2685692050932355700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_85
+      rect:
+        serializedVersion: 2
+        x: 952
+        y: 164
+        width: 27
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 555349bcd20197ce0800000000000000
+      internalID: -1407075619701508779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_86
+      rect:
+        serializedVersion: 2
+        x: 1093
+        y: 122
+        width: 45
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9876d10aba648080800000000000000
+      internalID: -9186099992801675105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_87
+      rect:
+        serializedVersion: 2
+        x: 1203
+        y: 164
+        width: 16
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e70d306652081e1c0800000000000000
+      internalID: -4476155656515891074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_88
+      rect:
+        serializedVersion: 2
+        x: 1279
+        y: 142
+        width: 33
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29449b5605325dbe0800000000000000
+      internalID: -1453216476546120558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_89
+      rect:
+        serializedVersion: 2
+        x: 1433
+        y: 152
+        width: 18
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8362512e92d187b80800000000000000
+      internalID: -8396929439508388296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_90
+      rect:
+        serializedVersion: 2
+        x: 1494
+        y: 132
+        width: 23
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e280de0583063db10800000000000000
+      internalID: 2005052054102149166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_91
+      rect:
+        serializedVersion: 2
+        x: 1563
+        y: 151
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce27ec77032961dc0800000000000000
+      internalID: -3668584109580586260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_92
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 142
+        width: 16
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aad2348bc2a1f35b0800000000000000
+      internalID: -5386557849939530326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_93
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 120
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8603d74337bf792d0800000000000000
+      internalID: -3271870132040945560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_94
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 120
+        width: 26
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b29df1102c74f270800000000000000
+      internalID: 8283382091823813302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_95
+      rect:
+        serializedVersion: 2
+        x: 894
+        y: 132
+        width: 17
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a57c7afbc1cb98c60800000000000000
+      internalID: 7820989059566126938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_96
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 108
+        width: 42
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 570301b05814357e0800000000000000
+      internalID: -1778005388209147787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_97
+      rect:
+        serializedVersion: 2
+        x: 761
+        y: 9
+        width: 213
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 843b4224af171e250800000000000000
+      internalID: 5972179900535452488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_98
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 122
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5ed4343a3d161260800000000000000
+      internalID: 7067868801025760860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_99
+      rect:
+        serializedVersion: 2
+        x: 920
+        y: 121
+        width: 13
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa10435831325c2a0800000000000000
+      internalID: -6717924702407097937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_100
+      rect:
+        serializedVersion: 2
+        x: 1051
+        y: 91
+        width: 25
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8197b49c1c56d6bd0800000000000000
+      internalID: -2635338323961612008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_101
+      rect:
+        serializedVersion: 2
+        x: 1151
+        y: 101
+        width: 25
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f678874246c7f23c0800000000000000
+      internalID: -4382147142857750673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_102
+      rect:
+        serializedVersion: 2
+        x: 1371
+        y: 8
+        width: 248
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: debec8b93b6f8d040800000000000000
+      internalID: 4672755864666172397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_103
+      rect:
+        serializedVersion: 2
+        x: 962
+        y: 60
+        width: 22
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b34dfbddbd89c1180800000000000000
+      internalID: -9143265073383353285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_104
+      rect:
+        serializedVersion: 2
+        x: 1063
+        y: 8
+        width: 223
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 975245ae57b60c410800000000000000
+      internalID: 1495313230473733497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_105
+      rect:
+        serializedVersion: 2
+        x: 1627
+        y: 81
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5182476b88e9ca050800000000000000
+      internalID: 5813195529042274325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_106
+      rect:
+        serializedVersion: 2
+        x: 1679
+        y: 91
+        width: 22
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71636d3bab03de8d0800000000000000
+      internalID: -2815540613597481449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_107
+      rect:
+        serializedVersion: 2
+        x: 747
+        y: 9
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5fcbdf6b0be972c0800000000000000
+      internalID: -4433253923815698594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_108
+      rect:
+        serializedVersion: 2
+        x: 1033
+        y: 9
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e89273b040d739230800000000000000
+      internalID: 3644393979794368910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_109
+      rect:
+        serializedVersion: 2
+        x: 1289
+        y: 9
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc8591df8a5a6eb40800000000000000
+      internalID: 5469240942707431627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_110
+      rect:
+        serializedVersion: 2
+        x: 1362
+        y: 9
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 378ba77e07d7f9770800000000000000
+      internalID: 8619746135683807347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_111
+      rect:
+        serializedVersion: 2
+        x: 1637
+        y: 9
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fd4c3e03903a02c0800000000000000
+      internalID: -4464702672427266576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_112
+      rect:
+        serializedVersion: 2
+        x: 1688
+        y: 9
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e6e0a3cd4e32f390800000000000000
+      internalID: -7786092302054660381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_113
+      rect:
+        serializedVersion: 2
+        x: 1730
+        y: 9
+        width: 22
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cacdd03e35b790c80800000000000000
+      internalID: -8356012033387406164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_114
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 9
+        width: 197
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eeeb50b1f6a426e50800000000000000
+      internalID: 6801080228338056942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: esbirro_115
+      rect:
+        serializedVersion: 2
+        x: 1985
+        y: 9
+        width: 24
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 975f3d3ccb24a0fe0800000000000000
+      internalID: -1222090970370935431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      esbirro_0: -8558043834014379239
+      esbirro_1: -8631105303858577677
+      esbirro_10: -1523840945960873256
+      esbirro_100: -2635338323961612008
+      esbirro_101: -4382147142857750673
+      esbirro_102: 4672755864666172397
+      esbirro_103: -9143265073383353285
+      esbirro_104: 1495313230473733497
+      esbirro_105: 5813195529042274325
+      esbirro_106: -2815540613597481449
+      esbirro_107: -4433253923815698594
+      esbirro_108: 3644393979794368910
+      esbirro_109: 5469240942707431627
+      esbirro_11: 8201652015335364452
+      esbirro_110: 8619746135683807347
+      esbirro_111: -4464702672427266576
+      esbirro_112: -7786092302054660381
+      esbirro_113: -8356012033387406164
+      esbirro_114: 6801080228338056942
+      esbirro_115: -1222090970370935431
+      esbirro_12: 6411121018797606762
+      esbirro_13: 8849143790151205649
+      esbirro_14: 6713102074774673362
+      esbirro_15: -7942765170528222445
+      esbirro_16: -5259666945757145766
+      esbirro_17: -2645984431723420910
+      esbirro_18: -1796303293536911378
+      esbirro_19: -7723572700179246674
+      esbirro_2: -4024589930614602761
+      esbirro_20: -8560088828211396612
+      esbirro_21: -7538480684383895089
+      esbirro_22: -3422807787536234304
+      esbirro_23: 5811968627751573762
+      esbirro_24: -3842044200705051328
+      esbirro_25: 4276324576742670876
+      esbirro_26: 517880021962811859
+      esbirro_27: 8389260766762264664
+      esbirro_28: -679656255249334917
+      esbirro_29: -2108222042188826144
+      esbirro_3: -7857318555716927359
+      esbirro_30: -2244704484286212400
+      esbirro_31: -4447666190958930097
+      esbirro_32: 3340846936393990443
+      esbirro_33: -2177635407794190704
+      esbirro_34: -3875682238447365550
+      esbirro_35: 6796151800498258727
+      esbirro_36: -1383932034081036553
+      esbirro_37: 7325086412317661348
+      esbirro_38: 6565236538225420934
+      esbirro_39: -8353575580837885481
+      esbirro_4: 6928987514817160003
+      esbirro_40: -4250314845860125675
+      esbirro_41: -8989701780179172319
+      esbirro_42: 7239864325392983928
+      esbirro_43: -8207318295837416782
+      esbirro_44: 1300664854064148476
+      esbirro_45: -4337101218766908880
+      esbirro_46: 2697233633694606540
+      esbirro_47: -8635045534968398703
+      esbirro_48: 1280100657207604457
+      esbirro_49: -3317023640858237979
+      esbirro_5: -3991206929831674093
+      esbirro_50: 3954585145663480396
+      esbirro_51: 2476463776273192414
+      esbirro_52: -8671157578171324561
+      esbirro_53: -8245665315310772976
+      esbirro_54: 7592883577742582563
+      esbirro_55: 4774201894996489058
+      esbirro_56: -2494633095919640976
+      esbirro_57: 5859451722994727924
+      esbirro_58: -3646378769591959644
+      esbirro_59: 7513940699825781237
+      esbirro_6: 7483544995661910701
+      esbirro_60: 7740303373975179004
+      esbirro_61: -9102428679612486634
+      esbirro_62: 423925531221437975
+      esbirro_63: -8762474619753290825
+      esbirro_64: -2567897475452809111
+      esbirro_65: -3596306437375078550
+      esbirro_66: 5409969405984950242
+      esbirro_67: -6338189306202038765
+      esbirro_68: 3556329768360881636
+      esbirro_69: -4233136087443650833
+      esbirro_7: -6487611667466690557
+      esbirro_70: 3615286177547448881
+      esbirro_71: -6340295835536730809
+      esbirro_72: 1149311273578562568
+      esbirro_73: -404082456721927165
+      esbirro_74: -5700651394092943009
+      esbirro_75: -879717821701944194
+      esbirro_76: 739370049061751952
+      esbirro_77: 8543380135250189232
+      esbirro_78: -2600266083192106008
+      esbirro_79: -5955624539251975810
+      esbirro_8: 4389429282051627795
+      esbirro_80: 7024741535688092012
+      esbirro_81: 4859665217602650445
+      esbirro_82: -1616903260743567488
+      esbirro_83: -6526829106710894879
+      esbirro_84: -2685692050932355700
+      esbirro_85: -1407075619701508779
+      esbirro_86: -9186099992801675105
+      esbirro_87: -4476155656515891074
+      esbirro_88: -1453216476546120558
+      esbirro_89: -8396929439508388296
+      esbirro_9: -4094139995357635475
+      esbirro_90: 2005052054102149166
+      esbirro_91: -3668584109580586260
+      esbirro_92: -5386557849939530326
+      esbirro_93: -3271870132040945560
+      esbirro_94: 8283382091823813302
+      esbirro_95: 7820989059566126938
+      esbirro_96: -1778005388209147787
+      esbirro_97: 5972179900535452488
+      esbirro_98: 7067868801025760860
+      esbirro_99: -6717924702407097937
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

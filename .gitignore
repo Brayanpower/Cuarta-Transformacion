@@ -116,3 +116,6 @@ InitTestScene*.unity*
 # macOS Finder metadata & editor setup logs
 .DS_Store
 setup_log.txt
+
+# Unity WebGL Burst temp output
+/[Dd]ata/
