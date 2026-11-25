@@ -59,7 +59,7 @@ public class Level3DroneEnemy : SimpleEnemy
 
     protected override void Update()
     {
-        if (isDead)
+        if (isDead || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
             return;
 
         if (player == null)

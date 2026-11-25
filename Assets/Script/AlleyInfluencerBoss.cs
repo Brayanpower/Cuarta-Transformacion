@@ -45,6 +45,8 @@ public class AlleyInfluencerBoss : SimpleEnemy
     public bool isEnraged = false;
     private bool isAttacking = false;
     private bool isDefeated = false;
+    public bool IsBossFightActive => isAwakened && !isDefeated;
+    public Vector3 BossRespawnAnchor => new Vector3(arenaTriggerX - 1.8f, initialSpawnPosition.y + 0.65f, 0f);
     private float nextAttackTime = 0f;
     private int attackCycleIndex = 0;
     private float walkAnimTimer = 0f;
@@ -165,7 +167,7 @@ public class AlleyInfluencerBoss : SimpleEnemy
 
     protected override void Update()
     {
-        if (isDefeated)
+        if (isDefeated || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
             return;
 
         if (playerTransform == null)

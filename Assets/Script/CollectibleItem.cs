@@ -61,7 +61,7 @@ public class CollectibleItem : MonoBehaviour
 
     void Update()
     {
-        if (isCollected)
+        if (isCollected || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
             return;
 
         // Movimiento flotante senoidal

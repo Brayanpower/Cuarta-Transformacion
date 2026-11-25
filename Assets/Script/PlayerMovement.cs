@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
@@ -46,6 +47,8 @@ public class PlayerMovement : MonoBehaviour
     public float squashStretchSpeed = 10f;
 
     private float horizontalMovement;
+    private float keyboardHorizontalInput;
+    private float virtualHorizontalInput;
     private bool isGrounded;
     private bool wasGrounded;
     public bool isInvulnerable = false;
@@ -53,6 +56,10 @@ public class PlayerMovement : MonoBehaviour
 
     public bool IsDashing => isDashing;
     public bool IsInvulnerable => isInvulnerable || isDashing;
+    public bool CanDash => canDash && !isDashing;
+    public float DashChargeRatio => canDash
+        ? 1f
+        : (isDashing ? 0f : Mathf.Clamp01(1f - (dashCooldownTimer / Mathf.Max(0.05f, dashCooldown))));
 
     // Coyote time & jump buffering
     private float coyoteTime = 0.15f;
@@ -62,8 +69,17 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 originalScale;
     private Vector3 spawnPoint;
+    private Vector3 pendingRespawnPoint;
     private Color originalSpriteColor = Color.white;
     private float defaultGravityScale = 1f;
+    private float dashCooldownTimer = 0f;
+    private float displayedHealth = 6f;
+
+    // Texturas y estilos cacheados del HUD (cero fugas de memoria en OnGUI)
+    private Texture2D hudSolidTex;
+    private GUIStyle hudLocationStyle;
+    private GUIStyle hudBarLabelStyle;
+    private GUIStyle hudCoinStyle;
 
     [Header("Límite Izquierdo y Caída al Vacío")]
     public bool blockLeftMapEdge = true;
@@ -96,6 +112,8 @@ public class PlayerMovement : MonoBehaviour
 
             isInvulnerable = true;
             isDashing = false;
+            keyboardHorizontalInput = 0f;
+            virtualHorizontalInput = 0f;
             horizontalMovement = 0f;
             jumpBufferCounter = 0f;
 
@@ -132,6 +150,8 @@ public class PlayerMovement : MonoBehaviour
             isArenaLocked = false;
             isInvulnerable = true;
             isDashing = false;
+            keyboardHorizontalInput = 0f;
+            virtualHorizontalInput = 0f;
             horizontalMovement = externalWalkDir;
 
             if (rb != null)
@@ -141,6 +161,8 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
+            keyboardHorizontalInput = 0f;
+            virtualHorizontalInput = 0f;
             horizontalMovement = 0f;
             if (rb != null)
                 rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
@@ -205,7 +227,9 @@ public class PlayerMovement : MonoBehaviour
             maxHealth = 6;
 
         currentHealth = maxHealth;
+        displayedHealth = maxHealth;
         spawnPoint = transform.position;
+        pendingRespawnPoint = spawnPoint;
         leftBoundaryX = spawnPoint.x - leftBoundaryMargin;
 
         originalScale = transform.localScale;
@@ -248,8 +272,16 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (rb == null || animator == null || isDead)
+        if (rb == null || animator == null || isDead || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
             return;
+
+        if (dashCooldownTimer > 0f)
+            dashCooldownTimer = Mathf.Max(0f, dashCooldownTimer - Time.deltaTime);
+
+        if (displayedHealth > currentHealth)
+            displayedHealth = Mathf.MoveTowards(displayedHealth, currentHealth, Time.deltaTime * 6.5f);
+        else
+            displayedHealth = currentHealth;
 
         // Si cae al vacío por debajo del mapa, morir y reaparecer en vez de caer infinitamente
         if (transform.position.y < voidKillY)
@@ -402,7 +434,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     public void Dash(InputAction.CallbackContext context)
     {
-        if (isControlLocked || externalAutoWalk)
+        if (isControlLocked || externalAutoWalk || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
             return;
 
         if (context.performed && canDash && !isDashing && !isDead)
@@ -525,7 +557,9 @@ public class PlayerMovement : MonoBehaviour
         if (!isControlLocked && !externalAutoWalk)
             isInvulnerable = false;
 
+        dashCooldownTimer = dashCooldown;
         yield return new WaitForSeconds(dashCooldown);
+        dashCooldownTimer = 0f;
         canDash = true;
         activeDashRoutine = null;
     }
@@ -548,20 +582,88 @@ public class PlayerMovement : MonoBehaviour
         isArenaLocked = false;
     }
 
-    public void Move(InputAction.CallbackContext context)
+    private void RefreshHorizontalMovement()
     {
-        if (isDead || isControlLocked || externalAutoWalk)
+        if (isDead || isControlLocked || externalAutoWalk || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
         {
             horizontalMovement = 0f;
             return;
         }
 
-        horizontalMovement = context.ReadValue<Vector2>().x;
+        horizontalMovement = Mathf.Abs(virtualHorizontalInput) > 0.01f
+            ? virtualHorizontalInput
+            : keyboardHorizontalInput;
+    }
+
+    public void Move(InputAction.CallbackContext context)
+    {
+        if (isDead || isControlLocked || externalAutoWalk || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
+        {
+            keyboardHorizontalInput = 0f;
+            virtualHorizontalInput = 0f;
+            horizontalMovement = 0f;
+            return;
+        }
+
+        keyboardHorizontalInput = context.ReadValue<Vector2>().x;
+        RefreshHorizontalMovement();
+    }
+
+    public void SetVirtualHorizontalInput(float axisX)
+    {
+        if (isDead || isControlLocked || externalAutoWalk || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
+        {
+            virtualHorizontalInput = 0f;
+            RefreshHorizontalMovement();
+            return;
+        }
+
+        virtualHorizontalInput = Mathf.Clamp(axisX, -1f, 1f);
+        RefreshHorizontalMovement();
+    }
+
+    public void TriggerVirtualJumpDown()
+    {
+        if (isDead || isControlLocked || externalAutoWalk || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
+            return;
+
+        jumpBufferCounter = jumpBufferTime;
+    }
+
+    public void TriggerVirtualJumpUp()
+    {
+        if (isDead || isControlLocked || externalAutoWalk || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
+            return;
+
+        if (rb != null && rb.linearVelocity.y > 0f)
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
+    }
+
+    public void TriggerVirtualAttack()
+    {
+        if (isDead || isControlLocked || externalAutoWalk || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
+            return;
+
+        if (animator != null)
+        {
+            animator.SetTrigger("Attack");
+            ProceduralSoundManager.Instance?.PlaySwordSwing();
+            ExecuteAttackDamage();
+        }
+    }
+
+    public void TriggerVirtualDash()
+    {
+        if (isDead || isControlLocked || externalAutoWalk || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
+            return;
+
+        if (canDash && !isDashing)
+            activeDashRoutine = StartCoroutine(DashRoutine());
     }
 
     public void Jump(InputAction.CallbackContext context)
     {
-        if (isDead || isControlLocked || externalAutoWalk)
+        if (isDead || isControlLocked || externalAutoWalk || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
             return;
 
         if (context.performed)
@@ -599,7 +701,11 @@ public class PlayerMovement : MonoBehaviour
 
     public void Attack(InputAction.CallbackContext context)
     {
-        if (isControlLocked || externalAutoWalk)
+        if (isControlLocked || externalAutoWalk || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
+            return;
+
+        if (context.control != null && context.control.device is Pointer &&
+            EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
 
         if (context.performed && !isDead && animator != null)
@@ -701,21 +807,40 @@ public class PlayerMovement : MonoBehaviour
     {
         isDead = true;
         isDashing = false;
+        keyboardHorizontalInput = 0f;
+        virtualHorizontalInput = 0f;
         horizontalMovement = 0f;
+        pendingRespawnPoint = spawnPoint;
         Debug.Log("¡Finn fue derrotado! Reviviendo en 1.5 segundos...");
 
-        // Esconder barra de vida del jefe activo y resetear combate
+        // Detener música temporalmente para reiniciarla limpia desde 0:00 al revivir
+        ProceduralSoundManager.Instance?.StopMusic();
+
+        // Si murió dentro de la arena contra el jefe, reaparecer justo en la entrada de la arena;
+        // en cualquier otra parte del nivel, reaparecer desde el inicio.
         ViralVendorBoss vendorBoss = Object.FindAnyObjectByType<ViralVendorBoss>();
         if (vendorBoss != null)
+        {
+            if (vendorBoss.IsBossFightActive)
+                pendingRespawnPoint = vendorBoss.BossRespawnAnchor;
             vendorBoss.ResetBoss();
+        }
 
         CharismaticMayorBoss mayorBoss = Object.FindAnyObjectByType<CharismaticMayorBoss>();
         if (mayorBoss != null)
+        {
+            if (mayorBoss.IsBossFightActive)
+                pendingRespawnPoint = mayorBoss.BossRespawnAnchor;
             mayorBoss.ResetBoss();
+        }
 
         AlleyInfluencerBoss influencerBoss = Object.FindAnyObjectByType<AlleyInfluencerBoss>();
         if (influencerBoss != null)
+        {
+            if (influencerBoss.IsBossFightActive)
+                pendingRespawnPoint = influencerBoss.BossRespawnAnchor;
             influencerBoss.ResetBoss();
+        }
 
         MinotaurBoss boss = Object.FindAnyObjectByType<MinotaurBoss>();
         if (boss != null)
@@ -728,8 +853,9 @@ public class PlayerMovement : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
 
-        // Restaurar posición y vida
-        transform.position = spawnPoint;
+        // Restaurar posición (entrada de arena si murió en jefe, o inicio del nivel) y vida
+        UnlockFromArena();
+        transform.position = pendingRespawnPoint;
         if (rb != null)
         {
             rb.gravityScale = defaultGravityScale;
@@ -737,16 +863,21 @@ public class PlayerMovement : MonoBehaviour
         }
 
         currentHealth = maxHealth;
+        displayedHealth = maxHealth;
         isDead = false;
         isInvulnerable = false;
         isDashing = false;
         canDash = true;
+        dashCooldownTimer = 0f;
 
         if (spriteRenderer != null)
             spriteRenderer.color = originalSpriteColor;
 
         if (animator != null)
             animator.SetTrigger("Revive");
+
+        // Reiniciar la música del nivel desde 0:00 cada vez que revive
+        ProceduralSoundManager.Instance?.RestartLevelMusic();
 
         // Resetear enemigos del nivel al reaparecer
         SimpleEnemy[] enemies = Object.FindObjectsByType<SimpleEnemy>();
@@ -779,9 +910,10 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        Vector2 checkSize = new Vector2(Mathf.Max(groundCheckSize.x, 0.34f), Mathf.Max(groundCheckSize.y, 0.14f));
         isGrounded = Physics2D.OverlapBox(
             groundCheck.position,
-            groundCheckSize,
+            checkSize,
             0f,
             groundLayer
         );
@@ -819,40 +951,138 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnGUI()
+    private void EnsureHudResources()
     {
-        // HUD temático: Jardín Principal de Dolores Hidalgo
-        GUIStyle locationStyle = new GUIStyle(GUI.skin.label);
-        locationStyle.fontSize = 13;
-        locationStyle.fontStyle = FontStyle.Bold;
-        locationStyle.normal.textColor = new Color(0.95f, 0.8f, 0.25f);
-
-        string sceneName = SceneManager.GetActiveScene().name;
-        string locationTitle = "📍 DOLORES HIDALGO — JARDÍN PRINCIPAL (NIVEL 1)";
-        if (sceneName.Contains("2"))
-            locationTitle = "📍 DOLORES HIDALGO — TALLERES DE TALAVERA (NIVEL 2)";
-        else if (sceneName.Contains("3"))
-            locationTitle = "📍 GUANAJUATO — CALLEJONES DEL CAOS (NIVEL 3)";
-
-        GUI.Label(new Rect(20, 15, 620, 20), locationTitle, locationStyle);
-
-        GUIStyle headerStyle = new GUIStyle(GUI.skin.label);
-        headerStyle.fontSize = 15;
-        headerStyle.fontStyle = FontStyle.Bold;
-        headerStyle.normal.textColor = Color.white;
-
-        string hearts = "";
-        for (int i = 0; i < maxHealth; i++)
+        if (hudSolidTex == null)
         {
-            hearts += (i < currentHealth) ? "❤️" : "🖤";
+            hudSolidTex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            hudSolidTex.SetPixels(new[] { Color.white, Color.white, Color.white, Color.white });
+            hudSolidTex.Apply();
         }
 
-        string dashStatus = canDash ? "⚡ Dash: LISTO" : "⏳ Dash...";
-        GUI.Label(new Rect(20, 36, 620, 26), $"{hearts}  Vida: {currentHealth}/{maxHealth}   |   🪙 Monedas: {CollectibleItem.TotalCoinsCollected}   |   {dashStatus}", headerStyle);
+        if (hudLocationStyle == null)
+        {
+            hudLocationStyle = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 13,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleLeft
+            };
+        }
 
-        GUIStyle hintStyle = new GUIStyle(GUI.skin.label);
-        hintStyle.fontSize = 11;
-        hintStyle.normal.textColor = new Color(0.85f, 0.85f, 0.85f, 0.9f);
-        GUI.Label(new Rect(20, 62, 650, 20), "A / D: Mover | Espacio: Saltar / Pisotón | Left Shift: Dash (Esquive) | Clic / Enter: Espadazo", hintStyle);
+        if (hudBarLabelStyle == null)
+        {
+            hudBarLabelStyle = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 11,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter
+            };
+        }
+
+        if (hudCoinStyle == null)
+        {
+            hudCoinStyle = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 13,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleLeft
+            };
+        }
+    }
+
+    private static void DrawHudOutlinedText(Rect rect, string text, GUIStyle style, Color textColor, Color outlineColor, float px = 1.2f)
+    {
+        style.normal.textColor = outlineColor;
+        GUI.Label(new Rect(rect.x - px, rect.y, rect.width, rect.height), text, style);
+        GUI.Label(new Rect(rect.x + px, rect.y, rect.width, rect.height), text, style);
+        GUI.Label(new Rect(rect.x, rect.y - px, rect.width, rect.height), text, style);
+        GUI.Label(new Rect(rect.x, rect.y + px, rect.width, rect.height), text, style);
+
+        style.normal.textColor = textColor;
+        GUI.Label(rect, text, style);
+    }
+
+    private void OnGUI()
+    {
+        EnsureHudResources();
+
+        string sceneName = SceneManager.GetActiveScene().name;
+        string locationTitle = "DOLORES HIDALGO — JARDÍN PRINCIPAL (NIVEL 1)";
+        if (sceneName.Contains("2"))
+            locationTitle = "DOLORES HIDALGO — TALLERES DE TALAVERA (NIVEL 2)";
+        else if (sceneName.Contains("3"))
+            locationTitle = "GUANAJUATO — CALLEJONES DEL CAOS (NIVEL 3)";
+
+        Color outlineCol = new Color(0.03f, 0.02f, 0.06f, 0.95f);
+        Color goldCol = new Color(0.955f, 0.785f, 0.340f, 1f);
+        Color creamCol = new Color(0.965f, 0.940f, 0.875f, 1f);
+        Color prevColor = GUI.color;
+
+        // 1. Nombre del sector actual arriba a la izquierda (puro texto con contorno)
+        DrawHudOutlinedText(new Rect(18f, 12f, 520f, 20f), locationTitle, hudLocationStyle, goldCol, outlineCol, 1.3f);
+
+        // 2. Barra de Vida (con daño rezagado dorado + relleno carmesí y brillo superior)
+        float barX = 18f;
+        float barW = 224f;
+        float hpBarY = 36f;
+        float hpBarH = 20f;
+        float maxHp = Mathf.Max(1f, maxHealth);
+        float hpRatio = Mathf.Clamp01(currentHealth / maxHp);
+        float lagRatio = Mathf.Clamp01(displayedHealth / maxHp);
+
+        GUI.color = new Color(0.08f, 0.06f, 0.12f, 0.95f);
+        GUI.DrawTexture(new Rect(barX - 2f, hpBarY - 2f, barW + 4f, hpBarH + 4f), hudSolidTex);
+        GUI.color = new Color(0.76f, 0.60f, 0.24f, 0.90f);
+        GUI.DrawTexture(new Rect(barX - 1f, hpBarY - 1f, barW + 2f, hpBarH + 2f), hudSolidTex);
+        GUI.color = new Color(0.16f, 0.10f, 0.14f, 0.96f);
+        GUI.DrawTexture(new Rect(barX, hpBarY, barW, hpBarH), hudSolidTex);
+
+        if (lagRatio > hpRatio)
+        {
+            GUI.color = new Color(0.96f, 0.78f, 0.24f, 0.90f);
+            GUI.DrawTexture(new Rect(barX, hpBarY, barW * lagRatio, hpBarH), hudSolidTex);
+        }
+
+        if (hpRatio > 0f)
+        {
+            GUI.color = new Color(0.84f, 0.16f, 0.22f, 1f);
+            GUI.DrawTexture(new Rect(barX, hpBarY, barW * hpRatio, hpBarH), hudSolidTex);
+            GUI.color = new Color(1.00f, 0.42f, 0.46f, 0.65f);
+            GUI.DrawTexture(new Rect(barX, hpBarY + 1f, barW * hpRatio, 4f), hudSolidTex);
+        }
+
+        GUI.color = prevColor;
+        DrawHudOutlinedText(new Rect(barX, hpBarY - 1f, barW, hpBarH + 2f), $"VIDA  {Mathf.Max(0, currentHealth)} / {maxHealth}", hudBarLabelStyle, creamCol, outlineCol, 1.1f);
+
+        // 3. Barra de Dash debajo de la barra de vida
+        float dashBarY = hpBarY + hpBarH + 6f;
+        float dashBarH = 16f;
+        float dashRatio = canDash ? 1f : (isDashing ? 0f : Mathf.Clamp01(1f - (dashCooldownTimer / Mathf.Max(0.05f, dashCooldown))));
+
+        GUI.color = new Color(0.08f, 0.06f, 0.12f, 0.95f);
+        GUI.DrawTexture(new Rect(barX - 2f, dashBarY - 2f, barW + 4f, dashBarH + 4f), hudSolidTex);
+        GUI.color = new Color(0.28f, 0.66f, 0.80f, 0.85f);
+        GUI.DrawTexture(new Rect(barX - 1f, dashBarY - 1f, barW + 2f, dashBarH + 2f), hudSolidTex);
+        GUI.color = new Color(0.10f, 0.12f, 0.20f, 0.96f);
+        GUI.DrawTexture(new Rect(barX, dashBarY, barW, dashBarH), hudSolidTex);
+
+        if (dashRatio > 0f)
+        {
+            GUI.color = canDash ? new Color(0.16f, 0.88f, 0.96f, 1f) : new Color(0.14f, 0.52f, 0.72f, 0.95f);
+            GUI.DrawTexture(new Rect(barX, dashBarY, barW * dashRatio, dashBarH), hudSolidTex);
+            if (canDash)
+            {
+                GUI.color = new Color(0.75f, 1.00f, 1.00f, 0.65f);
+                GUI.DrawTexture(new Rect(barX, dashBarY + 1f, barW * dashRatio, 3f), hudSolidTex);
+            }
+        }
+
+        GUI.color = prevColor;
+        string dashLabel = canDash ? "DASH  LISTO" : (isDashing ? "ESQUIVANDO..." : "DASH  RECARGANDO...");
+        DrawHudOutlinedText(new Rect(barX, dashBarY - 1f, barW, dashBarH + 2f), dashLabel, hudBarLabelStyle, creamCol, outlineCol, 1.1f);
+
+        // 4. Contador limpio de monedas a la derecha de las barras (sin texto permanente de controles)
+        DrawHudOutlinedText(new Rect(barX + barW + 16f, hpBarY + 6f, 200f, 24f), $"MONEDAS: {CollectibleItem.TotalCoinsCollected}", hudCoinStyle, goldCol, outlineCol, 1.2f);
     }
 }

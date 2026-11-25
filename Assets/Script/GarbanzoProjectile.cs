@@ -85,6 +85,9 @@ public class GarbanzoProjectile : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale <= 0f || PauseMenu.IsGamePaused)
+            return;
+
         if (isGroundWave)
         {
             float pulseY = 1f + 0.08f * Mathf.Sin(Time.time * 18f);

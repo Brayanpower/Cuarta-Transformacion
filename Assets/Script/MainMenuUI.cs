@@ -12,6 +12,7 @@ public class MainMenuUI : MonoBehaviour
     [Header("Paneles del Canvas")]
     public GameObject panelMain;
     public GameObject panelLevelSelect;
+    public GameObject panelControls;
     public GameObject panelSettings;
     public GameObject panelCredits;
 
@@ -19,12 +20,14 @@ public class MainMenuUI : MonoBehaviour
     public Button btnPlayDirect;
     public Button btnWatchStory;
     public Button btnOpenLevelSelect;
+    public Button btnOpenControls;
     public Button btnOpenSettings;
     public Button btnOpenCredits;
     public Button btnQuitGame;
 
-    [Header("Botón Volver desde Créditos")]
+    [Header("Botón Volver desde Créditos y Controles")]
     public Button btnBackFromCredits;
+    public Button btnBackFromControls;
 
     [Header("Cinemática de Historia")]
     public StoryCutsceneController storyCutsceneController;
@@ -77,9 +80,114 @@ public class MainMenuUI : MonoBehaviour
     private void Start()
     {
         Time.timeScale = 1f;
+        if (GetComponent<MainMenuBackgroundAnimator>() == null)
+            gameObject.AddComponent<MainMenuBackgroundAnimator>();
+
+        EnsureControlsScreenExists();
         EnsureButtonListenersConnected();
+        if (Application.platform == RuntimePlatform.WebGLPlayer && btnQuitGame != null)
+            btnQuitGame.gameObject.SetActive(false);
         ShowMainPanel();
         RefreshLevelSelectionUI();
+    }
+
+    private void EnsureControlsScreenExists()
+    {
+        if (panelMain != null && btnOpenControls == null && btnOpenCredits != null)
+        {
+            // Reacomodar limpiamente la columna del menú principal para albergar 6 tablones formales
+            SetChildLayout(panelMain.transform, "Btn_Jugar",            new Vector2(0f,  230f), new Vector2(540f, 92f));
+            SetChildLayout(panelMain.transform, "Btn_SeleccionarNivel", new Vector2(0f,  128f), new Vector2(540f, 92f));
+            SetChildLayout(panelMain.transform, "Btn_Ajustes",          new Vector2(0f,  -76f), new Vector2(540f, 92f));
+            SetChildLayout(panelMain.transform, "Btn_Creditos",         new Vector2(0f, -178f), new Vector2(540f, 92f));
+            SetChildLayout(panelMain.transform, "Btn_Salir",            new Vector2(0f, -280f), new Vector2(540f, 92f));
+
+            GameObject ctrlBtnObj = Object.Instantiate(btnOpenCredits.gameObject, panelMain.transform);
+            ctrlBtnObj.name = "Btn_ComoJugar";
+            SetChildLayout(panelMain.transform, "Btn_ComoJugar", new Vector2(0f, 26f), new Vector2(540f, 92f));
+            Text lbl = ctrlBtnObj.GetComponentInChildren<Text>();
+            if (lbl != null)
+            {
+                lbl.text = "CÓMO JUGAR";
+                lbl.fontSize = 30;
+            }
+            Button createdBtn = ctrlBtnObj.GetComponent<Button>();
+            if (createdBtn != null)
+            {
+                createdBtn.onClick = new Button.ButtonClickedEvent();
+                btnOpenControls = createdBtn;
+            }
+        }
+
+        if (panelControls == null && panelCredits != null)
+        {
+            GameObject ctrlPanelObj = Object.Instantiate(panelCredits, panelCredits.transform.parent);
+            ctrlPanelObj.name = "Panel_Controls";
+            panelControls = ctrlPanelObj;
+
+            Transform frame = ctrlPanelObj.transform.Find("Frame_Creditos");
+            if (frame != null)
+            {
+                frame.name = "Frame_Controles";
+                RectTransform frt = frame as RectTransform;
+                if (frt != null)
+                    frt.sizeDelta = new Vector2(980f, 700f);
+
+                Transform titleTf = frame.Find("Title_Creditos");
+                if (titleTf != null)
+                {
+                    titleTf.name = "Title_Controles";
+                    Text t = titleTf.GetComponent<Text>();
+                    if (t != null) t.text = "CÓMO JUGAR Y CONTROLES";
+                    SetChildLayout(frame, "Title_Controles", new Vector2(0f, 265f), new Vector2(760f, 56f));
+                }
+
+                Transform bodyTf = frame.Find("Body_Creditos");
+                if (bodyTf != null)
+                {
+                    bodyTf.name = "Body_Controles";
+                    Text b = bodyTf.GetComponent<Text>();
+                    if (b != null)
+                    {
+                        b.fontSize = 23;
+                        b.text =
+                            "MOVERSE:  Teclas A / D o Flechas Izquierda / Derecha\n\n" +
+                            "SALTAR / PISOTÓN:  Espacio (salta sobre enemigos para rebotar)\n\n" +
+                            "DASH (ESQUIVE):  Left Shift (atraviesa golpes y proyectiles)\n\n" +
+                            "ESPADAZO:  Clic Izquierdo o Enter\n\n" +
+                            "PAUSA:  Tecla ESC (ajustes de música, efectos, zoom y nivel)";
+                    }
+                    SetChildLayout(frame, "Body_Controles", new Vector2(0f, 15f), new Vector2(840f, 380f));
+                }
+
+                Transform backTf = frame.Find("Btn_VolverCreditos");
+                if (backTf != null)
+                {
+                    backTf.name = "Btn_VolverControles";
+                    SetChildLayout(frame, "Btn_VolverControles", new Vector2(0f, -245f), new Vector2(400f, 84f));
+                    Button backBtn = backTf.GetComponent<Button>();
+                    if (backBtn != null)
+                    {
+                        backBtn.onClick = new Button.ButtonClickedEvent();
+                        btnBackFromControls = backBtn;
+                    }
+                }
+            }
+        }
+    }
+
+    private static void SetChildLayout(Transform parent, string name, Vector2 anchoredPos, Vector2 size)
+    {
+        Transform tf = parent.Find(name);
+        if (tf == null)
+            return;
+
+        RectTransform rt = tf as RectTransform;
+        if (rt != null)
+        {
+            rt.anchoredPosition = anchoredPos;
+            rt.sizeDelta = size;
+        }
     }
 
     /// <summary>
@@ -98,6 +206,18 @@ public class MainMenuUI : MonoBehaviour
         {
             btnOpenLevelSelect.onClick.RemoveListener(ShowLevelSelectPanel);
             btnOpenLevelSelect.onClick.AddListener(ShowLevelSelectPanel);
+        }
+
+        if (btnOpenControls != null)
+        {
+            btnOpenControls.onClick.RemoveListener(ShowControlsPanel);
+            btnOpenControls.onClick.AddListener(ShowControlsPanel);
+        }
+
+        if (btnBackFromControls != null)
+        {
+            btnBackFromControls.onClick.RemoveListener(ShowMainPanel);
+            btnBackFromControls.onClick.AddListener(ShowMainPanel);
         }
 
         if (btnOpenSettings != null)
@@ -197,10 +317,18 @@ public class MainMenuUI : MonoBehaviour
         if (panelCredits != null) panelCredits.SetActive(true);
     }
 
+    public void ShowControlsPanel()
+    {
+        ProceduralSoundManager.Instance?.PlayButtonClick();
+        SetAllPanelsActive(false);
+        if (panelControls != null) panelControls.SetActive(true);
+    }
+
     private void SetAllPanelsActive(bool state)
     {
         if (panelMain != null) panelMain.SetActive(state);
         if (panelLevelSelect != null) panelLevelSelect.SetActive(state);
+        if (panelControls != null) panelControls.SetActive(state);
         if (panelSettings != null) panelSettings.SetActive(state);
         if (panelCredits != null) panelCredits.SetActive(state);
     }

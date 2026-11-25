@@ -48,7 +48,7 @@ public class Level2TalaveraEnemy : SimpleEnemy
 
     private void LateUpdate()
     {
-        if (isDead || player == null)
+        if (isDead || player == null || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
             return;
 
         // Mantener siempre sprites propios de cerámica de Talavera

@@ -47,7 +47,7 @@ public class Level3SelfieFanEnemy : SimpleEnemy
 
     private void LateUpdate()
     {
-        if (isDead || player == null)
+        if (isDead || player == null || Time.timeScale <= 0f || PauseMenu.IsGamePaused)
             return;
 
         fanAnimTimer += Time.deltaTime;
