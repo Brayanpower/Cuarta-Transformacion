@@ -27,6 +27,7 @@ public class HazardSpikes : MonoBehaviour
     private int animFrame = 0;
     private float nextEmberTime = 0f;
     private float nextBounceTime = -10f;
+    private bool isFlatSurfacePit = false;
 
     private void Start()
     {
@@ -50,7 +51,13 @@ public class HazardSpikes : MonoBehaviour
         float bottomY = transform.position.y - Mathf.Abs(transform.localScale.y) * 0.5f;
         float centerX = transform.position.x;
 
-        if (sceneName == "Nivel1")
+        bool isEarlyNivel1Pit = sceneName == "Nivel1" &&
+            (gameObject.name == "Hazard_Spikes_1" || gameObject.name == "Hazard_Spikes_2");
+        bool isFlatNivel3Strip = sceneName == "Nivel3" &&
+            (gameObject.name == "Hazard_Callejon_Bajo1" || gameObject.name == "Hazard_Callejon_Bajo2");
+        isFlatSurfacePit = isEarlyNivel1Pit || isFlatNivel3Strip;
+
+        if (isEarlyNivel1Pit)
         {
             lavaHeight = 0.36f;
             bottomY = -2.14f;
@@ -60,7 +67,11 @@ public class HazardSpikes : MonoBehaviour
             emberMinLife = 0.40f;
             emberMaxLife = 0.65f;
         }
-        // Sellar el foso de hornos en Nivel 2 de pared a pared sin huecos donde quedarse atrapado
+        else if (sceneName == "Nivel1")
+        {
+            lavaHeight = 0.72f;
+        }
+        // Sellar los fosos de hornos en Nivel 2 de pared a pared sin huecos donde quedarse atrapado
         else if (sceneName == "Nivel2")
         {
             if (gameObject.name == "Hazard_Horno_1")
@@ -74,6 +85,53 @@ public class HazardSpikes : MonoBehaviour
                 centerX = 56.5f;
                 bottomY = -5.0f;
                 lavaWidth = 15.0f;
+            }
+            else if (gameObject.name == "Hazard_Ext_N2_1")
+            {
+                centerX = 143.0f;
+                bottomY = -5.0f;
+                lavaWidth = 18.0f;
+            }
+            else if (gameObject.name == "Hazard_Ext_N2_2")
+            {
+                centerX = 165.0f;
+                bottomY = -5.0f;
+                lavaWidth = 18.0f;
+            }
+        }
+        else if (sceneName == "Nivel3")
+        {
+            if (isFlatNivel3Strip)
+            {
+                lavaHeight = 0.36f;
+                bottomY = -3.14f;
+                glowHeight = 0.50f;
+                emberMinSpeedY = 0.55f;
+                emberMaxSpeedY = 1.05f;
+                emberMinLife = 0.40f;
+                emberMaxLife = 0.65f;
+            }
+            else
+            {
+                lavaHeight = 0.56f;
+                glowHeight = 0.80f;
+
+                if (gameObject.name == "Hazard_Azotea_Foso1")
+                {
+                    centerX = 87.5f;
+                    bottomY = -5.10f;
+                    lavaWidth = 5.0f;
+                }
+                else if (gameObject.name == "Hazard_Azotea_Foso2")
+                {
+                    centerX = 104.5f;
+                    bottomY = -5.10f;
+                    lavaWidth = 5.0f;
+                }
+                else if (gameObject.name.StartsWith("Hazard_Ext_N3_"))
+                {
+                    bottomY = -6.10f;
+                }
             }
         }
 
@@ -136,8 +194,16 @@ public class HazardSpikes : MonoBehaviour
             col = gameObject.AddComponent<BoxCollider2D>();
 
         col.isTrigger = true;
-        col.size = new Vector2(Mathf.Max(0.5f, lavaWidth - 0.12f), lavaHeight * 0.72f);
-        col.offset = new Vector2(0f, lavaHeight * 0.36f);
+        if (isFlatSurfacePit)
+        {
+            col.size = new Vector2(Mathf.Max(0.5f, lavaWidth - 0.12f), lavaHeight * 0.72f);
+            col.offset = new Vector2(0f, lavaHeight * 0.36f);
+        }
+        else
+        {
+            col.size = new Vector2(lavaWidth + 0.10f, lavaHeight * 0.85f);
+            col.offset = new Vector2(0f, lavaHeight * 0.425f);
+        }
     }
 
     private void Update()

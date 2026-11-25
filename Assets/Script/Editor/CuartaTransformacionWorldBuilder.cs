@@ -256,6 +256,12 @@ public static class CuartaTransformacionWorldBuilder
         if (mainCam != null)
         {
             mainCam.backgroundColor = new Color(0.07f, 0.05f, 0.14f, 1f);
+            CameraFollow camFollow = mainCam.GetComponent<CameraFollow>();
+            if (camFollow != null)
+            {
+                camFollow.maxBounds = new Vector2(Mathf.Max(camFollow.maxBounds.x, 265f), camFollow.maxBounds.y);
+                EditorUtility.SetDirty(camFollow);
+            }
             EditorUtility.SetDirty(mainCam);
         }
 
@@ -312,36 +318,65 @@ public static class CuartaTransformacionWorldBuilder
                 continue;
             }
 
-            // Reemplazar las bases delgadas de palo (Platform_*) por balcones/puentes medievales de cantera y roble
+            // Reemplazar las bases delgadas de palo (Platform_*) por balcones/puentes medievales de cantera y roble (idempotente)
             if (root.name.StartsWith("Platform_") && props.platCantera != null)
             {
                 SpriteRenderer psr = root.GetComponent<SpriteRenderer>();
                 BoxCollider2D pcol = root.GetComponent<BoxCollider2D>();
 
-                float desiredTopY = pcol != null ? pcol.bounds.max.y : root.transform.position.y + 0.09f;
-                float currentWidth = pcol != null ? pcol.bounds.size.x : 3.5f;
-                float scaleX = Mathf.Clamp(currentWidth / 3.5f, 0.85f, 1.55f);
+                bool alreadyMedieval = psr != null && psr.sprite == props.platCantera;
 
-                if (psr != null)
+                if (alreadyMedieval)
                 {
-                    psr.sprite = props.platCantera;
+                    psr.drawMode = SpriteDrawMode.Simple;
                     psr.color = Color.white;
                     psr.sortingOrder = 1;
                     if (litMat != null) psr.sharedMaterial = litMat;
                     EditorUtility.SetDirty(psr);
+
+                    float curScaleX = root.transform.localScale.x;
+                    if (curScaleX < 0.85f || curScaleX > 1.55f || Mathf.Abs(root.transform.localScale.y - 1f) > 0.001f)
+                    {
+                        float clampedX = Mathf.Clamp(curScaleX, 0.85f, 1.55f);
+                        root.transform.localScale = new Vector3(clampedX, 1.0f, 1f);
+                        EditorUtility.SetDirty(root.transform);
+                    }
+
+                    if (pcol != null)
+                    {
+                        pcol.size = new Vector2(3.46f, 0.40f);
+                        pcol.offset = new Vector2(0f, -0.02f);
+                        EditorUtility.SetDirty(pcol);
+                    }
                 }
-
-                root.transform.localScale = new Vector3(scaleX, 1.0f, 1f);
-                // Con pivot = (0.5, 0.82) en 32px / 32ppu, el borde superior está a +0.18 del transform.position.y
-                root.transform.position = new Vector3(root.transform.position.x, desiredTopY - 0.18f, root.transform.position.z);
-                EditorUtility.SetDirty(root.transform);
-
-                if (pcol != null)
+                else
                 {
-                    // Colisionador ajustado solo al tablero transitable superior (permite caminar bajo los arcos de piedra)
-                    pcol.size = new Vector2(3.46f, 0.40f);
-                    pcol.offset = new Vector2(0f, -0.02f);
-                    EditorUtility.SetDirty(pcol);
+                    float desiredTopY = pcol != null ? pcol.bounds.max.y : root.transform.position.y + 0.09f;
+                    float currentWidth = pcol != null ? pcol.bounds.size.x : 3.5f;
+                    float scaleX = Mathf.Clamp(currentWidth / 3.5f, 0.85f, 1.55f);
+
+                    if (psr != null)
+                    {
+                        psr.sprite = props.platCantera;
+                        psr.drawMode = SpriteDrawMode.Simple;
+                        psr.color = Color.white;
+                        psr.sortingOrder = 1;
+                        if (litMat != null) psr.sharedMaterial = litMat;
+                        EditorUtility.SetDirty(psr);
+                    }
+
+                    root.transform.localScale = new Vector3(scaleX, 1.0f, 1f);
+                    // Con pivot = (0.5, 0.82) en 32px / 32ppu, el borde superior está a +0.18 del transform.position.y
+                    root.transform.position = new Vector3(root.transform.position.x, desiredTopY - 0.18f, root.transform.position.z);
+                    EditorUtility.SetDirty(root.transform);
+
+                    if (pcol != null)
+                    {
+                        // Colisionador ajustado solo al tablero transitable superior (permite caminar bajo los arcos de piedra)
+                        pcol.size = new Vector2(3.46f, 0.40f);
+                        pcol.offset = new Vector2(0f, -0.02f);
+                        EditorUtility.SetDirty(pcol);
+                    }
                 }
 
                 upgradedPlatforms++;
@@ -750,8 +785,8 @@ public static class CuartaTransformacionWorldBuilder
 
         CreateSpikeHazard("Hazard_Callejon_Bajo1", new Vector3(37.5f, -2.82f, 0f), new Vector3(6f, 0.35f, 1f), refs.spriteLitMaterial);
         CreateSpikeHazard("Hazard_Callejon_Bajo2", new Vector3(54f, -2.82f, 0f), new Vector3(9f, 0.35f, 1f), refs.spriteLitMaterial);
-        CreateSpikeHazard("Hazard_Azotea_Foso1",   new Vector3(87f, -4.82f, 0f), new Vector3(5f, 0.35f, 1f), refs.spriteLitMaterial);
-        CreateSpikeHazard("Hazard_Azotea_Foso2",   new Vector3(104f, -4.82f, 0f), new Vector3(5f, 0.35f, 1f), refs.spriteLitMaterial);
+        CreateSpikeHazard("Hazard_Azotea_Foso1",   new Vector3(87.5f, -4.82f, 0f), new Vector3(5f, 0.35f, 1f), refs.spriteLitMaterial);
+        CreateSpikeHazard("Hazard_Azotea_Foso2",   new Vector3(104.5f, -4.82f, 0f), new Vector3(5f, 0.35f, 1f), refs.spriteLitMaterial);
 
         CreateSpotlight("Reflector_Callejon_1", new Vector3(24f, 3.2f, 0f), 0f, refs.spriteLitMaterial);
         CreateSpotlight("Reflector_Callejon_2", new Vector3(50f, 7.6f, 0f), 1.4f, refs.spriteLitMaterial);
@@ -1031,6 +1066,7 @@ public static class CuartaTransformacionWorldBuilder
         CameraFollow cf = refs.mainCamera.GetComponent<CameraFollow>() ?? refs.mainCamera.gameObject.AddComponent<CameraFollow>();
         cf.target = refs.player.transform;
         cf.isBossLocked = false;
+        cf.maxBounds = new Vector2(Mathf.Max(cf.maxBounds.x, 265f), cf.maxBounds.y);
 
         if (refs.platformSprite == null)
             refs.platformSprite = LoadSpriteByGuidOrPath(PlatformSpriteGuid, "Assets/Images/Nivel1/Terrain");
